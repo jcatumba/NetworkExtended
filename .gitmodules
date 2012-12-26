@@ -1,0 +1,3 @@
+[submodule "networkx"]
+	path = networkx
+	url = git@github.com:jcatumba/networkx.git
