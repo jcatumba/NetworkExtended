@@ -1,3 +1,6 @@
 [submodule "networkx"]
 	path = networkx
 	url = git@github.com:jcatumba/networkx.git
+[submodule "netevo"]
+	path = netevo
+	url = git@bitbucket.org:jcatumba/netevo.git
