@@ -21,6 +21,7 @@ void main(int argc, char** argv)
     PyObject* nx_module, * pFunc, *pNXName, * pNodes, * pNodesTuple;
     PyObject* pObject, * graphNodes, * output, * pInt, * pItem;
 
+    Py_SetProgramName("NetworkExtended");
     Py_Initialize();
     pNXName = PyString_FromString("networkx");
     nx_module = PyImport_Import(pNXName);
