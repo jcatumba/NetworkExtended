@@ -1,5 +1,14 @@
+/*===================================================================
+ * NetworkExtended
+ * Copyright (C) 2012 Jorge Catumba Ruiz <jorgerev90@gmail.com>
+ * Universidad Nacional de Colombia, Colombia
+ * ------------------------------------------------------------------
+ * This software is licensed under the terms of the GPL v0.3 for
+ * more information about the license see the license.txt file.
+ * ================================================================*/
+
 #include <Python.h>
-#include "networkx_load.h"
+#include "libnetworkx/networkx_load.h"
 
 void main(int argc, char** argv)
 {
@@ -81,14 +90,14 @@ void main(int argc, char** argv)
     PyObject* nodes2 = PyObject_CallObject(nxG_order, pGraphTuple2);
     if (nodes2) printf("nxH has %ld nodes.\n", PyInt_AsLong(nodes2));
     
-    Py_XDECREF(nxG_add_node);
+    /*Py_XDECREF(nxG_add_node);
     Py_XDECREF(pAttrTuple1);
     Py_XDECREF(pAttrTuple2);
     Py_XDECREF(pAttrTuple3);
     Py_XDECREF(pGraphTuple1);
     Py_XDECREF(pGraphTuple1);
     Py_XDECREF(nxG);
-    Py_XDECREF(nxH);
+    Py_XDECREF(nxH);*/
     
     Py_Finalize();
 }
