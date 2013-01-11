@@ -69,27 +69,32 @@ void print_vars() {
     }
 }
 
-void parsecommand (char *command, char **p_parsed) {
-    int i=1,j;
+void parsecommand (char *command, char **p_parsed, int i) {
+    int j;
     char *result = NULL;
 
-    result = strtok(command, "=");
-    p_parsed[0] = result;
-    if (result != NULL) {
-        result = strtok(NULL, "(");
-        p_parsed[1] = result;
+    if ( i==0 ) {
+        result = strtok(command, "(");
+        p_parsed[0] = result;
+    } else {
+        result = strtok(command, "=");
+        p_parsed[0] = result;
+        if (result != NULL) {
+            result = strtok(NULL, "(");
+            p_parsed[1] = result;
+        }
     }
-    while (result != NULL ) {
-        i++;
+    while (result != NULL) {
+        ++i;
         result = strtok(NULL, ",");
         p_parsed[i] = result;
     }
     result = strtok(p_parsed[i-1],")");
     p_parsed[i-1] = result;
 
-    for (j=0;j<i;j++) {
-        printf("[%d : %s]\n", j, p_parsed[j]);
-    }
+    //for (j=0;j<i;j++) {
+    //    printf("[%d : %s]\n", j, p_parsed[j]);
+    //}
 }
 
 // Principal
@@ -98,7 +103,7 @@ int main( int argc, char *argv[] ) {
     char cmdStr[256], *user, hostname[256], *cmd_val[5];
     int index=0, begin, end;
     
-    if ( argc > 1) {
+    if ( argc > 1 ) {
         printf("Options given.\n");
     }
 
@@ -115,24 +120,43 @@ int main( int argc, char *argv[] ) {
     	memset(cmdStr, 0x00, sizeof(cmdStr));
 	    gets(cmdStr);
         char *p;
+        int index;
         p = strchr(cmdStr, '=');
         if (p != NULL) {
-            printf("Assignation found.\n");
+            index = 2;
         } else {
-            printf("Assignation not found.\n");
+            index = 1;
         }
-	    parsecommand(cmdStr, cmd_val);
+	    parsecommand(cmdStr, cmd_val, index-1);
 	    if ( strncmp("exit", cmd_val[0], 4) == 0 ) {
 	        return 0;
-	    } else if ( strncmp("add", cmd_val[1], 5) == 0 ) {
-	        int result = atoi(cmd_val[2]) + atoi(cmd_val[3]);
-	        printf("%d\n", result);
-	    } else if ( strncmp("deduct", cmd_val[1], 6) == 0 ) {
-	        int result = atoi(cmd_val[2]) - atoi(cmd_val[3]);
-	        printf("%d\n", result);
-	    } else if ( strncmp("multiply", cmd_val[1], 11) == 0 ) {
-	        int result = atoi(cmd_val[2]) * atoi(cmd_val[3]);
-	        printf("%d\n", result);
+	    } else if ( strncmp("add", cmd_val[index-1], 5) == 0 ) {
+	        int result = atoi(cmd_val[index]) + atoi(cmd_val[index+1]);
+            if ( index == 2 ) {
+                add_variable(cmd_val[0], result);
+                printf("%s=\n", cmd_val[0]);
+            } else {
+                printf("ans=\n");
+            }
+	        printf("\t%d\n", result);
+	    } else if ( strncmp("deduct", cmd_val[index-1], 6) == 0 ) {
+	        int result = atoi(cmd_val[index]) - atoi(cmd_val[index+1]);
+            if ( index == 2 ) {
+                add_variable(cmd_val[0], result);
+                printf("%s=\n", cmd_val[0]);
+            } else {
+                printf("ans=\n");
+            }
+	        printf("\t%d\n", result);
+	    } else if ( strncmp("multiply", cmd_val[index-1], 11) == 0 ) {
+	        int result = atoi(cmd_val[index]) * atoi(cmd_val[index+1]);
+            if ( index == 2 ) {
+                add_variable(cmd_val[0], result);
+                printf("%s=\n", cmd_val[0]);
+            } else {
+                printf("ans=\n");
+            }
+	        printf("\t%d\n", result);
 	    } else {
 	        printf("Unknown command. Try again.\n");
 	    }
