@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <regex.h>
-#include <uthash.h>
+#include "uthash.h"
 
 typedef struct {
     char id[10];
@@ -36,6 +36,28 @@ hashtable *find_variable(char key[10]) {
 
     HASH_FIND_STR(clivariables, key, s);
     return s;
+}
+
+void delete_variable(hashtable *variable) {
+    HASH_DEL(clivariables, variable);
+    free(variable);
+}
+
+void delete_all() {
+    hashtable *current_var, *tmp;
+
+    HASH_ITER(hh, clivariables, current_var, tmp) {
+        HASH_DEL(clivariables, current_var);
+        free(current_var);
+    }
+}
+
+void print_vars() {
+    hashtable *s;
+
+    for(s = clivariables; s != NULL; s=s->hh.next){
+        printf("variable name %s: value %d\n", s->id, s->value);
+    }
 }
 
 void parsecommand (char *command, char **p_parsed) {
@@ -83,17 +105,24 @@ int main( int argc, char *argv[] ) {
         printf("[NetworkExtended]: ");
     	memset(cmdStr, 0x00, sizeof(cmdStr));
 	    gets(cmdStr);
+        char *p;
+        p = strchr(cmdStr, '=');
+        if (p != NULL) {
+            printf("Assignation found.\n");
+        } else {
+            printf("Assignation not found.\n");
+        }
 	    parsecommand(cmdStr, cmd_val);
 	    if ( strncmp("exit", cmd_val[0], 4) == 0 ) {
 	        return 0;
-	    } else if ( strncmp("add", cmd_val[0], 5) == 0 ) {
-	        int result = atoi(cmd_val[1]) + atoi(cmd_val[2]);
+	    } else if ( strncmp("add", cmd_val[1], 5) == 0 ) {
+	        int result = atoi(cmd_val[2]) + atoi(cmd_val[3]);
 	        printf("%d\n", result);
-	    } else if ( strncmp("deduct", cmd_val[0], 6) == 0 ) {
-	        int result = atoi(cmd_val[1]) - atoi(cmd_val[2]);
+	    } else if ( strncmp("deduct", cmd_val[1], 6) == 0 ) {
+	        int result = atoi(cmd_val[2]) - atoi(cmd_val[3]);
 	        printf("%d\n", result);
-	    } else if ( strncmp("multiply", cmd_val[0], 11) == 0 ) {
-	        int result = atoi(cmd_val[1]) * atoi(cmd_val[2]);
+	    } else if ( strncmp("multiply", cmd_val[1], 11) == 0 ) {
+	        int result = atoi(cmd_val[2]) * atoi(cmd_val[3]);
 	        printf("%d\n", result);
 	    } else {
 	        printf("Unknown command. Try again.\n");
