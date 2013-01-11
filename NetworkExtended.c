@@ -22,15 +22,6 @@ typedef struct {
 
 hashtable *clivariables = NULL;
 
-void add_variable(char repr[10], int amount) {
-    hashtable *s;
-
-    s = (hashtable*)malloc(sizeof(hashtable));
-    strcpy(s->id, repr);
-    s->value = amount;
-    HASH_ADD_STR(clivariables, id, s);
-}
-
 hashtable *find_variable(char key[10]) {
     hashtable *s;
 
@@ -41,6 +32,24 @@ hashtable *find_variable(char key[10]) {
 void delete_variable(hashtable *variable) {
     HASH_DEL(clivariables, variable);
     free(variable);
+}
+
+void add_variable(char repr[10], int amount) {
+    hashtable *s;
+    hashtable *t = find_variable(repr);
+
+    if ( t == NULL ) {
+        s = (hashtable*)malloc(sizeof(hashtable));
+        strcpy(s->id, repr);
+        s->value = amount;
+        HASH_ADD_STR(clivariables, id, s);
+    } else {
+        delete_variable(t);
+        s = (hashtable*)malloc(sizeof(hashtable));
+        strcpy(s->id, repr);
+        s->value = amount;
+        HASH_ADD_STR(clivariables, id, s);
+    }
 }
 
 void delete_all() {
