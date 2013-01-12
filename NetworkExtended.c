@@ -29,17 +29,17 @@ typedef struct {
     UT_hash_handle hh;
 } hash_var;
 
-hash_var *clivariables = NULL;
+hash_var *cli_vars = NULL;
 
 hash_var *find_variable(char key[10]) {
     hash_var *s;
 
-    HASH_FIND_STR(clivariables, key, s);
+    HASH_FIND_STR(cli_vars, key, s);
     return s;
 }
 
 void delete_variable(hash_var *variable) {
-    HASH_DEL(clivariables, variable);
+    HASH_DEL(cli_vars, variable);
     free(variable);
 }
 
@@ -51,21 +51,21 @@ void add_variable(char repr[10], int amount) {
         s = (hash_var*)malloc(sizeof(hash_var));
         strcpy(s->id, repr);
         s->value = amount;
-        HASH_ADD_STR(clivariables, id, s);
+        HASH_ADD_STR(cli_vars, id, s);
     } else {
         delete_variable(t);
         s = (hash_var*)malloc(sizeof(hash_var));
         strcpy(s->id, repr);
         s->value = amount;
-        HASH_ADD_STR(clivariables, id, s);
+        HASH_ADD_STR(cli_vars, id, s);
     }
 }
 
 void delete_all() {
     hash_var *current_var, *tmp;
 
-    HASH_ITER(hh, clivariables, current_var, tmp) {
-        HASH_DEL(clivariables, current_var);
+    HASH_ITER(hh, cli_vars, current_var, tmp) {
+        HASH_DEL(cli_vars, current_var);
         free(current_var);
     }
 }
@@ -73,7 +73,7 @@ void delete_all() {
 void print_vars() {
     hash_var *s;
 
-    for(s = clivariables; s != NULL; s=s->hh.next){
+    for(s = cli_vars; s != NULL; s=s->hh.next){
         printf("variable name %s: value %d\n", s->id, s->value);
     }
 }
@@ -84,7 +84,58 @@ typedef struct {
     char name[25];
     int (*func_call)(params);
     UT_hash_handle hh;
-} hash_fun;
+} hash_func;
+
+hash_func *cli_functs = NULL;
+
+hash_func *find_function(char key[10]) {
+    hash_func *s;
+
+    HASH_FIND_STR(cli_functs, key, s);
+    return s;
+}
+
+void delete_function(hash_func *function) {
+    HASH_DEL(cli_functs, function);
+    free(function);
+}
+
+void add_function(char name[10], int (*funct)(params)) {
+    hash_func *s;
+    hash_func *t = find_function(name);
+
+    if ( t == NULL ) {
+        s = (hash_func*)malloc(sizeof(hash_func));
+        strcpy(s->name, name);
+        s->func_call = funct;
+        HASH_ADD_STR(cli_functs, name, s);
+    } else {
+        delete_function(t);
+        s = (hash_func*)malloc(sizeof(hash_func));
+        strcpy(s->name, name);
+        s->func_call = funct;
+        HASH_ADD_STR(cli_functs, name, s);
+    }
+}
+
+void delete_all_functions() {
+    hash_func *current_func, *tmp;
+
+    HASH_ITER(hh, cli_functs, current_func, tmp) {
+        HASH_DEL(cli_functs, current_func);
+        free(current_func);
+    }
+}
+
+void print_functions() {
+    hash_func *s;
+
+    for(s = cli_functs; s != NULL; s=s->hh.next){
+        printf("variable name %s", s->name);
+    }
+}
+
+// Internal
 
 void parsecommand (char *command, char **p_parsed, int i) {
     int j;
@@ -117,8 +168,8 @@ void parsecommand (char *command, char **p_parsed, int i) {
 // Internal functions and structs
 
 int add(params p) {return p.int1 + p.int2;}
-int deduct(params p) {return p.int1 + p.int2;}
-int multiply(params p) {return p.int1 + p.int2;}
+int deduct(params p) {return p.int1 - p.int2;}
+int multiply(params p) {return p.int1 * p.int2;}
 
 int compute(int (*func_arit)(params), params p){ int d = (*func_arit)(p); return d; };
 
