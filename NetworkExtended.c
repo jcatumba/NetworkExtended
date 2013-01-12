@@ -15,8 +15,9 @@
 #include "uthash.h"
 
 typedef struct{
-    int int1, int2, int3, int4, int5;
-    char *str1, *str2, *str3, *str4, *str5;
+    int cmd_size;
+    char *var_name;
+    char **cmd_val;
 } params;
 
 // Hashing functions
@@ -61,7 +62,7 @@ void add_variable(char repr[10], int amount) {
     }
 }
 
-void delete_all() {
+void delete_all_variables() {
     hash_var *current_var, *tmp;
 
     HASH_ITER(hh, cli_vars, current_var, tmp) {
@@ -88,7 +89,7 @@ typedef struct {
 
 hash_func *cli_functs = NULL;
 
-hash_func *find_function(char key[10]) {
+hash_func *find_function(char key[25]) {
     hash_func *s;
 
     HASH_FIND_STR(cli_functs, key, s);
@@ -100,7 +101,7 @@ void delete_function(hash_func *function) {
     free(function);
 }
 
-void add_function(char name[10], int (*funct)(params)) {
+void add_function(char name[25], int (*funct)(params)) {
     hash_func *s;
     hash_func *t = find_function(name);
 
@@ -137,11 +138,11 @@ void print_functions() {
 
 // Internal
 
-void parsecommand (char *command, char **p_parsed, int i) {
+void parsecommand (char *command, char **p_parsed, int *i) {
     int j;
     char *result = NULL;
 
-    if ( i==0 ) {
+    if ( *i==0 ) {
         result = strtok(command, "(");
         p_parsed[0] = result;
     } else {
@@ -153,106 +154,114 @@ void parsecommand (char *command, char **p_parsed, int i) {
         }
     }
     while (result != NULL) {
-        ++i;
+        ++*i;
         result = strtok(NULL, ",");
-        p_parsed[i] = result;
+        p_parsed[*i] = result;
     }
-    result = strtok(p_parsed[i-1],")");
-    p_parsed[i-1] = result;
+    result = strtok(p_parsed[*i-1],")");
+    p_parsed[*i-1] = result;
 
-    for (j=0;j<i;j++) {
-        printf("[%d : %s]\n", j, p_parsed[j]);
-    }
 }
 
-// Internal functions and structs
+// Internal callable functions
 
-int add(params p) {return p.int1 + p.int2;}
-int deduct(params p) {return p.int1 - p.int2;}
-int multiply(params p) {return p.int1 * p.int2;}
+int add(params p) {
+    int result = atoi(p.cmd_val[0]) + atoi(p.cmd_val[1]);
+    add_variable(p.var_name, result);
+    printf("%s=\n", p.var_name);
+    printf("\t%d\n", result);
+}
+int deduct(params p) {
+    int result = atoi(p.cmd_val[0]) - atoi(p.cmd_val[1]);
+    add_variable(p.var_name, result);
+    printf("%s=\n", p.var_name);
+    printf("\t%d\n", result);
+}
+int multiply(params p) {
+    int result = atoi(p.cmd_val[0]) * atoi(p.cmd_val[1]);
+    add_variable(p.var_name, result);
+    printf("%s=\n", p.var_name);
+    printf("\t%d\n", result);
+}
+int exit_cli(params p) { exit(0); return 0;}
+int value(params p) {
+    hash_var *s = find_variable(p.var_name);
+    if ( s != NULL ) {
+        printf("%s=\n\t%d\n", s->id, s->value);
+    } else {
+        printf("Value of %s not found.\n", p.var_name);
+    }
+    return 0;
+}
 
 int compute(int (*func_arit)(params), params p){ int d = (*func_arit)(p); return d; };
 
 // Principal
 
 int main( int argc, char *argv[] ) {
-    char cmdStr[256], *user, hostname[256], *cmd_val[5];
+    char cmdStr[256], *user, hostname[256], *cmd_val[10];
     int index=0, begin, end;
     
     if ( argc > 1 ) {
         printf("Options given.\n");
     }
 
-    memset(hostname, 0x00, sizeof(hostname));
-    gethostname(hostname, sizeof(hostname));
-    user = (char *)getenv("USER");
+    add_function("add", &add);
+    add_function("deduct", &deduct);
+    add_function("multiply", &multiply);
+    add_function("exit", &exit_cli);
+    add_function("value", &value);
+    //memset(hostname, 0x00, sizeof(hostname));
+    //gethostname(hostname, sizeof(hostname));
+    //user = (char *)getenv("USER");
 
-    if( user == NULL ) {
-    	strcpy(user, "unknown");
-    }
+    //if( user == NULL ) {
+    //	strcpy(user, "unknown");
+    //}
 
     while(1) {
         printf("[NetworkExtended]: ");
     	memset(cmdStr, 0x00, sizeof(cmdStr));
 	    gets(cmdStr);
         char *p;
-        int index;
+        int index, j=0;
+        params pmain;
+
         p = strchr(cmdStr, '=');
         if (p != NULL) {
             index = 2;
         } else {
             index = 1;
         }
-	    parsecommand(cmdStr, cmd_val, index-1);
-        params pmain;
-	    if ( strncmp("exit", cmd_val[0], 4) == 0 ) {
-	        return 0;
-	    } else if ( strncmp("add", cmd_val[index-1], 5) == 0 ) {
-            pmain.int1 = atoi(cmd_val[index]);
-            pmain.int2 = atoi(cmd_val[index+1]);
-	        int result = compute(&add, pmain);
-            if ( index == 2 ) {
-                add_variable(cmd_val[0], result);
-                printf("%s=\n", cmd_val[0]);
-            } else {
-                add_variable("ans", result);
-                printf("ans=\n");
+
+        int size_cmd = index-1;
+	    parsecommand(cmdStr, cmd_val, &size_cmd);
+
+        if ( index == 2 ) {
+            pmain.var_name = cmd_val[0];
+        } else {
+            pmain.var_name = "ans";
+        }
+
+        int margc = size_cmd-index;
+
+        pmain.cmd_size = margc;
+        if ( margc != 0 ) {
+            char *cmd_val_tmp[8];
+            for ( j=0; j<margc; j++ ) {
+                cmd_val_tmp[j] = cmd_val[j+index];
             }
-	        printf("\t%d\n", result);
-	    } else if ( strncmp("deduct", cmd_val[index-1], 6) == 0 ) {
-            pmain.int1 = atoi(cmd_val[index]);
-            pmain.int2 = atoi(cmd_val[index+1]);
-	        int result = compute(&deduct, pmain);
-            if ( index == 2 ) {
-                add_variable(cmd_val[0], result);
-                printf("%s=\n", cmd_val[0]);
-            } else {
-                add_variable("ans", result);
-                printf("ans=\n");
-            }
-	        printf("\t%d\n", result);
-	    } else if ( strncmp("multiply", cmd_val[index-1], 11) == 0 ) {
-            pmain.int1 = atoi(cmd_val[index]);
-            pmain.int2 = atoi(cmd_val[index+1]);
-	        int result = compute(&multiply, pmain);
-            if ( index == 2 ) {
-                add_variable(cmd_val[0], result);
-                printf("%s=\n", cmd_val[0]);
-            } else {
-                add_variable("ans", result);
-                printf("ans=\n");
-            }
-	        printf("\t%d\n", result);
-        } else if ( strncmp("value", cmd_val[index-1], 5) == 0 ) {
-            hash_var *s = find_variable(cmd_val[index]);
-            if ( s != NULL ) {
-                printf("%s=\n\t%d\n", cmd_val[index], s->value);
-            } else {
-                printf("Value of %s not found.\n", cmd_val[index]);
-            }
-	    } else {
-	        printf("Unknown command. Try again.\n");
-	    }
+            pmain.cmd_val = cmd_val_tmp;
+        }
+
+
+        hash_func *instance = find_function(cmd_val[index-1]);
+
+        if ( instance != NULL ) {
+            int output = compute(instance->func_call, pmain);
+        } else {
+            printf("Command not found. Try again.\n");
+        }
     }
     return 0;
 }
