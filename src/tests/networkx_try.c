@@ -8,7 +8,7 @@
  * ================================================================*/
 
 #include <Python.h>
-#include "libnetworkx/networkx_load.h"
+#include "headers/networkx.h"
 
 void main(int argc, char** argv)
 {
@@ -45,7 +45,7 @@ void main(int argc, char** argv)
     bool pagerank_flag;
     PyObject* nxG_pagerank = load_nx(nx_module, "pagerank", &pagerank_flag);
     if (pagerank_flag) printf("pagerank for Graph loaded.\n");
-    bool pwp_flag;
+    //bool pwp_flag;
     /*PyObject* nxG_pwprank = load_nx(nx_module, "pwp", &pwp_flag);
     if (pwp_flag) printf("pwp for Graph loaded.\n");*/
     

@@ -7,18 +7,20 @@
  * more information about the license see the license.txt file.
  * ================================================================*/
 
-#include <Python.h>
+#ifndef NETWORKX_H
+#define NETWORKX_H
 
 typedef int bool;
 enum { false, true };
 
-PyObject* load_nx(PyObject* object, const char* attr_name, bool* flag) {
-    PyObject* pFun;
-    if (pFun = PyObject_GetAttrString(object, attr_name)) {
-        *flag = true;
-        return pFun;
-    } else {
-        *flag = false;
-        return NULL;
-    }
-}
+typedef struct {
+    char name[15];
+    char parent[15];
+    PyObject* py_object;
+} NX_object
+
+NX_object load_nx(NX_object nxobject, const char* attr_name);
+NX_object load_networkx();
+void load_objects(NX_object nxobj);
+
+#endif //NETWORKX_H

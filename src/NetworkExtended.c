@@ -8,33 +8,20 @@
  * ================================================================*/
 
 #include <stdio.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <regex.h>
+//#include <regex.h>
 #include "uthash.h"
+#include "networkx.h"
+#include "networkextended.h"
 
-typedef struct{
-    int cmd_size;
-    char *var_name;
-    char **cmd_val;
-} params;
-
-// Hashing functions
-
-// Variables
-
-typedef struct {
-    char id[10];
-    int value;
-    UT_hash_handle hh;
-} hash_var;
+// Functions for hashing variables
 
 hash_var *cli_vars = NULL;
 
 hash_var *find_variable(char key[10]) {
     hash_var *s;
-
     HASH_FIND_STR(cli_vars, key, s);
     return s;
 }
@@ -44,22 +31,18 @@ void delete_variable(hash_var *variable) {
     free(variable);
 }
 
-void add_variable(char repr[10], int amount) {
+void add_variable(char repr[10], int amount, NX_object nxobj) {
     hash_var *s;
     hash_var *t = find_variable(repr);
 
-    if ( t == NULL ) {
-        s = (hash_var*)malloc(sizeof(hash_var));
-        strcpy(s->id, repr);
-        s->value = amount;
-        HASH_ADD_STR(cli_vars, id, s);
-    } else {
+    if ( t != NULL ) {
         delete_variable(t);
-        s = (hash_var*)malloc(sizeof(hash_var));
-        strcpy(s->id, repr);
-        s->value = amount;
-        HASH_ADD_STR(cli_vars, id, s);
     }
+    s = (hash_var*)malloc(sizeof(hash_var));
+    strcpy(s->id, repr);
+    s->value = amount;
+    s->object = nxobj;
+    HASH_ADD_STR(cli_vars, id, s);
 }
 
 void delete_all_variables() {
@@ -79,13 +62,7 @@ void print_vars() {
     }
 }
 
-// Functions
-
-typedef struct {
-    char name[25];
-    int (*func_call)(params);
-    UT_hash_handle hh;
-} hash_func;
+// Functions for hashing internals
 
 hash_func *cli_functs = NULL;
 
@@ -101,31 +78,17 @@ void delete_function(hash_func *function) {
     free(function);
 }
 
-void add_function(char name[25], int (*funct)(params)) {
+void add_function(char name[25], netext_function funct) {
     hash_func *s;
     hash_func *t = find_function(name);
 
-    if ( t == NULL ) {
-        s = (hash_func*)malloc(sizeof(hash_func));
-        strcpy(s->name, name);
-        s->func_call = funct;
-        HASH_ADD_STR(cli_functs, name, s);
-    } else {
+    if ( t != NULL ) {
         delete_function(t);
-        s = (hash_func*)malloc(sizeof(hash_func));
-        strcpy(s->name, name);
-        s->func_call = funct;
-        HASH_ADD_STR(cli_functs, name, s);
     }
-}
-
-void delete_all_functions() {
-    hash_func *current_func, *tmp;
-
-    HASH_ITER(hh, cli_functs, current_func, tmp) {
-        HASH_DEL(cli_functs, current_func);
-        free(current_func);
-    }
+    s = (hash_func*)malloc(sizeof(hash_func));
+    strcpy(s->name, name);
+    s->func_call = funct;
+    HASH_ADD_STR(cli_functs, name, s);
 }
 
 void print_functions() {
@@ -136,7 +99,16 @@ void print_functions() {
     }
 }
 
-// Internal
+// Internal functions
+
+int compute(netext_function function, params p, NX_object nxobj){
+    NX_object d = (*function)(p, nxobj);
+    if ( d != NULL ) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
 
 void parsecommand (char *command, char **p_parsed, int *i) {
     int j;
@@ -163,38 +135,57 @@ void parsecommand (char *command, char **p_parsed, int *i) {
 
 }
 
-// Internal callable functions
+// Callable functions
 
-int add(params p) {
+NX_object add(params p, NX_object nxobj) {
     int result = atoi(p.cmd_val[0]) + atoi(p.cmd_val[1]);
-    add_variable(p.var_name, result);
+    add_variable(p.var_name, result, NULL);
     printf("%s=\n", p.var_name);
     printf("\t%d\n", result);
+    return NULL;
 }
-int deduct(params p) {
+NX_object deduct(params p, NX_object nxobj) {
     int result = atoi(p.cmd_val[0]) - atoi(p.cmd_val[1]);
-    add_variable(p.var_name, result);
+    add_variable(p.var_name, result, NULL);
     printf("%s=\n", p.var_name);
     printf("\t%d\n", result);
+    return NULL;
 }
-int multiply(params p) {
+NX_object multiply(params p, NX_object nxobj) {
     int result = atoi(p.cmd_val[0]) * atoi(p.cmd_val[1]);
-    add_variable(p.var_name, result);
+    add_variable(p.var_name, result, NULL);
     printf("%s=\n", p.var_name);
     printf("\t%d\n", result);
+    return NULL;
 }
-int exit_cli(params p) { exit(0); return 0;}
-int value(params p) {
+NX_object Graph(params p, NX_object callable) {
+    //p.var_name = h
+    //p.cmd_size = 0
+    //p.cmd_val = []
+    NX_object graph;
+    if(graph.py_object = PyObject_CallObject(nxGraph.py_object, NULL)) {
+        graph.name = p.var_name;
+        graph.parent = nxGraph.name;
+        add_variable(graph.name, 0, graph);
+        return graph;
+    } else {
+        printf("Graph creation failed.\n");
+        return NULL;
+    }
+}
+NX_object value(params p, NX_object nxobj) {
     hash_var *s = find_variable(p.var_name);
     if ( s != NULL ) {
         printf("%s=\n\t%d\n", s->id, s->value);
     } else {
         printf("Value of %s not found.\n", p.var_name);
     }
-    return 0;
+    return NULL;
 }
-
-int compute(int (*func_arit)(params), params p){ int d = (*func_arit)(p); return d; };
+NX_object exit_cli(params p, NX_object nxobj) {
+    exit(0);
+    return NULL;
+}
 
 // Principal
 
@@ -206,11 +197,6 @@ int main( int argc, char *argv[] ) {
         printf("Options given.\n");
     }
 
-    add_function("add", &add);
-    add_function("deduct", &deduct);
-    add_function("multiply", &multiply);
-    add_function("exit", &exit_cli);
-    add_function("value", &value);
     //memset(hostname, 0x00, sizeof(hostname));
     //gethostname(hostname, sizeof(hostname));
     //user = (char *)getenv("USER");
@@ -218,6 +204,18 @@ int main( int argc, char *argv[] ) {
     //if( user == NULL ) {
     //	strcpy(user, "unknown");
     //}
+
+    add_function("add", &add);
+    add_function("deduct", &deduct);
+    add_function("multiply", &multiply);
+    add_function("exit", &exit_cli);
+    add_function("value", &value);
+    add_function("Graph", &Graph);
+
+    Py_SetProgramName("NetworkExtended");
+    Py_Initialize();
+    NX_object nx_module = load_networkx();
+    load_objects();
 
     while(1) {
         printf("[NetworkExtended]: ");
@@ -254,14 +252,14 @@ int main( int argc, char *argv[] ) {
             pmain.cmd_val = cmd_val_tmp;
         }
 
-
         hash_func *instance = find_function(cmd_val[index-1]);
 
         if ( instance != NULL ) {
-            int output = compute(instance->func_call, pmain);
+            int output = compute(instance->func_call, pmain, NX_object nxobj);
         } else {
             printf("Command not found. Try again.\n");
         }
     }
+    Py_Finalize();
     return 0;
 }
