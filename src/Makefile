@@ -1,16 +1,19 @@
 #
-# Makefile for libnetworkx
+# Makefile
 #
 
 pkgconfig= `pkg-config --cflags --libs python`
-SLIBRARIES= libnetworkx.so
-OBJECTS= networkx_load.o
+SLIBRARIES= ../lib/libnetworkx.so
+OBJECTS= ../lib/networkx.o
+INCLUDE = -I./headers
 
 $(SLIBRARIES): $(OBJECTS)
 	gcc -shared -o $@ $<
 
-networkx_load.o: networkx_load.c networkx_load.h
-	gcc -c -fPIC -o $@ $< $(pkgconfig)
+../lib/networkx.o: networkx.c headers/networkx.h
+	gcc -c -fPIC -o $@ $< $(INCLUDE) $(pkgconfig) 
 
 clean:
 	rm -f $(SLIBRARIES) $(OBJECTS)
+
+#TODO: Add instructions to build tests and modules/netevo directories

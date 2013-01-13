@@ -1,26 +1,23 @@
 #
-# Makefile
+# Makefile for networkextended
 #
 
-SUBDIRS = libnetworkx
+SUBDIRS = src build lib
 SUBCLEAN = $(addsuffix .clean,$(SUBDIRS))
-LIB = -L./libnetworkx -lnetworkx 
-LINK = -Wl,-rpath,./libnetworkx
+LIB = -L./lib -lnetworkx -lnetworkextended
+LINK = -Wl,-rpath,./lib
 pkgconfig = `pkg-config --cflags --libs python`
 
-networkx_try.bin: $(SUBDIRS) networkx_try.c
-	gcc -o $@ networkx_try.c $(LINK) $(LIB) $(pkgconfig)
+build/networkextended.bin: $(SUBDIRS) src/NetworkExtended.c src/networkx.c src/headers/uthash.h src/headers/networkx.h src/headers/networkextended.h
+	gcc -o $@ NetworkExtended.c $(LINK) $(LIB) $(pkgconfig)
 
 .PHONY: $(SUBDIRS)
 
 $(SUBDIRS):
 	$(MAKE) --directory=$@
 
-.PHONY: clean $(SUBCLEAN) local
-clean: $(SUBCLEAN) local
+.PHONY: clean $(SUBCLEAN)
+clean: $(SUBCLEAN)
 
 $(SUBCLEAN): %.clean:
 	$(MAKE) -C $* clean
-
-local:
-	rm -f networkx_try.bin
