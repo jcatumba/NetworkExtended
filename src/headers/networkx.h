@@ -10,17 +10,19 @@
 #ifndef NETWORKX_H
 #define NETWORKX_H
 
+#include <Python.h>
+
 typedef int bool;
 enum { false, true };
 
 typedef struct {
-    char name[15];
-    char parent[15];
+    const char* name;
+    const char* parent;
     PyObject* py_object;
-} NX_object
+} NX_object;
 
-NX_object load_nx(NX_object nxobject, const char* attr_name);
-NX_object load_networkx();
-void load_objects(NX_object nxobj);
+NX_object* load_nx(NX_object *nxobject, const char* attr_name);
+NX_object* load_networkx();
+void load_objects(NX_object *nxobj);
 
 #endif //NETWORKX_H

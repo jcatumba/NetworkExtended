@@ -10,10 +10,13 @@
 #ifndef NETWORKEXTENDED_H
 #define NETWORKEXTENDED_H
 
-#include "uthash.h"
 #include "networkx.h"
-
-typedef NX_object (*netext_function)(params, NX_object);
+#include "uthash.h"
+#include <stdio.h>
+//#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+//#include <regex.h>
 
 typedef struct{
     int cmd_size;
@@ -24,38 +27,40 @@ typedef struct{
 typedef struct {
     char id[10];
     int value;
-    NX_object object;
+    NX_object* object;
     UT_hash_handle hh;
 } hash_var;
 
+typedef NX_object* (*nxfunction)(params, NX_object*);
+
 typedef struct {
     char name[25];
-    netext_function func_call;
+    nxfunction func_call;
     UT_hash_handle hh;
 } hash_func;
 
 // Functions for hashing variables
 hash_var *find_variable(char key[10]);
 void delete_variable(hash_var *variable);
-void add_variable(char repr[10], int amount, NX_object nxobj);
+void add_variable(const char repr[10], int amount, NX_object* nxobj);
 void delete_all_variables();
 void print_vars();
 
 // Functions for hashing internals
 hash_func *find_function(char key[25]);
 void delete_function(hash_func *function);
-void add_function(char name[25], netext_function function);
+void add_function(char name[25], nxfunction function);
 void print_functions();
 
 // Internal functions
-int compute(netext_function function, params p, NX_object nxobj);
+int compute(nxfunction function, params p, NX_object* nxobj);
 void parsecommand(char *command, char **p_parsed, int *i);
 
 // Callable functions
-NX_object add(params p, NX_object nxobj);
-NX_object deduct(params p, NX_object nxobj);
-NX_object multiply(params p, NX_object nxobj);
-NX_object value(params p, NX_object nxobj);
-NX_object exit_cliparams p, NX_object nxobj);
+NX_object* add(params p, NX_object* nxobj);
+NX_object* deduct(params p, NX_object* nxobj);
+NX_object* multiply(params p, NX_object* nxobj);
+NX_object* value(params p, NX_object* nxobj);
+NX_object* exit_cli(params p, NX_object* nxobj);
 
 #endif // NETWORKEXTENDED_H

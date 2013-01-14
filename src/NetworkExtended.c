@@ -7,14 +7,14 @@
  * more information about the license see the license.txt file.
  * ================================================================*/
 
-#include <stdio.h>
-//#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-//#include <regex.h>
-#include "uthash.h"
-#include "networkx.h"
 #include "networkextended.h"
+
+// Classes
+extern NX_object* nxGraph,* nxDiGraph,* nxMultiGraph,* nxMultiDiGraph;
+// Generic Methods
+extern NX_object* nx_pagerank;
+// Graph Methods
+extern NX_object* nxGraph_add_node,* nxGraph_order;
 
 // Functions for hashing variables
 
@@ -31,15 +31,15 @@ void delete_variable(hash_var *variable) {
     free(variable);
 }
 
-void add_variable(char repr[10], int amount, NX_object nxobj) {
+void add_variable(const char repr[10], int amount, NX_object *nxobj) {
     hash_var *s;
-    hash_var *t = find_variable(repr);
+    hash_var *t = find_variable((char *)repr);
 
     if ( t != NULL ) {
         delete_variable(t);
     }
     s = (hash_var*)malloc(sizeof(hash_var));
-    strcpy(s->id, repr);
+    strcpy(s->id, (char *)repr);
     s->value = amount;
     s->object = nxobj;
     HASH_ADD_STR(cli_vars, id, s);
@@ -78,7 +78,7 @@ void delete_function(hash_func *function) {
     free(function);
 }
 
-void add_function(char name[25], netext_function funct) {
+void add_function(char name[25], nxfunction funct) {
     hash_func *s;
     hash_func *t = find_function(name);
 
@@ -101,8 +101,8 @@ void print_functions() {
 
 // Internal functions
 
-int compute(netext_function function, params p, NX_object nxobj){
-    NX_object d = (*function)(p, nxobj);
+int compute(nxfunction function, params p, NX_object *nxobj){
+    NX_object* d = (*function)(p, nxobj);
     if ( d != NULL ) {
         return 0;
     } else {
@@ -137,54 +137,50 @@ void parsecommand (char *command, char **p_parsed, int *i) {
 
 // Callable functions
 
-NX_object add(params p, NX_object nxobj) {
+NX_object* add(params p, NX_object *nxobj) {
     int result = atoi(p.cmd_val[0]) + atoi(p.cmd_val[1]);
     add_variable(p.var_name, result, NULL);
     printf("%s=\n", p.var_name);
     printf("\t%d\n", result);
     return NULL;
 }
-NX_object deduct(params p, NX_object nxobj) {
+NX_object* deduct(params p, NX_object *nxobj) {
     int result = atoi(p.cmd_val[0]) - atoi(p.cmd_val[1]);
     add_variable(p.var_name, result, NULL);
     printf("%s=\n", p.var_name);
     printf("\t%d\n", result);
     return NULL;
 }
-NX_object multiply(params p, NX_object nxobj) {
+NX_object* multiply(params p, NX_object *nxobj) {
     int result = atoi(p.cmd_val[0]) * atoi(p.cmd_val[1]);
     add_variable(p.var_name, result, NULL);
     printf("%s=\n", p.var_name);
     printf("\t%d\n", result);
     return NULL;
 }
-NX_object Graph(params p, NX_object callable) {
-    //p.var_name = h
-    //p.cmd_size = 0
-    //p.cmd_val = []
-    NX_object graph;
-    if(graph.py_object = PyObject_CallObject(nxGraph.py_object, NULL)) {
-        graph.name = p.var_name;
-        graph.parent = nxGraph.name;
-        add_variable(graph.name, 0, graph);
-        return graph;
+NX_object* Graph(params p, NX_object *callable) {
+    NX_object* graph;
+    if(graph->py_object = PyObject_CallObject(callable->py_object, NULL)) {
+        graph->name = p.var_name;
+        graph->parent = callable->name;
+        add_variable(graph->name, 0, graph);
     } else {
         printf("Graph creation failed.\n");
-        return NULL;
     }
+    return graph;
 }
-NX_object value(params p, NX_object nxobj) {
+NX_object* value(params p, NX_object *nxobj) {
     hash_var *s = find_variable(p.var_name);
     if ( s != NULL ) {
         printf("%s=\n\t%d\n", s->id, s->value);
     } else {
         printf("Value of %s not found.\n", p.var_name);
     }
-    return NULL;
+    //return NULL;
 }
-NX_object exit_cli(params p, NX_object nxobj) {
+NX_object* exit_cli(params p, NX_object *nxobj) {
     exit(0);
-    return NULL;
+    //return NULL;
 }
 
 // Principal
@@ -214,8 +210,8 @@ int main( int argc, char *argv[] ) {
 
     Py_SetProgramName("NetworkExtended");
     Py_Initialize();
-    NX_object nx_module = load_networkx();
-    load_objects();
+    NX_object* nx_module = load_networkx();
+    load_objects(nx_module);
 
     while(1) {
         printf("[NetworkExtended]: ");
@@ -253,9 +249,10 @@ int main( int argc, char *argv[] ) {
         }
 
         hash_func *instance = find_function(cmd_val[index-1]);
+        NX_object* nx_obj;
 
         if ( instance != NULL ) {
-            int output = compute(instance->func_call, pmain, NX_object nxobj);
+            int output = compute(instance->func_call, pmain, nx_obj);
         } else {
             printf("Command not found. Try again.\n");
         }
