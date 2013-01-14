@@ -31,7 +31,7 @@ typedef struct {
     UT_hash_handle hh;
 } hash_var;
 
-typedef NX_object* (*nxfunction)(params, NX_object*);
+typedef NX_object* (*nxfunction)(params);
 
 typedef struct {
     char name[25];
@@ -53,14 +53,15 @@ void add_function(char name[25], nxfunction function);
 void print_functions();
 
 // Internal functions
-int compute(nxfunction function, params p, NX_object* nxobj);
+int compute(nxfunction function, params p);
 void parsecommand(char *command, char **p_parsed, int *i);
 
 // Callable functions
-NX_object* add(params p, NX_object* nxobj);
-NX_object* deduct(params p, NX_object* nxobj);
-NX_object* multiply(params p, NX_object* nxobj);
-NX_object* value(params p, NX_object* nxobj);
-NX_object* exit_cli(params p, NX_object* nxobj);
+NX_object* add(params p);
+NX_object* deduct(params p);
+NX_object* multiply(params p);
+NX_object* Graph(params p);
+NX_object* value(params p);
+NX_object* exit_cli(params p);
 
 #endif // NETWORKEXTENDED_H

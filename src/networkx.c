@@ -9,22 +9,20 @@
 
 #include "networkx.h"
 
-NX_object* load_nx(NX_object *nxobject, const char* attr_name) {
-    NX_object* pFun;
-    if (pFun->py_object = PyObject_GetAttrString(nxobject->py_object, attr_name)) {
-        pFun->name = attr_name;
-        pFun->parent = nxobject->name;
-        printf("Reference of %s at %s loaded.\n", pFun->name, nxobject->name);
-        return pFun;
-    } else {
-        printf("Reference of %s at %s load failed.\n", attr_name, nxobject->name);
-        return NULL;
-    }
-}
+// NX_objects definitions of NetworkX module, classes and methods
+
+NX_object* nxGraph = NULL;
+NX_object* nxDiGraph = NULL;
+NX_object* nxMultiGraph = NULL;
+NX_object* nxMultiDiGraph = NULL;
+NX_object* nx_pagerank = NULL;
+NX_object* nxGraph_add_node = NULL;
+NX_object* nxGraph_order = NULL;
 
 NX_object* load_networkx() {
-    NX_object* nx_module;
-    PyObject* nx_name = PyString_FromString("modules.networkx");
+    NX_object* nx_module = NULL;
+    nx_module = (NX_object*)malloc(sizeof(NX_object));
+    PyObject* nx_name = PyString_FromString("networkx");
     if (nx_module->py_object = PyImport_Import(nx_name)) {
         nx_module->name = "NetworkX";
         nx_module->parent = "Python";
@@ -37,17 +35,31 @@ NX_object* load_networkx() {
     Py_DECREF(nx_name);
 }
 
+NX_object* load_nx(NX_object *nxobject, const char* attr_name) {
+    NX_object* pFun;
+    pFun = (NX_object*)malloc(sizeof(NX_object));
+    if (pFun->py_object = PyObject_GetAttrString(nxobject->py_object, attr_name)) {
+        pFun->name = attr_name;
+        pFun->parent = nxobject->name;
+        printf("Reference of %s at %s loaded.\n", pFun->name, nxobject->name);
+        return pFun;
+    } else {
+        printf("Reference of %s at %s load failed.\n", attr_name, nxobject->name);
+        return NULL;
+    }
+}
+
 void load_objects(NX_object *nx_module) {
     // Classes
-    NX_object* nxGraph = load_nx(nx_module, "Graph");
-    NX_object* nxDiGraph = load_nx(nx_module, "DiGraph");
-    NX_object* nxMultiGraph = load_nx(nx_module, "MultiGraph");
-    NX_object* nxMultiDiGraph = load_nx(nx_module, "MultiDiGraph");
+    nxGraph = load_nx(nx_module, "Graph");
+    nxDiGraph = load_nx(nx_module, "DiGraph");
+    nxMultiGraph = load_nx(nx_module, "MultiGraph");
+    nxMultiDiGraph = load_nx(nx_module, "MultiDiGraph");
 
     // Generic Methods
-    NX_object* nx_pagerank = load_nx(nx_module, "pagerank");
+    nx_pagerank = load_nx(nx_module, "pagerank");
 
     // Graph Methods
-    NX_object* nxGraph_add_node = load_nx(nxGraph, "add_node");
-    NX_object* nxGraph_order = load_nx(nxGraph, "order");
+    nxGraph_add_node = load_nx(nxGraph, "add_node");
+    nxGraph_order = load_nx(nxGraph, "order");
 }

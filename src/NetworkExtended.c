@@ -101,8 +101,8 @@ void print_functions() {
 
 // Internal functions
 
-int compute(nxfunction function, params p, NX_object *nxobj){
-    NX_object* d = (*function)(p, nxobj);
+int compute(nxfunction function, params p){
+    NX_object* d = (*function)(p);
     if ( d != NULL ) {
         return 0;
     } else {
@@ -133,54 +133,6 @@ void parsecommand (char *command, char **p_parsed, int *i) {
     result = strtok(p_parsed[*i-1],")");
     p_parsed[*i-1] = result;
 
-}
-
-// Callable functions
-
-NX_object* add(params p, NX_object *nxobj) {
-    int result = atoi(p.cmd_val[0]) + atoi(p.cmd_val[1]);
-    add_variable(p.var_name, result, NULL);
-    printf("%s=\n", p.var_name);
-    printf("\t%d\n", result);
-    return NULL;
-}
-NX_object* deduct(params p, NX_object *nxobj) {
-    int result = atoi(p.cmd_val[0]) - atoi(p.cmd_val[1]);
-    add_variable(p.var_name, result, NULL);
-    printf("%s=\n", p.var_name);
-    printf("\t%d\n", result);
-    return NULL;
-}
-NX_object* multiply(params p, NX_object *nxobj) {
-    int result = atoi(p.cmd_val[0]) * atoi(p.cmd_val[1]);
-    add_variable(p.var_name, result, NULL);
-    printf("%s=\n", p.var_name);
-    printf("\t%d\n", result);
-    return NULL;
-}
-NX_object* Graph(params p, NX_object *callable) {
-    NX_object* graph;
-    if(graph->py_object = PyObject_CallObject(callable->py_object, NULL)) {
-        graph->name = p.var_name;
-        graph->parent = callable->name;
-        add_variable(graph->name, 0, graph);
-    } else {
-        printf("Graph creation failed.\n");
-    }
-    return graph;
-}
-NX_object* value(params p, NX_object *nxobj) {
-    hash_var *s = find_variable(p.var_name);
-    if ( s != NULL ) {
-        printf("%s=\n\t%d\n", s->id, s->value);
-    } else {
-        printf("Value of %s not found.\n", p.var_name);
-    }
-    //return NULL;
-}
-NX_object* exit_cli(params p, NX_object *nxobj) {
-    exit(0);
-    //return NULL;
 }
 
 // Principal
@@ -252,11 +204,61 @@ int main( int argc, char *argv[] ) {
         NX_object* nx_obj;
 
         if ( instance != NULL ) {
-            int output = compute(instance->func_call, pmain, nx_obj);
+            int output = compute(instance->func_call, pmain);
         } else {
             printf("Command not found. Try again.\n");
         }
     }
     Py_Finalize();
     return 0;
+}
+
+// Callable functions
+
+NX_object* add(params p) {
+    int result = atoi(p.cmd_val[0]) + atoi(p.cmd_val[1]);
+    add_variable(p.var_name, result, NULL);
+    printf("%s=\n", p.var_name);
+    printf("\t%d\n", result);
+    return NULL;
+}
+NX_object* deduct(params p) {
+    int result = atoi(p.cmd_val[0]) - atoi(p.cmd_val[1]);
+    add_variable(p.var_name, result, NULL);
+    printf("%s=\n", p.var_name);
+    printf("\t%d\n", result);
+    return NULL;
+}
+NX_object* multiply(params p) {
+    int result = atoi(p.cmd_val[0]) * atoi(p.cmd_val[1]);
+    add_variable(p.var_name, result, NULL);
+    printf("%s=\n", p.var_name);
+    printf("\t%d\n", result);
+    return NULL;
+}
+NX_object* Graph(params p) {
+    NX_object* graph = NULL;
+    graph = (NX_object*)malloc(sizeof(NX_object));
+    if(graph->py_object = PyObject_CallObject(nxGraph->py_object, NULL)) {
+        graph->name = p.var_name;
+        graph->parent = nxGraph->name;
+        add_variable(graph->name, 0, graph);
+        return graph;
+    } else {
+        printf("Graph creation failed.\n");
+        return NULL;
+    }
+}
+NX_object* value(params p) {
+    hash_var *s = find_variable(p.cmd_val[0]);
+    if ( s != NULL ) {
+        printf("%s=\n\t%d\n", s->id, s->value);
+    } else {
+        printf("Value of %s not found.\n", p.cmd_val[0]);
+        return NULL;
+    }
+}
+NX_object* exit_cli(params p) {
+    exit(0);
+    return NULL;
 }

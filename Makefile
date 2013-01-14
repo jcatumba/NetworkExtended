@@ -12,7 +12,10 @@ pkgconfig = `pkg-config --cflags --libs python`
 build/networkextended.bin: $(SUBDIRS) src/NetworkExtended.c src/networkx.c src/headers/uthash.h src/headers/networkx.h src/headers/networkextended.h
 	gcc -o $@ src/NetworkExtended.c $(LINK) $(LIB) $(INCLUDE) $(pkgconfig)
 
-.PHONY: $(SUBDIRS)
+.PHONY: $(SUBDIRS) debug
+
+debug:
+	gcc -g -o build/networkextended.bin src/NetworkExtended.c $(LINK) $(LIB) $(INCLUDE) $(pkgconfig)
 
 $(SUBDIRS):
 	$(MAKE) --directory=$@
