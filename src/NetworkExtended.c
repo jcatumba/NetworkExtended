@@ -150,7 +150,7 @@ int main( int argc, char *argv[] ) {
     //user = (char *)getenv("USER");
 
     //if( user == NULL ) {
-    //	strcpy(user, "unknown");
+    //    strcpy(user, "unknown");
     //}
 
     add_function("add", &add);
@@ -167,8 +167,8 @@ int main( int argc, char *argv[] ) {
 
     while(1) {
         printf("[NetworkExtended]: ");
-    	memset(cmdStr, 0x00, sizeof(cmdStr));
-	    gets(cmdStr);
+        memset(cmdStr, 0x00, sizeof(cmdStr));
+        gets(cmdStr);
         char *p;
         int index, j=0;
         params pmain;
@@ -181,7 +181,7 @@ int main( int argc, char *argv[] ) {
         }
 
         int size_cmd = index-1;
-	    parsecommand(cmdStr, cmd_val, &size_cmd);
+        parsecommand(cmdStr, cmd_val, &size_cmd);
 
         if ( index == 2 ) {
             pmain.var_name = cmd_val[0];
