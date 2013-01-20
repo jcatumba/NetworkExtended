@@ -14,7 +14,7 @@ extern NX_object* nxGraph,* nxDiGraph,* nxMultiGraph,* nxMultiDiGraph;
 // Generic Methods
 extern NX_object* nx_pagerank;
 // Graph Methods
-extern NX_object* nxGraph_add_node,* nxGraph_order;
+extern NX_object* nx_add_node,* nx_order;
 
 // Functions for hashing variables
 
@@ -159,6 +159,11 @@ int main( int argc, char *argv[] ) {
     add_function("exit", &exit_cli);
     add_function("value", &value);
     add_function("Graph", &Graph);
+    add_function("DiGraph", &DiGraph);
+    add_function("MultiGraph", &MultiGraph);
+    add_function("MultiDiGraph", &MultiDiGraph);
+    add_function("add_node", &add_node);
+    add_function("order", &order);
 
     Py_SetProgramName("NetworkExtended");
     Py_Initialize();
@@ -236,6 +241,7 @@ NX_object* multiply(params p) {
     printf("\t%d\n", result);
     return NULL;
 }
+/* Graphs creation functions */
 NX_object* Graph(params p) {
     NX_object* graph = NULL;
     graph = (NX_object*)malloc(sizeof(NX_object));
@@ -243,13 +249,72 @@ NX_object* Graph(params p) {
         graph->name = p.var_name;
         graph->parent = nxGraph->name;
         add_variable(graph->name, 0, graph);
-        return graph;
     } else {
         printf("Graph creation failed.\n");
-        return NULL;
+    }
+    return graph;
+}
+NX_object* DiGraph(params p) {
+    NX_object* digraph = NULL;
+    digraph = (NX_object*)malloc(sizeof(NX_object));
+    if(digraph->py_object = PyObject_CallObject(nxDiGraph->py_object, NULL)) {
+        digraph->name = p.var_name;
+        digraph->parent = nxDiGraph->name;
+        add_variable(digraph->name, 0, digraph);
+    } else {
+        printf("DiGraph creation failed.\n");
+    }
+    return digraph;
+}
+NX_object* MultiGraph(params p) {
+    NX_object* multigraph = NULL;
+    multigraph = (NX_object*)malloc(sizeof(NX_object));
+    if(multigraph->py_object = PyObject_CallObject(nxMultiGraph->py_object, NULL)) {
+        multigraph->name = p.var_name;
+        multigraph->parent = nxMultiGraph->name;
+        add_variable(multigraph->name, 0, multigraph);
+    } else {
+        printf("MultiGraph creation failed.\n");
+    }
+    return multigraph;
+}
+NX_object* MultiDiGraph(params p) {
+    NX_object* multidigraph = NULL;
+    multidigraph = (NX_object*)malloc(sizeof(NX_object));
+    if(multidigraph->py_object = PyObject_CallObject(nxMultiDiGraph->py_object, NULL)) {
+        multidigraph->name = p.var_name;
+        multidigraph->parent = nxMultiDiGraph->name;
+        add_variable(multidigraph->name, 0, multidigraph);
+    } else {
+        printf("MultiDiGraph creation failed.\n");
+    }
+    return multidigraph;
+}
+/* Basic Methods for Graphs */
+NX_object* add_node(params p) { /* TODO: Handle addition of node attributes */
+    hash_var *f = find_variable(p.cmd_val[0]);
+    if ( f != NULL ) {
+        PyObject* tuple = PyTuple_New(2);
+        PyTuple_SetItem(tuple, 0, f->object->py_object);
+        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1]))); /* TODO: Allow not integer nodes */
+        PyObject_CallObject(nx_add_node->py_object, tuple);
+    } else {
+        fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
+    }
+    return NULL;
+}
+NX_object* order(params p) {
+    hash_var *f = find_variable(p.cmd_val[0]);
+    if ( f != NULL ) {
+        PyObject* tuple = PyTuple_New(1);
+        PyTuple_SetItem(tuple, 0, f->object->py_object);
+        PyObject* value = PyObject_CallObject(nx_order->py_object, tuple);
+        if (value) printf("%ld\n", PyInt_AsLong(value));
+    } else {
+        fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
     }
 }
-NX_object* value(params p) {
+NX_object* value(params p) { /* TODO: Replace by simple variable call */
     hash_var *s = find_variable(p.cmd_val[0]);
     if ( s != NULL ) {
         printf("%s=\n\t%d\n", s->id, s->value);

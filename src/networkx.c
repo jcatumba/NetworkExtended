@@ -11,14 +11,6 @@
 
 // NX_objects definitions of NetworkX module, classes and methods
 
-NX_object* nxGraph = NULL;
-NX_object* nxDiGraph = NULL;
-NX_object* nxMultiGraph = NULL;
-NX_object* nxMultiDiGraph = NULL;
-NX_object* nx_pagerank = NULL;
-NX_object* nxGraph_add_node = NULL;
-NX_object* nxGraph_order = NULL;
-
 NX_object* load_networkx() {
     NX_object* nx_module = NULL;
     nx_module = (NX_object*)malloc(sizeof(NX_object));
@@ -41,10 +33,10 @@ NX_object* load_nx(NX_object *nxobject, const char* attr_name) {
     if (pFun->py_object = PyObject_GetAttrString(nxobject->py_object, attr_name)) {
         pFun->name = attr_name;
         pFun->parent = nxobject->name;
-        printf("Reference of %s at %s loaded.\n", pFun->name, nxobject->name);
+        //printf("Reference of %s at %s loaded.\n", pFun->name, nxobject->name);
         return pFun;
     } else {
-        printf("Reference of %s at %s load failed.\n", attr_name, nxobject->name);
+        //printf("Reference of %s at %s load failed.\n", attr_name, nxobject->name);
         return NULL;
     }
 }
@@ -57,9 +49,9 @@ void load_objects(NX_object *nx_module) {
     nxMultiDiGraph = load_nx(nx_module, "MultiDiGraph");
 
     // Generic Methods
-    nx_pagerank = load_nx(nx_module, "pagerank");
+    //nx_pagerank = load_nx(nx_module, "pagerank");
 
     // Graph Methods
-    nxGraph_add_node = load_nx(nxGraph, "add_node");
-    nxGraph_order = load_nx(nxGraph, "order");
+    nx_add_node = load_nx(nxGraph, "add_node");
+    nx_order = load_nx(nxGraph, "order");
 }
