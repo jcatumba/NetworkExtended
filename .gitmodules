@@ -1,6 +1,6 @@
-[submodule "src/modules/netevo"]
-	path = src/modules/netevo
-	url = git@bitbucket.org:jcatumba/netevo.git
+#[submodule "src/modules/netevo"]
+#	path = src/modules/netevo
+#	url = git@bitbucket.org:jcatumba/netevo.git
 [submodule "src/modules/networkx"]
 	path = src/modules/networkx
 	url = git@github.com:jcatumba/networkx.git
