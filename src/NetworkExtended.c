@@ -328,7 +328,7 @@ NX_object* remove_node(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
         PyObject* tuple = PyTuple_New(2);
-        PyTuple_SetItem(tuple, 0, f->object->pyobject);
+        PyTuple_SetItem(tuple, 0, f->object->py_object);
         PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1])));
         PyObject_CallObject(nx_remove_node->py_object, tuple);
     } else {
@@ -353,7 +353,7 @@ NX_object* remove_edge(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
         PyObject* tuple = PyTuple_New(3);
-        PyTuple_SetItem(tuple, 0, f->object->pyobject);
+        PyTuple_SetItem(tuple, 0, f->object->py_object);
         PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1])));
         PyTuple_SetItem(tuple, 2, PyInt_FromLong(atoi(p.cmd_val[2])));
         PyObject_CallObject(nx_remove_edge->py_object, tuple);
@@ -366,7 +366,7 @@ NX_object* clear(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
         PyObject* tuple = PyTuple_New(1);
-        PyTuple_SetItem(tuple, 0, f->object->pyobject);
+        PyTuple_SetItem(tuple, 0, f->object->py_object);
         PyObject_CallObject(nx_clear->py_object, tuple);
     } else {
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
