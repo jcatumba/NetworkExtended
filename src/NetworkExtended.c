@@ -288,11 +288,21 @@ NX_object* MultiDiGraph(params p) {
     return multidigraph;
 }
 /* Basic Methods for Graphs */
+PyObject* tuple_creation(PyObject* graph, params p){
+    int i;
+    PyObject* tuple = PyTuple_New(p.cmd_size);
+    PyTuple_SetItem(tuple, 0, graph);
+    for (i=1; i<p.cmd_size; i++) {
+        /* TODO: p.cmd_val[i] is not allways an integer. Replace on bison-cli */
+        PyTuple_SetItem(tuple, i, PyInt_FromLong(atoi(p.cmd_val[i])));
+    }
+    return tuple;
+    free(tuple);
+}
 NX_object* len(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
-        PyObject* tuple = PyTuple_New(1);
-        PyTuple_SetItem(tuple, 0, f->object->py_object);
+        PyObject* tuple = tuple_creation(f->object->py_object,p);
         PyObject* value = PyObject_CallObject(nx_len->py_object, tuple);
         if (value) printf("%ld\n", PyInt_AsLong(value));
     } else {
@@ -302,9 +312,7 @@ NX_object* len(params p) {
 NX_object* add_node(params p) { /* TODO: Handle addition of node attributes */
     hash_var *f = find_variable(p.cmd_val[0]);
     if ( f != NULL ) {
-        PyObject* tuple = PyTuple_New(2);
-        PyTuple_SetItem(tuple, 0, f->object->py_object);
-        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1]))); /* TODO: Allow non integer nodes */
+        PyObject* tuple = tuple_creation(f->object->py_object, p);
         PyObject_CallObject(nx_add_node->py_object, tuple);
     } else {
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
@@ -314,9 +322,7 @@ NX_object* add_node(params p) { /* TODO: Handle addition of node attributes */
 NX_object* remove_node(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
-        PyObject* tuple = PyTuple_New(2);
-        PyTuple_SetItem(tuple, 0, f->object->py_object);
-        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1])));
+        PyObject* tuple = tuple_creation(f->object->py_object, p);
         PyObject_CallObject(nx_remove_node->py_object, tuple);
     } else {
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
@@ -326,10 +332,7 @@ NX_object* remove_node(params p) {
 NX_object* add_edge(params p) { /* TODO: Handle attributes */
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
-        PyObject* tuple = PyTuple_New(3);
-        PyTuple_SetItem(tuple, 0, f->object->py_object);
-        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1]))); /* TODO: Allow non intenger nodes */
-        PyTuple_SetItem(tuple, 2, PyInt_FromLong(atoi(p.cmd_val[2])));
+        PyObject* tuple = tuple_creation(f->object->py_object, p);
         PyObject_CallObject(nx_add_edge->py_object, tuple);
     } else {
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
@@ -339,10 +342,7 @@ NX_object* add_edge(params p) { /* TODO: Handle attributes */
 NX_object* remove_edge(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
-        PyObject* tuple = PyTuple_New(3);
-        PyTuple_SetItem(tuple, 0, f->object->py_object);
-        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1])));
-        PyTuple_SetItem(tuple, 2, PyInt_FromLong(atoi(p.cmd_val[2])));
+        PyObject* tuple = tuple_creation(f->object->py_object, p);
         PyObject_CallObject(nx_remove_edge->py_object, tuple);
     } else {
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
@@ -352,8 +352,7 @@ NX_object* remove_edge(params p) {
 NX_object* clear(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
-        PyObject* tuple = PyTuple_New(1);
-        PyTuple_SetItem(tuple, 0, f->object->py_object);
+        PyObject* tuple = tuple_creation(f->object->py_object, p);
         PyObject_CallObject(nx_clear->py_object, tuple);
     } else {
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
@@ -362,8 +361,7 @@ NX_object* clear(params p) {
 NX_object* order(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);
     if ( f != NULL ) {
-        PyObject* tuple = PyTuple_New(1);
-        PyTuple_SetItem(tuple, 0, f->object->py_object);
+        PyObject* tuple = tuple_creation(f->object->py_object, p);
         PyObject* value = PyObject_CallObject(nx_order->py_object, tuple);
         if (value) printf("%ld\n", PyInt_AsLong(value));
     } else {
@@ -375,11 +373,10 @@ NX_object* value(params p) { /* TODO: Replace by simple variable call */
     if ( s != NULL ) {
         printf("%s=\n\t%d\n", s->id, s->value);
     } else {
-        printf("Value of %s not found.\n", p.cmd_val[0]);
-        return NULL;
+        printf("Variable %s not found.\n", p.cmd_val[0]);
     }
+    return NULL;
 }
 NX_object* exit_cli(params p) {
     exit(0);
-    return NULL;
 }
