@@ -4,7 +4,7 @@
     #include <string.h>
     #include <stdlib.h>
     #include <ctype.h>
-    #include "mfcalc.h"
+    #include "netext.h"
     #define YYDEBUG 1
     #define YYPRINT(file, type, value) yyprint(file, type, value)
     int yylex(void);
