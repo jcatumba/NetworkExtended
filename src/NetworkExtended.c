@@ -14,7 +14,7 @@ extern NX_object* nxGraph,* nxDiGraph,* nxMultiGraph,* nxMultiDiGraph;
 // Generic Methods
 extern NX_object* nx_pagerank;
 // Graph Methods
-extern NX_object* nx_add_node,* nx_order;
+extern NX_object* nx_len,* nx_add_node,* nx_add_edge,* nx_order;
 
 // Functions for hashing variables
 
@@ -162,7 +162,9 @@ int main( int argc, char *argv[] ) {
     add_function("DiGraph", &DiGraph);
     add_function("MultiGraph", &MultiGraph);
     add_function("MultiDiGraph", &MultiDiGraph);
+    add_function("len", &len);
     add_function("add_node", &add_node);
+    add_function("add_edge", &add_edge);
     add_function("order", &order);
 
     Py_SetProgramName("NetworkExtended");
@@ -291,13 +293,37 @@ NX_object* MultiDiGraph(params p) {
     return multidigraph;
 }
 /* Basic Methods for Graphs */
+NX_object* len(params p) {
+    hash_var *f = find_variable(p.cmd_val[0]);
+    if (f != NULL) {
+        PyObject* tuple = PyTuple_New(1);
+        PyTuple_SetItem(tuple, 0, f->object->py_object);
+        PyObject* value = PyObject_CallObject(nx_len->py_object, tuple);
+        if (value) printf("%ld\n", PyInt_AsLong(value));
+    } else {
+        fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
+    }
+}
 NX_object* add_node(params p) { /* TODO: Handle addition of node attributes */
     hash_var *f = find_variable(p.cmd_val[0]);
     if ( f != NULL ) {
         PyObject* tuple = PyTuple_New(2);
         PyTuple_SetItem(tuple, 0, f->object->py_object);
-        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1]))); /* TODO: Allow not integer nodes */
+        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1]))); /* TODO: Allow non integer nodes */
         PyObject_CallObject(nx_add_node->py_object, tuple);
+    } else {
+        fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
+    }
+    return NULL;
+}
+NX_object* add_edge(params p) { /* TODO: Handle attributes */
+    hash_var *f = find_variable(p.cmd_val[0]);
+    if (f != NULL) {
+        PyObject* tuple = PyTuple_New(3);
+        PyTuple_SetItem(tuple, 0, f->object->py_object);
+        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1]))); /* TODO: Allow non intenger nodes */
+        PyTuple_SetItem(tuple, 2, PyInt_FromLong(atoi(p.cmd_val[2])));
+        PyObject_CallObject(nx_add_edge->py_object, tuple);
     } else {
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
     }

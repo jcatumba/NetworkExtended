@@ -52,6 +52,8 @@ void load_objects(NX_object *nx_module) {
     //nx_pagerank = load_nx(nx_module, "pagerank");
 
     // Graph Methods
+    nx_len = load_nx(nxGraph, "__len__");
     nx_add_node = load_nx(nxGraph, "add_node");
+    nx_add_edge = load_nx(nxGraph, "add_edge");
     nx_order = load_nx(nxGraph, "order");
 }
