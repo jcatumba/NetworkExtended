@@ -252,52 +252,39 @@ NX_object* multiply(params p) {
     return NULL;
 }
 /* Graphs creation functions */
-NX_object* Graph(params p) {
-    NX_object* graph = NULL;
-    graph = (NX_object*)malloc(sizeof(NX_object));
-    if(graph->py_object = PyObject_CallObject(nxGraph->py_object, NULL)) {
-        graph->name = p.var_name;
-        graph->parent = nxGraph->name;
-        add_variable(graph->name, 0, graph);
-    } else {
-        printf("Graph creation failed.\n");
+NX_object* nxgraph_creation(NX_object* nx_obj, params p) { /* Generalized constructor of graphs */
+    NX_object* graph_const = NULL;
+    graph_const = (NX_object*)malloc(sizeof(NX_object));
+    if (graph_const->py_object = PyObject_CallObject(nx_obj->py_object, NULL)) {
+        graph_const->name = p.var_name;
+        graph_const->parent = nx_obj->name;
+        add_variable(graph_const->name, 0, graph_const);
     }
+    return graph_const;
+    free(graph_const);
+}
+NX_object* Graph(params p) {
+    NX_object* graph = nxgraph_creation(nxGraph, p);
+    if (graph == NULL)
+        fprintf(stderr, "Graph creation failed.\n");
     return graph;
 }
 NX_object* DiGraph(params p) {
-    NX_object* digraph = NULL;
-    digraph = (NX_object*)malloc(sizeof(NX_object));
-    if(digraph->py_object = PyObject_CallObject(nxDiGraph->py_object, NULL)) {
-        digraph->name = p.var_name;
-        digraph->parent = nxDiGraph->name;
-        add_variable(digraph->name, 0, digraph);
-    } else {
-        printf("DiGraph creation failed.\n");
-    }
+    NX_object* digraph = nxgraph_creation(nxDiGraph, p);
+    if (digraph == NULL)
+        fprintf(stderr, "DiGraph creation failed.\n");
     return digraph;
 }
 NX_object* MultiGraph(params p) {
-    NX_object* multigraph = NULL;
-    multigraph = (NX_object*)malloc(sizeof(NX_object));
-    if(multigraph->py_object = PyObject_CallObject(nxMultiGraph->py_object, NULL)) {
-        multigraph->name = p.var_name;
-        multigraph->parent = nxMultiGraph->name;
-        add_variable(multigraph->name, 0, multigraph);
-    } else {
-        printf("MultiGraph creation failed.\n");
-    }
+    NX_object* multigraph = nxgraph_creation(nxMultiGraph, p);
+    if (multigraph == NULL)
+        fprintf(stderr, "MultiGraph creation failed.\n");
     return multigraph;
 }
 NX_object* MultiDiGraph(params p) {
-    NX_object* multidigraph = NULL;
-    multidigraph = (NX_object*)malloc(sizeof(NX_object));
-    if(multidigraph->py_object = PyObject_CallObject(nxMultiDiGraph->py_object, NULL)) {
-        multidigraph->name = p.var_name;
-        multidigraph->parent = nxMultiDiGraph->name;
-        add_variable(multidigraph->name, 0, multidigraph);
-    } else {
-        printf("MultiDiGraph creation failed.\n");
-    }
+    NX_object* multidigraph = nxgraph_creation(nxMultiDiGraph, p);
+    if (multidigraph == NULL)
+        fprintf(stderr, "MultiDiGraph creation failed.\n");
     return multidigraph;
 }
 /* Basic Methods for Graphs */
