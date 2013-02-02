@@ -14,7 +14,7 @@ extern NX_object* nxGraph,* nxDiGraph,* nxMultiGraph,* nxMultiDiGraph;
 // Generic Methods
 extern NX_object* nx_pagerank;
 // Graph Methods
-extern NX_object* nx_len,* nx_add_node,* nx_add_edge,* nx_order;
+extern NX_object* nx_len,* nx_add_node,* nx_remove_node,* nx_add_edge,* nx_remove_edge,* nx_clear,* nx_order;
 
 // Functions for hashing variables
 
@@ -164,7 +164,10 @@ int main( int argc, char *argv[] ) {
     add_function("MultiDiGraph", &MultiDiGraph);
     add_function("len", &len);
     add_function("add_node", &add_node);
+    add_function("remove_node", &remove_node);
     add_function("add_edge", &add_edge);
+    add_function("remove_edge", &remove_edge);
+    add_function("clear", &clear);
     add_function("order", &order);
 
     Py_SetProgramName("NetworkExtended");
@@ -175,7 +178,12 @@ int main( int argc, char *argv[] ) {
     while(1) {
         printf("[NetworkExtended]: ");
         memset(cmdStr, 0x00, sizeof(cmdStr));
-        gets(cmdStr);
+        fgets(cmdStr, 100, stdin);
+        /* Remove new line character TODO: Remove on bison-cli implementation */
+        int len = strlen(cmdStr);
+        if (cmdStr[len-1] == '\n')
+            cmdStr[len-1] = '\0';
+        /*gets(cmdStr);*/
         char *p;
         int index, j=0;
         params pmain;
@@ -316,6 +324,18 @@ NX_object* add_node(params p) { /* TODO: Handle addition of node attributes */
     }
     return NULL;
 }
+NX_object* remove_node(params p) {
+    hash_var *f = find_variable(p.cmd_val[0]);
+    if (f != NULL) {
+        PyObject* tuple = PyTuple_New(2);
+        PyTuple_SetItem(tuple, 0, f->object->pyobject);
+        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1])));
+        PyObject_CallObject(nx_remove_node->py_object, tuple);
+    } else {
+        fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
+    }
+    return NULL;
+}
 NX_object* add_edge(params p) { /* TODO: Handle attributes */
     hash_var *f = find_variable(p.cmd_val[0]);
     if (f != NULL) {
@@ -328,6 +348,29 @@ NX_object* add_edge(params p) { /* TODO: Handle attributes */
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
     }
     return NULL;
+}
+NX_object* remove_edge(params p) {
+    hash_var *f = find_variable(p.cmd_val[0]);
+    if (f != NULL) {
+        PyObject* tuple = PyTuple_New(3);
+        PyTuple_SetItem(tuple, 0, f->object->pyobject);
+        PyTuple_SetItem(tuple, 1, PyInt_FromLong(atoi(p.cmd_val[1])));
+        PyTuple_SetItem(tuple, 2, PyInt_FromLong(atoi(p.cmd_val[2])));
+        PyObject_CallObject(nx_remove_edge->py_object, tuple);
+    } else {
+        fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
+    }
+    return NULL;
+}
+NX_object* clear(params p) {
+    hash_var *f = find_variable(p.cmd_val[0]);
+    if (f != NULL) {
+        PyObject* tuple = PyTuple_New(1);
+        PyTuple_SetItem(tuple, 0, f->object->pyobject);
+        PyObject_CallObject(nx_clear->py_object, tuple);
+    } else {
+        fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
+    }
 }
 NX_object* order(params p) {
     hash_var *f = find_variable(p.cmd_val[0]);

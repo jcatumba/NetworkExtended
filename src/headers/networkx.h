@@ -30,7 +30,10 @@ NX_object* nxMultiDiGraph = NULL;
 /* NX basic methods */
 NX_object* nx_len = NULL;
 NX_object* nx_add_node = NULL;
+NX_object* nx_remove_node = NULL;
 NX_object* nx_add_edge = NULL;
+NX_object* nx_remove_edge = NULL;
+NX_object* nx_clear = NULL;
 NX_object* nx_order = NULL;
 NX_object* nx_pagerank = NULL;
 

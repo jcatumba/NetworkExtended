@@ -64,15 +64,15 @@ NX_object* Graph(params p);
 NX_object* DiGraph(params p);
 NX_object* MultiGraph(params p);
 NX_object* MultiDiGraph(params p);
-/* NetworkX Basic Methods */
+/* NetworkX Basic Methods (Graph properties and construction) */
 NX_object* len(params p);
 NX_object* add_node(params p);
-NX_object* add_nodes_from(params p);
+NX_object* add_nodes_from(params p); /* TODO: implement after bison-cli */
 NX_object* remove_node(params p);
-NX_object* remove_nodes_from(params p);
+NX_object* remove_nodes_from(params p); /* TODO: implement after bison-cli */
 NX_object* add_edge(params p);
-NX_object* add_edges_from(params p);
-NX_object* add_weighted_edges_from(params p);
+NX_object* add_edges_from(params p); /* TODO: implement after bison-cli */
+NX_object* add_weighted_edges_from(params p); /* TODO: implement after bison-cli */
 NX_object* remove_edge(params p);
 NX_object* remove_edges_from(params p);
 NX_object* add_star(params p);
