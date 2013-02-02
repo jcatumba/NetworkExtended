@@ -19,14 +19,16 @@
 }
 
 %token <val> NUM /* Simple double precision number */
-%token <sym> LP RP PLUS MINUS TIMES OVER EQ TO STOP
+%token <sym> LP RP LA RA LB RB COMMA COLON PLUS MINUS TIMES OVER EQ TO STOP
 %token <tptr> VAR FNCT /* Variable and function */
-%type <val> exp
+%type <val> genexp exp
 
 %right EQ
 %left PLUS MINUS
 %left TIMES OVER
 %right TO
+%right COMMA
+%right COLON
 
 %% /* The grammar follows */
 
@@ -35,27 +37,52 @@ input       : /* empty */
 ;
 
 line        : STOP      
-            | exp STOP { printf ( ">>> %.10g\n", $1 ); }
+            | genexp STOP { printf ( ">>> %.10g\n", $1 ); }
             | error STOP { yyerrok; }
+;
+
+genexp      : exp
+            | VAR EQ exp        { $$ = $3; $1->value.var = $3; }
+            | VAR EQ exp        { $$ = $3; $1->value.var = $3; }
+            | LP exp RP         { $$ = $2; }
 ;
 
 exp         : NUM               { $$ = $1; }
             | VAR               { $$ = $1->value.var; }
-            | VAR EQ exp        { $$ = $3; $1->value.var = $3; }
             | FNCT LP exp RP    { $$ = (*($1->value.fnctptr))($3); }
             | exp PLUS exp      { $$ = $1 + $3; }
             | exp MINUS exp     { $$ = $1 - $3; }
             | exp TIMES exp     { $$ = $1 * $3; }
             | exp OVER exp      { $$ = $1 / $3; }
             | exp TO exp        { $$ = pow ($1, $3); }
-            | LP exp RP         { $$ = $2; }
+            | list              
+            | dict
+;
+
+list        : LA RA             { $$ = 0; }
+            | LA commasv RA
+;
+
+commasv     : exp
+            | commasv COMMA exp
+;
+
+dict        : LB RB             { $$ = 0; }
+            | LB commasv1 RB
+;
+
+commasv1    : colonsv 
+            | commasv1 COMMA colonsv
+;
+
+colonsv     : exp COLON exp
 ;
 /* End of grammar */
 %%
 
 /* Called by yyparse on error. */
 void yyerror( char const *s ) {
-    fprintf( stderr, "calc: %s\n", s );
+    fprintf( stderr, "netext: %s\n", s );
 }
 
 struct init {
@@ -65,13 +92,13 @@ struct init {
 
 struct init const arith_fncts[] =
 {
-    "sin", sin,
-    "cos", cos,
-    "atan", atan,
-    "ln", log,
-    "exp", exp,
-    "sqrt", sqrt,
-    0, 0
+    {"sin", sin},
+    {"cos", cos},
+    {"atan", atan},
+    {"ln", log},
+    {"exp", exp},
+    {"sqrt", sqrt},
+    {0, 0}
 };
 
 /* The symbol table: a chain of `struct symrec' */
