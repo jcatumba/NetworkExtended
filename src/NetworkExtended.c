@@ -9,12 +9,16 @@
 
 #include "networkextended.h"
 
+typedef int type;
+enum {Int, Bool, Long, Float, Complex, ByteArray, String, Tuple, List, Dict};
+
 // Classes
 extern NX_object* nxGraph,* nxDiGraph,* nxMultiGraph,* nxMultiDiGraph;
 // Generic Methods
 extern NX_object* nx_pagerank;
 // Graph Methods
 extern NX_object* nx_len,* nx_add_node,* nx_remove_node,* nx_add_edge,* nx_remove_edge,* nx_clear,* nx_order;
+extern NX_object* nx_nodes;
 
 // Functions for hashing variables
 
@@ -110,6 +114,68 @@ int compute(nxfunction function, params p){
     }
 }
 
+type nx_type_detection(PyObject* obj) {
+    type typed;
+    if(PyInt_Check(obj)) typed = Int;
+    if(PyBool_Check(obj)) typed = Bool;
+    if(PyLong_Check(obj)) typed = Long;
+    if(PyFloat_Check(obj)) typed = Float;
+    if(PyComplex_Check(obj)) typed = Complex;
+    if(PyByteArray_Check(obj)) typed = ByteArray;
+    if(PyString_Check(obj)) typed = String;
+    if(PyTuple_Check(obj)) typed = Tuple;
+    if(PyList_Check(obj)) typed = List;
+    if(PyDict_Check(obj)) typed = Dict;
+    return typed;
+}
+
+char* nx_parse_output(PyObject* output) {
+    char* buffer;
+    buffer = (char*)malloc(30);
+    type rtype = nx_type_detection(output);
+    if (rtype == Int || rtype == Long) {
+        long int out;
+        out = PyInt_AsLong(output);
+        sprintf(buffer, "%d", out);
+    } else if (rtype == Float) {
+        double out;
+        out = PyFloat_AsDouble(output);
+        sprintf(buffer, "%lf", out);
+    } else if (rtype == Complex) {
+        double out1, out2;
+        char out1_s[10], out2_s[10];
+        out1 = PyComplex_RealAsDouble(output);
+        out2 = PyComplex_ImagAsDouble(output);
+        sprintf(out1_s, "%lf", out1);
+        sprintf(out2_s, "%lf", out1);
+        strcpy(buffer, out1_s);
+        strcat(buffer, " + ");
+        strcat(buffer, out2_s);
+        strcat(buffer, "i");
+    } else if (rtype == String) {
+        char* out;
+        out = (char*)PyString_AsString(output);
+        strcpy(buffer, out);
+    }
+    switch (rtype) {
+        case Int:
+            break;
+        case Bool:
+            break;
+        case Long:
+            break;
+        case Float:
+            break;
+        case Complex:
+            break;
+        case ByteArray:
+            break;
+        case String:
+            break;
+    }
+    return buffer;
+}
+
 void parsecommand (char *command, char **p_parsed, int *i) {
     int j;
     char *result = NULL;
@@ -169,6 +235,7 @@ int main( int argc, char *argv[] ) {
     add_function("remove_edge", &remove_edge);
     add_function("clear", &clear);
     add_function("order", &order);
+    add_function("nodes", &nodes);
 
     Py_SetProgramName("NetworkExtended");
     Py_Initialize();
@@ -354,6 +421,28 @@ NX_object* clear(params p) {
     if (f != NULL) {
         PyObject* tuple = tuple_creation(f->object->py_object, p);
         PyObject_CallObject(nx_clear->py_object, tuple);
+    } else {
+        fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
+    }
+}
+NX_object* nodes(params p) {
+    hash_var *f = find_variable(p.cmd_val[0]);
+    if (f != NULL) {
+        int i;
+        PyObject* tuple = tuple_creation(f->object->py_object, p);
+        PyObject* result = PyObject_CallObject(nx_nodes->py_object, tuple);
+        int size = PyList_Size(result);
+        printf("[");
+        for (i=0; i<size; i++) {
+            PyObject* item = PyList_GetItem(result, i);
+            char* parsed = nx_parse_output(item);
+            if (i == size-1) {
+                printf("%s", parsed);
+            } else {
+                printf("%s,", parsed);
+            }
+        }
+        printf("]\n");
     } else {
         fprintf(stderr, "Graph %s not found.\n", p.cmd_val[0]);
     }
