@@ -1,0 +1,18 @@
+The following list shows the TODO for NetworkExtended
+
+-- Overall
+    * Import of gml graph files (MIDLE, required)
+    * Add data to graphs (required)
+    * Windows and Android versions (HARD, optional)
+
+-- CLI related
+    * End the NetworkX implementation. (EASY, required)
+    * Move NetEvo from igraph to NetworkX (HARD, optional)
+    * Implement WebGraph creation. (MIDLE, optional)
+
+-- GUI related (required)
+    * Design GUI
+    * Program, files and algorithms menus
+    * Define graph layout
+    * Define keyboard and mouse client events on graphs
+    * Define keyboard and mouse client events on screen
