@@ -1,7 +1,7 @@
 %{
-#include "netext.h"
-#include "netext.tab.h"
-#include <stdio.h>
+    #include "netext.h"
+    #include "netext.tab.h"
+    #include <stdio.h>
 %}
 
 %option noyywrap
@@ -12,7 +12,6 @@ int     "-"?{posint}
 long    {int}(""|("."{posint}))
 
 char    [a-zA-z]
- /* "-"?[0-9]+(""|"."([0-9]+)) */
 %%
 
 {long}         { yylval.val = atof(yytext); return NUM; }

@@ -43,7 +43,6 @@ line        : STOP
 
 genexp      : exp
             | VAR EQ exp        { $$ = $3; $1->value.var = $3; }
-            | VAR EQ exp        { $$ = $3; $1->value.var = $3; }
             | LP exp RP         { $$ = $2; }
 ;
 
