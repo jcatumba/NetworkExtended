@@ -95,7 +95,7 @@ void print_vars() {
     }
 }
 
-// Functions for hashing internals
+// Functions for hashing callables
 
 hash_func *cli_functs = NULL;
 

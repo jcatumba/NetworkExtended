@@ -22,6 +22,7 @@ int main( int argc, char *argv[] ) {
         printf("Options given.\n");
     }
 
+    // TODO: Replace these and add functions from init_table
     add_function("add", &add);
     add_function("deduct", &deduct);
     add_function("multiply", &multiply);
