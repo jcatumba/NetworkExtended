@@ -16,6 +16,39 @@ extern NX_object* nx_pagerank;
 // Graph Methods
 extern NX_object* nx_len,* nx_add_node,* nx_add_edge,* nx_order;
 
+// Functions for add functions and variables to symrec
+
+symrec *sym_table;
+
+void init_table (void) {
+    int i;
+    for (i=0; arith_fncts[i].fname != 0; i++) {
+        symrec *ptr = putsym (arith_fncts[i].fname, FNCT);
+        ptr->value.fnctptr = arith_fncts[i].fnct;
+    }
+}
+
+symrec * putsym (char const *sym_name, int sym_type) {
+    symrec *ptr = (symrec*) malloc (sizeof (symrec));
+    ptr->name = (char*) malloc (strlen (sym_name) + 1);
+    strcpy (ptr->name, sym_name);
+    ptr->type = sym_type;
+    ptr->value.var = 0; /* Set value to 0 even if fctn */
+    ptr->next = (struct symrec *)sym_table;
+    sym_table = ptr;
+    return ptr;
+}
+
+symrec * getsym (char const *sym_name) {
+    symrec *ptr;
+    for (ptr = sym_table; ptr != (symrec *) 0; ptr = (symrec *)ptr->next) {
+        if (strcmp (ptr->name, sym_name) == 0) {
+            return ptr;
+        }
+    }
+    return 0;
+}
+
 // Functions for hashing variables
 
 hash_var *cli_vars = NULL;
@@ -135,92 +168,7 @@ void parsecommand (char *command, char **p_parsed, int *i) {
 
 }
 
-// Principal
-
-int main( int argc, char *argv[] ) {
-    char cmdStr[256], *user, hostname[256], *cmd_val[10];
-    int index=0, begin, end;
-    
-    if ( argc > 1 ) {
-        printf("Options given.\n");
-    }
-
-    //memset(hostname, 0x00, sizeof(hostname));
-    //gethostname(hostname, sizeof(hostname));
-    //user = (char *)getenv("USER");
-
-    //if( user == NULL ) {
-    //    strcpy(user, "unknown");
-    //}
-
-    add_function("add", &add);
-    add_function("deduct", &deduct);
-    add_function("multiply", &multiply);
-    add_function("exit", &exit_cli);
-    add_function("value", &value);
-    add_function("Graph", &Graph);
-    add_function("DiGraph", &DiGraph);
-    add_function("MultiGraph", &MultiGraph);
-    add_function("MultiDiGraph", &MultiDiGraph);
-    add_function("len", &len);
-    add_function("add_node", &add_node);
-    add_function("add_edge", &add_edge);
-    add_function("order", &order);
-
-    Py_SetProgramName("NetworkExtended");
-    Py_Initialize();
-    NX_object* nx_module = load_networkx();
-    load_objects(nx_module);
-
-    while(1) {
-        printf("[NetworkExtended]: ");
-        memset(cmdStr, 0x00, sizeof(cmdStr));
-        gets(cmdStr);
-        char *p;
-        int index, j=0;
-        params pmain;
-
-        p = strchr(cmdStr, '=');
-        if (p != NULL) {
-            index = 2;
-        } else {
-            index = 1;
-        }
-
-        int size_cmd = index-1;
-        parsecommand(cmdStr, cmd_val, &size_cmd);
-
-        if ( index == 2 ) {
-            pmain.var_name = cmd_val[0];
-        } else {
-            pmain.var_name = "ans";
-        }
-
-        int margc = size_cmd-index;
-
-        pmain.cmd_size = margc;
-        if ( margc != 0 ) {
-            char *cmd_val_tmp[8];
-            for ( j=0; j<margc; j++ ) {
-                cmd_val_tmp[j] = cmd_val[j+index];
-            }
-            pmain.cmd_val = cmd_val_tmp;
-        }
-
-        hash_func *instance = find_function(cmd_val[index-1]);
-        NX_object* nx_obj;
-
-        if ( instance != NULL ) {
-            int output = compute(instance->func_call, pmain);
-        } else {
-            printf("Command not found. Try again.\n");
-        }
-    }
-    Py_Finalize();
-    return 0;
-}
-
-// Callable functions
+// Callable functions TODO: Edit functions to match the pointer: double (*func_t) (params)
 
 NX_object* add(params p) {
     int result = atoi(p.cmd_val[0]) + atoi(p.cmd_val[1]);

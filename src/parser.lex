@@ -1,6 +1,15 @@
+/*===================================================================
+ * NetworkExtended
+ * Copyright (C) 2012 Jorge Catumba Ruiz <jorgerev90@gmail.com>
+ * Universidad Nacional de Colombia, Colombia
+ * ------------------------------------------------------------------
+ * This software is licensed under the terms of the GPL v0.3 for
+ * more information about the license see the license.txt file.
+ * ================================================================*/
+
 %{
-    #include "netext.h"
-    #include "netext.tab.h"
+    #include "networkextended.h"
+    #include "parser.tab.h"
     #include <stdio.h>
 %}
 
@@ -12,6 +21,7 @@ int     "-"?{posint}
 long    {int}(""|("."{posint}))
 
 char    [a-zA-z]
+
 %%
 
 {long}         { yylval.val = atof(yytext); return NUM; }

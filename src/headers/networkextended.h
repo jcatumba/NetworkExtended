@@ -10,11 +10,36 @@
 #ifndef NETWORKEXTENDED_H
 #define NETWORKEXTENDED_H
 
+#include "netext.h"
 #include "networkx.h"
 #include "uthash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* Function type */
+typedef double (*func_t) (double);
+     
+/* Data type for links in the chain of symbols */
+struct symrec
+{
+    char *name;  /* name of symbol */
+    int type;    /* type of symbol: either VAR or FNCT */
+    union
+    {
+      double var;      /* value of a VAR */
+      func_t fnctptr;  /* value of a FNCT */
+    } value;
+    struct symrec *next;  /* link field */
+};
+     
+typedef struct symrec symrec;
+     
+/* The symbol table: a chain of `struct symrec' */
+extern symrec *sym_table;
+     
+symrec *putsym (char const *, int);
+symrec *getsym (char const *);
 
 typedef struct{
     int cmd_size;
@@ -36,6 +61,24 @@ typedef struct {
     nxfunction func_call;
     UT_hash_handle hh;
 } hash_func;
+
+struct init {
+    char const *fname;
+    double (*fnct) (double);
+};
+
+struct init const arith_fncts[] =
+{
+    {"sin", sin},
+    {"cos", cos},
+    {"atan", atan},
+    {"ln", log},
+    {"exp", exp},
+    {"sqrt", sqrt},
+    {0, 0}
+};
+
+void init_table (void);
 
 //--- Functions for hashing variables
 hash_var *find_variable(char key[10]);
@@ -179,8 +222,9 @@ NX_object* edge_load(params p);
 NX_object* dijkstra_path(params p);
 
 /* NetworkX Drawing */
-/* Control. */ 
-NX_object* value(params p); /* TODO: Replace value by simple variable imput */
+
+/* Control */ 
+NX_object* value(params p); /* TODO: Replace value by simple variable input */
 NX_object* exit_cli(params p); /* TODO: Improve exit_cli function */
 
 #endif // NETWORKEXTENDED_H
