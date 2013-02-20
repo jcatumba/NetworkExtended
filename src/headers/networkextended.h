@@ -10,8 +10,8 @@
 #ifndef NETWORKEXTENDED_H
 #define NETWORKEXTENDED_H
 
-#include "netext.h"
 #include "networkx.h"
+#include "parser.tab.h"
 #include "uthash.h"
 #include <stdio.h>
 #include <stdlib.h>
