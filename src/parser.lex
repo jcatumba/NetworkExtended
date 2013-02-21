@@ -8,7 +8,7 @@
  * ================================================================*/
 
 %{
-    #include "networkextended.h"
+    #include "parser.h"
     #include "parser.tab.h"
     #include <stdio.h>
 %}
@@ -34,12 +34,6 @@ char    [a-zA-z]
 {char}+        { symrec *s = getsym(yytext); if (s==0) s = putsym(yytext, VAR) ; yylval.tptr = s; return s->type; }
 "("            { return LP; }
 ")"            { return RP; }
-"["            { return LA; }
-"]"            { return RA; }
-"{"            { return LB; }
-"}"            { return RB; }
-","            { return COMMA; }
-":"            { return COLON; }
 [ \t]+         { }
 "\n"           { return STOP; }
 

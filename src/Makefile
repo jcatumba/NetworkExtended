@@ -14,23 +14,23 @@ all: $(LIBRARIES)
 ../lib/networkx.o: networkx.c headers/networkx.h
 	gcc -g -c $< -o $@ $(INCLUDE) $(pkgconfig) 
 
-../lib/networkextended.o: networkextended.c parser.tab.c
+../lib/networkextended.o: networkextended.c headers/networkextended.h headers/parser.h parser.tab.c
 	gcc -g -c $< -o $@ $(INCLUDE) $(pkgconfig)
 
 ../lib/parserl.o: lex.yy.c
-	gcc -g -c lex.yy.c -o $@
+	gcc -g -c lex.yy.c -o $@ $(INCLUDE)
 
 lex.yy.c: parser.lex parser.tab.c
 	flex parser.lex
 
 ../lib/parsery.o: parser.tab.c
-	gcc -g -c parser.tab.c -o $@
+	gcc -g -c parser.tab.c -o $@ $(INCLUDE)
 
-parser.tab.c: parser.y headers/networkextended.h
+parser.tab.c: parser.y headers/parser.h
 	bison --defines=headers/parser.tab.h parser.y
 
-../lib/main.o: main.c
-	gcc -g -c $< -o $@
+../lib/main.o: main.c headers/main.h
+	gcc -g -c $< -o $@ $(INCLUDE)
 
 clean:
 	rm -f ../lib/*

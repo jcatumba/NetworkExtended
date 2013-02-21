@@ -10,9 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-extern FILE *yyin;
-extern int yyparse(void);
+#include "main.h"
 
 int main( int argc, char *argv[] ) {
     char cmdStr[256], *cmd_val[10];
@@ -23,7 +21,7 @@ int main( int argc, char *argv[] ) {
     }
 
     // TODO: Replace these and add functions from init_table
-    add_function("add", &add);
+    /*add_function("add", &add);
     add_function("deduct", &deduct);
     add_function("multiply", &multiply);
     add_function("exit", &exit_cli);
@@ -35,12 +33,15 @@ int main( int argc, char *argv[] ) {
     add_function("len", &len);
     add_function("add_node", &add_node);
     add_function("add_edge", &add_edge);
-    add_function("order", &order);
+    add_function("order", &order);*/
 
-    Py_SetProgramName("NetworkExtended");
-    Py_Initialize();
-    NX_object* nx_module = load_networkx();
-    load_objects(nx_module);
+    init_table();
+
+    Py_SetProgramName ("NetworkExtended");
+    Py_Initialize ();
+    init_networkx ();
+    /*NX_object* nx_module = load_networkx();
+    load_objects(nx_module);*/
 
     while(1) {
         printf("[NetworkExtended]: ");
