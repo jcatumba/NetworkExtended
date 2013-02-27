@@ -12,54 +12,56 @@
 #include <stdlib.h>
 #include "main.h"
 
-int main( int argc, char *argv[] ) {
+int main ( int argc, char *argv[] ) {
     char cmdStr[256], *cmd_val[10];
     int index=0;
     
     if ( argc > 1 ) {
-        printf("Options given.\n");
+        printf ("Options given.\n");
     }
 
     // TODO: Replace these and add functions from init_table
-    /*add_function("add", &add);
-    add_function("deduct", &deduct);
-    add_function("multiply", &multiply);
-    add_function("exit", &exit_cli);
-    add_function("value", &value);
-    add_function("Graph", &Graph);
-    add_function("DiGraph", &DiGraph);
-    add_function("MultiGraph", &MultiGraph);
-    add_function("MultiDiGraph", &MultiDiGraph);
-    add_function("len", &len);
-    add_function("add_node", &add_node);
-    add_function("add_edge", &add_edge);
-    add_function("order", &order);*/
+    /*add_function ("add", &add);
+    add_function ("deduct", &deduct);
+    add_function ("multiply", &multiply);
+    add_function ("exit", &exit_cli);
+    add_function ("value", &value);
+    add_function ("Graph", &Graph);
+    add_function ("DiGraph", &DiGraph);
+    add_function ("MultiGraph", &MultiGraph);
+    add_function ("MultiDiGraph", &MultiDiGraph);
+    add_function ("len", &len);
+    add_function ("add_node", &add_node);
+    add_function ("add_edge", &add_edge);
+    add_function ("order", &order);*/
 
-    init_table();
+    init_table ();
+    s = (stack*) malloc (sizeof (stack));
+    s->top = -1;
 
     Py_SetProgramName ("NetworkExtended");
     Py_Initialize ();
     init_networkx ();
-    /*NX_object* nx_module = load_networkx();
-    load_objects(nx_module);*/
+    /*NX_object* nx_module = load_networkx ();
+    load_objects (nx_module);*/
 
-    while(1) {
-        printf("[NetworkExtended]: ");
-        memset(cmdStr, 0x00, sizeof(cmdStr));
-        fgets(cmdStr, 255, stdin);
+    while (1) {
+        printf ("[NetworkExtended]: ");
+        memset (cmdStr, 0x00, sizeof (cmdStr));
+        fgets (cmdStr, 255, stdin);
 
-        yyin = fopen("cmd", "w+");
-        fprintf(yyin, "%s", cmdStr);
-        fseek(yyin, 0, SEEK_SET);
+        yyin = fopen ("cmd", "w+");
+        fprintf (yyin, "%s", cmdStr);
+        fseek (yyin, 0, SEEK_SET);
 
-        yyparse();
+        yyparse ();
 
         /*
         char *p;
         int index, j=0;
         params pmain;
 
-        p = strchr(cmdStr, '=');
+        p = strchr (cmdStr, '=');
         if (p != NULL) {
             index = 2;
         } else {
@@ -67,7 +69,7 @@ int main( int argc, char *argv[] ) {
         }
 
         int size_cmd = index-1;
-        parsecommand(cmdStr, cmd_val, &size_cmd);
+        parsecommand (cmdStr, cmd_val, &size_cmd);
 
         if ( index == 2 ) {
             pmain.var_name = cmd_val[0];
@@ -86,17 +88,17 @@ int main( int argc, char *argv[] ) {
             pmain.cmd_val = cmd_val_tmp;
         }
 
-        hash_func *instance = find_function(cmd_val[index-1]);
+        hash_func *instance = find_function (cmd_val[index-1]);
         NX_object* nx_obj;
 
         if ( instance != NULL ) {
-            int output = compute(instance->func_call, pmain);
+            int output = compute (instance->func_call, pmain);
         } else {
-            printf("Command not found. Try again.\n");
+            printf ("Command not found. Try again.\n");
         }
         */
         remove ("cmd");
     }
-    Py_Finalize();
+    Py_Finalize ();
     return 0;
 }

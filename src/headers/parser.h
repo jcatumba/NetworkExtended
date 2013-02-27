@@ -7,8 +7,28 @@
  * more information about the license see the license.txt file.
  * ================================================================*/
 
+#define MAXSIZE 10 /* Maxsize for stack */
+
+/* Union definition for data */
+typedef union {
+    double number;
+    char string[16];
+} data;
+
+/* Structure definition for stack */
+struct stack {
+    int top;
+    int type;
+    data value;
+    struct stack *next;
+};
+
+typedef struct stack stack;
+stack *s;
+
 /* Function type */
 typedef double (*func_t) (double);
+typedef double (*func_p) (stack*);
      
 /* Data type for links in the chain of symbols */
 struct symrec
@@ -19,6 +39,7 @@ struct symrec
     {
       double var;      /* value of a VAR */
       func_t fnctptr;  /* value of a FNCT */
+      func_p fncpptr;  /* value of a FNCP */
     } value;
     struct symrec *next;  /* link field */
 };
@@ -30,3 +51,13 @@ extern symrec *sym_table;
 
 symrec *putsym (char const *, int);
 symrec *getsym (char const *);
+
+/* Functions to manipulate stack */
+void push (int, double);
+int pop (void);
+void display (void);
+
+/* Functions to handle stack structs */
+stack * putitem (int, int);
+stack * getitem (int);
+void clear_stack (void);

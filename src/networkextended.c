@@ -16,8 +16,13 @@ symrec *sym_table;
 void init_table (void) {
     int i;
     for (i=0; arith_fncts[i].fname != 0; i++) {
-        symrec *ptr = putsym (arith_fncts[i].fname, FNCT);
-        ptr->value.fnctptr = arith_fncts[i].fnct;
+        if (i <= 5) {
+            symrec *ptr = putsym (arith_fncts[i].fname, FNCT);
+            ptr->value.fnctptr = arith_fncts[i].fnct.fnc1;
+        } else {
+            symrec *ptr = putsym (arith_fncts[i].fname, FNCP);
+            ptr->value.fncpptr = arith_fncts[i].fnct.fnc2;
+        }
     }
 }
 
@@ -80,6 +85,30 @@ void parsecommand (char *command, char **p_parsed, int *i) {
 }
 
 //--- Callable
+
+double max (stack *p) {
+    int i;
+    double max;
+    max = s->value.number;
+    for (i=s->top; i>=1; i--) {
+        if (max < s->next->value.number)
+            max = s->next->value.number;
+        pop ();
+    }
+    return max;
+}
+
+double min (stack *p) {
+    int i;
+    double min;
+    min = s->value.number;
+    for (i=s->top; i>=1; i--) {
+        if (min > s->next->value.number)
+            min = s->next->value.number;
+        pop ();
+    }
+    return min;
+}
 
 /* TODO: Replace by simple variable call */
 NX_object* value (params p) {

@@ -18,9 +18,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+//--- Callable
+double max (stack*);
+double min (stack*);
+NX_object* value(params p); /* XXX: Replace value by simple variable input */
+NX_object* exit_cli(params p); /* TODO: Improve exit_cli function */
+
 struct init {
     char const *fname;
-    double (*fnct) (double);
+    union {
+        double (*fnc1) (double);
+        double (*fnc2) (stack *);
+    } fnct;
 };
 
 struct init const arith_fncts[] =
@@ -31,6 +40,8 @@ struct init const arith_fncts[] =
     {"ln", log},
     {"exp", exp},
     {"sqrt", sqrt},
+    {"max", {.fnc2 = max}},
+    {"min", {.fnc2 = min}},
     {0, 0}
 };
 
@@ -39,9 +50,5 @@ void init_table (void);
 //--- Internal functions
 int compute(nxfunction function, params p);
 void parsecommand(char *command, char **p_parsed, int *i); /* XXX: Replace to yyparse */
-
-//--- Callable
-NX_object* value(params p); /* XXX: Replace value by simple variable input */
-NX_object* exit_cli(params p); /* TODO: Improve exit_cli function */
 
 #endif // NETWORKEXTENDED_H
