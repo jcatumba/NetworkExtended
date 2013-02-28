@@ -49,7 +49,7 @@ typedef NX_object* (*func_nx) (stack*);
 typedef union { /* TODO: Add lists and dictionaries */
     double num;
     char str[50];
-    NX_object *obj;
+    NX_object* obj;
 } varval;
 
 typedef struct {

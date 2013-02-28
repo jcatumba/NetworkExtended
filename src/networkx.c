@@ -10,6 +10,22 @@
 #include "networkx.h"
 
 //
+// References to NetworkX classes and methods
+//
+/*** Graph Types ***/
+NX_object* nxGraph = NULL;
+NX_object* nxDiGraph = NULL;
+NX_object* nxMultiGraph = NULL;
+NX_object* nxMultiDiGraph = NULL;
+
+/*** NX basic methods ***/
+NX_object* nx_len = NULL;
+NX_object* nx_add_node = NULL;
+NX_object* nx_add_edge = NULL;
+NX_object* nx_order = NULL;
+NX_object* nx_pagerank = NULL;
+
+//
 //  Loading NetworkX functions
 //
 void init_networkx () {

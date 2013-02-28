@@ -20,6 +20,8 @@
     void yyerror (char const*);
     void yyprint ();
     void put_output (datatype);
+    datatype nxobj_to_datatype (NX_object*);
+    datatype num_to_datatype (double);
 %}
 
 %union {
@@ -52,20 +54,20 @@ line        : STOP
 ;
 
 genericexp  : basicexp
-            | FNCP LP csv RP    { $$.data.num = (*($1->value.fncpptr))(s); $$.type = NUM; }
-            | FNCNX LP csv RP   { $$->data->obj = (*($1->value.fnxptr))(s); $$.type = NXO; }
+            | FNCP LP csv RP    { double num = (*($1->value.fncpptr))(s); $$ = num_to_datatype (num); }
+            | FNCNX LP csv RP   { NX_object *obj = (*($1->value.fnxptr))(s); $$ = nxobj_to_datatype (obj); }
 ;
 
-basicexp    : NUM                     { $$.data.num = $1->data.num; $$.type = NUM; }
+basicexp    : NUM                     { double num = $1.data.num; $$ = num_to_datatype (num); }
             | VAR                     { $$.data.num = $1->value.var.data.num; $$.type = NUM; }
-            | VAR EQ basicexp         { $$.data.num = $3.data.num; $1->value.var.data.num = $3->data.num; $1->type = NUM; $$.type = NUM; }
-            | FNCT LP basicexp RP     { $$.data.num = (*($1->value.fnctptr))($3->data.num); $$.type = NUM; }
-            | basicexp PLUS basicexp  { $$.data.num = $1->data.num + $3->data.num; $$.type = NUM; }
-            | basicexp MINUS basicexp { $$.data.num = $1->data.num - $3->data.num; $$.type = NUM; }
-            | basicexp TIMES basicexp { $$.data.num = $1->data.num * $3->data.num; $$.type = NUM; }
-            | basicexp OVER basicexp  { $$.data.num = $1->data.num / $3->data.num; $$.type = NUM; }
-            | basicexp TO basicexp    { $$.data.num = pow ($1->data.num, $3->data.num); $$.type = NUM; }
-            | LP basicexp RP          { $$.data.num = $2->data.num; $$.type = NUM; }
+            | VAR EQ basicexp         { $$.data.num = $3.data.num; $1->value.var.data.num = $3.data.num; $1->type = NUM; $$.type = NUM; }
+            | FNCT LP basicexp RP     { $$.data.num = (*($1->value.fnctptr))($3.data.num); $$.type = NUM; }
+            | basicexp PLUS basicexp  { $$.data.num = $1.data.num + $3.data.num; $$.type = NUM; }
+            | basicexp MINUS basicexp { $$.data.num = $1.data.num - $3.data.num; $$.type = NUM; }
+            | basicexp TIMES basicexp { $$.data.num = $1.data.num * $3.data.num; $$.type = NUM; }
+            | basicexp OVER basicexp  { $$.data.num = $1.data.num / $3.data.num; $$.type = NUM; }
+            | basicexp TO basicexp    { $$.data.num = pow ($1.data.num, $3.data.num); $$.type = NUM; }
+            | LP basicexp RP          { $$.data.num = $2.data.num; $$.type = NUM; }
 ;
 
 csv         : basicexp           { push (NUM, $1); }
@@ -98,11 +100,25 @@ void put_output (datatype val) {
             printf (">>> %s\n", val.data.str);
             break;
         case NXO:
-            printf (">>> Blur Object: %s", val.data.obj->name);
+            //printf (">>> Blur Object: %s", val.data.obj->name);
             break;
         default:
             break;
     }
+}
+
+datatype nxobj_to_datatype (NX_object *obj) {
+    datatype ptr;
+    ptr.type = NXO;
+    ptr.data.obj = obj;
+    return ptr;
+}
+
+datatype num_to_datatype (double num) {
+    datatype ptr;
+    ptr.type = NUM;
+    ptr.data.num = num;
+    return ptr;
 }
 
 //

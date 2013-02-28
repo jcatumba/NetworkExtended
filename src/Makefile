@@ -30,7 +30,7 @@ parser.tab.c: parser.y headers/parser.h
 	bison --defines=headers/parser.tab.h parser.y
 
 ../lib/main.o: main.c headers/main.h
-	gcc -g -c $< -o $@ $(INCLUDE)
+	gcc -g -c $< -o $@ $(INCLUDE) $(pkgconfig)
 
 clean:
 	rm -f ../lib/*
