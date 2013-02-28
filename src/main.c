@@ -7,9 +7,6 @@
  * more information about the license see the license.txt file.
  * ================================================================*/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "main.h"
 
 int main ( int argc, char *argv[] ) {
@@ -20,21 +17,6 @@ int main ( int argc, char *argv[] ) {
         printf ("Options given.\n");
     }
 
-    // TODO: Replace these and add functions from init_table
-    /*add_function ("add", &add);
-    add_function ("deduct", &deduct);
-    add_function ("multiply", &multiply);
-    add_function ("exit", &exit_cli);
-    add_function ("value", &value);
-    add_function ("Graph", &Graph);
-    add_function ("DiGraph", &DiGraph);
-    add_function ("MultiGraph", &MultiGraph);
-    add_function ("MultiDiGraph", &MultiDiGraph);
-    add_function ("len", &len);
-    add_function ("add_node", &add_node);
-    add_function ("add_edge", &add_edge);
-    add_function ("order", &order);*/
-
     init_table ();
     s = (stack*) malloc (sizeof (stack));
     s->top = -1;
@@ -42,8 +24,6 @@ int main ( int argc, char *argv[] ) {
     Py_SetProgramName ("NetworkExtended");
     Py_Initialize ();
     init_networkx ();
-    /*NX_object* nx_module = load_networkx ();
-    load_objects (nx_module);*/
 
     while (1) {
         printf ("[NetworkExtended]: ");
@@ -56,47 +36,6 @@ int main ( int argc, char *argv[] ) {
 
         yyparse ();
 
-        /*
-        char *p;
-        int index, j=0;
-        params pmain;
-
-        p = strchr (cmdStr, '=');
-        if (p != NULL) {
-            index = 2;
-        } else {
-            index = 1;
-        }
-
-        int size_cmd = index-1;
-        parsecommand (cmdStr, cmd_val, &size_cmd);
-
-        if ( index == 2 ) {
-            pmain.var_name = cmd_val[0];
-        } else {
-            pmain.var_name = "ans";
-        }
-
-        int margc = size_cmd-index;
-
-        pmain.cmd_size = margc;
-        if ( margc != 0 ) {
-            char *cmd_val_tmp[8];
-            for ( j=0; j<margc; j++ ) {
-                cmd_val_tmp[j] = cmd_val[j+index];
-            }
-            pmain.cmd_val = cmd_val_tmp;
-        }
-
-        hash_func *instance = find_function (cmd_val[index-1]);
-        NX_object* nx_obj;
-
-        if ( instance != NULL ) {
-            int output = compute (instance->func_call, pmain);
-        } else {
-            printf ("Command not found. Try again.\n");
-        }
-        */
         remove ("cmd");
     }
     Py_Finalize ();

@@ -9,9 +9,32 @@
 
 #include "networkextended.h"
 
-//--- Functions for add functions and variables to symrec
-
+// The table of symbols: chain of `struct symrec'
 symrec *sym_table;
+
+// Initialize the table of symbols with functions
+struct init {
+    char const *fname;
+    union {
+        double (*fnc1) (double);
+        double (*fnc2) (stack *);
+        NX_object* (*fnc3) (stack *);
+    } fnct;
+};
+
+struct init const arith_fncts[] =
+{
+    {"sin", sin},
+    {"cos", cos},
+    {"atan", atan},
+    {"ln", log},
+    {"exp", exp},
+    {"sqrt", sqrt},
+    {"max", {.fnc2 = max}},
+    {"min", {.fnc2 = min}},
+    {"Graph", {.fnc3 = Graph}},
+    {0, 0}
+};
 
 void init_table (void) {
     int i;
@@ -19,38 +42,21 @@ void init_table (void) {
         if (i <= 5) {
             symrec *ptr = putsym (arith_fncts[i].fname, FNCT);
             ptr->value.fnctptr = arith_fncts[i].fnct.fnc1;
-        } else {
+        } else if (i <= 7){
             symrec *ptr = putsym (arith_fncts[i].fname, FNCP);
             ptr->value.fncpptr = arith_fncts[i].fnct.fnc2;
+        } else {
+            symrec *ptr = putsym (arith_fncts[i].fname, FNCNX);
+            ptr->value.fnxptr = arith_fncts[i].fnct.fnc2;
         }
     }
 }
 
-symrec * putsym (char const *sym_name, int sym_type) {
-    symrec *ptr = (symrec*) malloc (sizeof (symrec));
-    ptr->name = (char*) malloc (strlen (sym_name) + 1);
-    strcpy (ptr->name, sym_name);
-    ptr->type = sym_type;
-    ptr->value.var = 0; /* Set value to 0 even if fctn */
-    ptr->next = (struct symrec *) sym_table;
-    sym_table = ptr;
-    return ptr;
-}
-
-symrec * getsym (char const *sym_name) {
-    symrec *ptr;
-    for (ptr = sym_table; ptr != (symrec *) 0; ptr = (symrec *) ptr->next) {
-        if (strcmp (ptr->name, sym_name) == 0) {
-            return ptr;
-        }
-    }
-    return 0;
-}
-
+//
 // Internal functions
+//
 
-/* XXX: Remove (bison parser will call functions) */
-int compute (nxfunction function, params p){
+int compute (nxfunction function, params p){ /* XXX: Remove (bison parser will call functions) */
     NX_object* d = (*function)(p);
     if ( d != NULL ) {
         return 0;
@@ -59,8 +65,7 @@ int compute (nxfunction function, params p){
     }
 }
 
-/* XXX: Replace by yyparse */
-void parsecommand (char *command, char **p_parsed, int *i) {
+void parsecommand (char *command, char **p_parsed, int *i) { /* XXX: Replace by yyparse */
     int j;
     char *result = NULL;
 
@@ -84,7 +89,9 @@ void parsecommand (char *command, char **p_parsed, int *i) {
     p_parsed[*i-1] = result;
 }
 
-//--- Callable
+//
+// CLI functions
+//
 
 double max (stack *p) {
     int i;
@@ -111,7 +118,7 @@ double min (stack *p) {
 }
 
 /* TODO: Replace by simple variable call */
-NX_object* value (params p) {
+/*NX_object* value (params p) {
     hash_var *s = find_variable (p.cmd_val[0]);
     if ( s != NULL ) {
         printf ("%s=\n\t%d\n", s->id, s->value);
@@ -124,4 +131,4 @@ NX_object* value (params p) {
 NX_object* exit_cli (params p) {
     exit (0);
     return NULL;
-}
+}*/

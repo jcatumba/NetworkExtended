@@ -10,56 +10,40 @@
 #ifndef NETWORKX_H
 #define NETWORKX_H
 
-#include <Python.h>
-#include "uthash.h"
+#include "parser.h"
 
-typedef struct{
-    int cmd_size;
-    char *var_name;
-    char **cmd_val;
-} params;
+//
+// References to NetworkX classes and methods
+//
+/*** Graph Types ***/
+NX_object* nxGraph = NULL;
+NX_object* nxDiGraph = NULL;
+NX_object* nxMultiGraph = NULL;
+NX_object* nxMultiDiGraph = NULL;
 
-typedef struct {
-    const char* name;
-    const char* parent;
-    PyObject* py_object;
-} NX_object;
+/*** NX basic methods ***/
+NX_object* nx_len = NULL;
+NX_object* nx_add_node = NULL;
+NX_object* nx_add_edge = NULL;
+NX_object* nx_order = NULL;
+NX_object* nx_pagerank = NULL;
 
-typedef NX_object* (*nxfunction)(params);
-
-typedef struct {
-    char id[10];
-    int value;
-    NX_object* object;
-    UT_hash_handle hh;
-} hash_var;
-
-typedef struct {
-    char name[25];
-    nxfunction func_call;
-    UT_hash_handle hh;
-} hash_func;
-
-//--- Functions for hashing variables
-hash_var *find_variable(char key[10]);
-void delete_variable(hash_var *variable);
-void add_variable(const char repr[10], int amount, NX_object* nxobj);
-void delete_all_variables();
-void print_vars();
-
-//--- Functions for hashing callables
-hash_func *find_function(char key[25]);
-void delete_function(hash_func *function);
-void add_function(char name[25], nxfunction function);
-void print_functions();
+//
+// Loading NetworkX functions
+//
+void init_networkx (void);
+NX_object* load_nx(NX_object *nxobject, const char* attr_name);
+NX_object* load_networkx();
+void load_objects(NX_object *nxobj);
 
 //--- Callable NetworkX functions
-/* NetworkX Basic Classes (Graph types). TODO: Allow the user to use Attributes */
-NX_object* Graph(params p);
+/*** NetworkX Basic Classes (Graph types). TODO: Allow the user to use Attributes ***/
+NX_object* Graph (stack *p);
+/*NX_object* Graph(params p);*/
 NX_object* DiGraph(params p);
 NX_object* MultiGraph(params p);
 NX_object* MultiDiGraph(params p);
-/* NetworkX Basic Methods */
+/*** NetworkX Basic Methods ***/
 NX_object* len(params p);
 NX_object* add_node(params p);
 NX_object* add_nodes_from(params p);
@@ -112,7 +96,7 @@ NX_object* to_directed(params p);
 NX_object* subgraph(params p);
 NX_object* reverse(params p); /* [Multi]DiGraph specific */
 
-/* NetworkX Algorithms */
+/*** NetworkX Algorithms ***/
 NX_object* max_clique(params p);
 NX_object* clique_removal(params p);
 NX_object* min_weighted_dominating_set(params p);
@@ -173,12 +157,6 @@ NX_object* edge_load(params p);
 
 NX_object* dijkstra_path(params p);
 
-/* NetworkX Drawing */
-
-//--- Load NetworkX functions
-void init_networkx (void);
-NX_object* load_nx(NX_object *nxobject, const char* attr_name);
-NX_object* load_networkx();
-void load_objects(NX_object *nxobj);
+/*** NetworkX Drawing ***/
 
 #endif //NETWORKX_H

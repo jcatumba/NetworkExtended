@@ -10,7 +10,6 @@
 %{
     #include "parser.h"
     #include "parser.tab.h"
-    #include <stdio.h>
 %}
 
 %option noyywrap
@@ -24,7 +23,7 @@ char    [a-zA-z]
 
 %%
 
-{long}         { yylval.val = atof (yytext); return NUM; }
+{long}         { yylval.val.data.num = atof (yytext); return NUM; }
 "+"            { yylval.sym = yytext[0]; return PLUS; }
 "-"            { yylval.sym = yytext[0]; return MINUS; }
 "*"            { yylval.sym = yytext[0]; return TIMES; }

@@ -18,13 +18,13 @@ all: $(LIBRARIES)
 	gcc -g -c $< -o $@ $(INCLUDE) $(pkgconfig)
 
 ../lib/parserl.o: lex.yy.c
-	gcc -g -c lex.yy.c -o $@ $(INCLUDE)
+	gcc -g -c lex.yy.c -o $@ $(INCLUDE) $(pkgconfig)
 
 lex.yy.c: parser.lex parser.tab.c
 	flex parser.lex
 
 ../lib/parsery.o: parser.tab.c
-	gcc -g -c parser.tab.c -o $@ $(INCLUDE)
+	gcc -g -c parser.tab.c -o $@ $(INCLUDE) $(pkgconfig)
 
 parser.tab.c: parser.y headers/parser.h
 	bison --defines=headers/parser.tab.h parser.y

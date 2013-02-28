@@ -11,39 +11,17 @@
 #define NETWORKEXTENDED_H
 
 #include "networkx.h"
-#include "parser.h"
 #include "parser.tab.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <math.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
 
 //--- Callable
 double max (stack*);
 double min (stack*);
 NX_object* value(params p); /* XXX: Replace value by simple variable input */
 NX_object* exit_cli(params p); /* TODO: Improve exit_cli function */
-
-struct init {
-    char const *fname;
-    union {
-        double (*fnc1) (double);
-        double (*fnc2) (stack *);
-    } fnct;
-};
-
-struct init const arith_fncts[] =
-{
-    {"sin", sin},
-    {"cos", cos},
-    {"atan", atan},
-    {"ln", log},
-    {"exp", exp},
-    {"sqrt", sqrt},
-    {"max", {.fnc2 = max}},
-    {"min", {.fnc2 = min}},
-    {0, 0}
-};
 
 void init_table (void);
 

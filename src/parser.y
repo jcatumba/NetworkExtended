@@ -8,29 +8,30 @@
  * ================================================================*/
 
 %{
+    #include "parser.h"
     #include <math.h>
     #include <stdio.h>
     #include <string.h>
     #include <stdlib.h>
     #include <ctype.h>
-    #include "parser.h"
     #define YYDEBUG 1
     #define YYPRINT(file, type, value) yyprint(file, type, value)
-    int yylex(void);
-    void yyerror(char const*s);
-    void yyprint();
+    int yylex (void);
+    void yyerror (char const*);
+    void yyprint ();
+    void put_output (datatype);
 %}
 
 %union {
-    double val;
+    datatype val;
     char sym;
     symrec *tptr;
 }
 
-%token <val> NUM STR /* Simple double precision number */
+%token <val> NUM STR NXO /* Double, String or NXO */
 %token <sym> LP RP LA RA LB RB COMMA COLON PLUS MINUS TIMES OVER EQ TO STOP
-%token <tptr> VAR FNCT FNCP /* Variable and function */
-%type <val> /*exp*/ basicexp genericexp csv
+%token <tptr> VAR FNCT FNCP FNCNX /* Variable and functions */
+%type <val> /*exp*/ basicexp genericexp /*csv*/
 
 %right EQ
 %left PLUS MINUS
@@ -46,24 +47,25 @@ input       : /* empty */
 ;
 
 line        : STOP      
-            | genericexp STOP { printf ( ">>> %.10g\n", $1 ); }
+            | genericexp STOP { put_output ( $1 ); }
             | error STOP      { yyerrok; }
 ;
 
 genericexp  : basicexp
-            | FNCP LP csv RP    { $$ = (*($1->value.fncpptr))(s); }
+            | FNCP LP csv RP    { $$.data.num = (*($1->value.fncpptr))(s); $$.type = NUM; }
+            | FNCNX LP csv RP   { $$->data->obj = (*($1->value.fnxptr))(s); $$.type = NXO; }
 ;
 
-basicexp    : NUM                     { $$ = $1; }
-            | VAR                     { $$ = $1->value.var; }
-            | VAR EQ basicexp         { $$ = $3; $1->value.var = $3; }
-            | FNCT LP basicexp RP     { $$ = (*($1->value.fnctptr))($3); }
-            | basicexp PLUS basicexp  { $$ = $1 + $3; }
-            | basicexp MINUS basicexp { $$ = $1 - $3; }
-            | basicexp TIMES basicexp { $$ = $1 * $3; }
-            | basicexp OVER basicexp  { $$ = $1 / $3; }
-            | basicexp TO basicexp    { $$ = pow ($1, $3); }
-            | LP basicexp RP          { $$ = $2; }
+basicexp    : NUM                     { $$.data.num = $1->data.num; $$.type = NUM; }
+            | VAR                     { $$.data.num = $1->value.var.data.num; $$.type = NUM; }
+            | VAR EQ basicexp         { $$.data.num = $3.data.num; $1->value.var.data.num = $3->data.num; $1->type = NUM; $$.type = NUM; }
+            | FNCT LP basicexp RP     { $$.data.num = (*($1->value.fnctptr))($3->data.num); $$.type = NUM; }
+            | basicexp PLUS basicexp  { $$.data.num = $1->data.num + $3->data.num; $$.type = NUM; }
+            | basicexp MINUS basicexp { $$.data.num = $1->data.num - $3->data.num; $$.type = NUM; }
+            | basicexp TIMES basicexp { $$.data.num = $1->data.num * $3->data.num; $$.type = NUM; }
+            | basicexp OVER basicexp  { $$.data.num = $1->data.num / $3->data.num; $$.type = NUM; }
+            | basicexp TO basicexp    { $$.data.num = pow ($1->data.num, $3->data.num); $$.type = NUM; }
+            | LP basicexp RP          { $$.data.num = $2->data.num; $$.type = NUM; }
 ;
 
 csv         : basicexp           { push (NUM, $1); }
@@ -72,8 +74,11 @@ csv         : basicexp           { push (NUM, $1); }
 /* End of grammar */
 %%
 
-void yyerror ( char const *s ) {
-    fprintf ( stderr, "netext: %s\n", s );
+//
+// Functions for parser
+//
+void yyerror (char const *s) {
+    fprintf ( stderr, "NetworkExtended: %s\n", s );
 }
 
 void yyprint (FILE *file, int type, YYSTYPE value) {
@@ -83,19 +88,62 @@ void yyprint (FILE *file, int type, YYSTYPE value) {
         fprintf(file, " %g", value.val);
 }
 
-//--- Functions for handle struct
-void push (int type, double val) {
+void put_output (datatype val) {
+    int type = val.type;
+    switch (type) {
+        case NUM:
+            printf (">>> %.10g\n", val.data.num);
+            break;
+        case STR:
+            printf (">>> %s\n", val.data.str);
+            break;
+        case NXO:
+            printf (">>> Blur Object: %s", val.data.obj->name);
+            break;
+        default:
+            break;
+    }
+}
+
+//
+// Functions for handle table of symbols `struct symrec'
+//
+symrec *putsym (char const *sym_name, int sym_type) {
+    symrec *ptr = (symrec*) malloc (sizeof (symrec));
+    ptr->name = (char*) malloc (strlen (sym_name) + 1);
+    strcpy (ptr->name, sym_name);
+    ptr->type = sym_type;
+    ptr->value.var.data.num = 0; /* Set value to 0 even if fctn */
+    ptr->next = (struct symrec *) sym_table;
+    sym_table = ptr;
+    return ptr;
+}
+
+symrec *getsym (char const *sym_name) {
+    symrec *ptr;
+    for (ptr = sym_table; ptr != (symrec *) 0; ptr = (symrec *) ptr->next) {
+        if (strcmp (ptr->name, sym_name) == 0) {
+            return ptr;
+        }
+    }
+    return 0;
+}
+
+//
+// Functions for handle stack
+//
+void push (int type, datatype val) {
     if (s->top == MAXSIZE - 1 ) {
         return; /* stack is full */
     } else {
-        switch (type)  {
-            //case STR:
-            //    s = putitem (s->top+1, STR);
-            //    strcpy (s->value.string, val.string);
-            //    break;
+        switch (type) {
+            case STR:
+                s = putitem (s->top+1, STR);
+                strcpy (s->value.string, val.data.str);
+                break;
             case NUM:
                 s = putitem (s->top+1, NUM);
-                s->value.number = val;
+                s->value.number = val.data.num;
                 break;
             default:
                 break;
@@ -132,6 +180,16 @@ void display () {
     printf("\n");
 }
 
+void clear_stack () {
+    int i, j;
+    for (i=s->top; i>=0; i--)
+        pop ();
+    return;
+}
+
+//
+// Functions for handle stack chain
+//
 stack * putitem (int top, int type) {
     stack *ptr = getitem (top);
     if (ptr == 0)
@@ -150,11 +208,4 @@ stack * getitem (int top) {
             return ptr;
     }
     return 0;
-}
-
-void clear_stack () {
-    int i, j;
-    for (i=s->top; i>=0; i--)
-        pop ();
-    return;
 }

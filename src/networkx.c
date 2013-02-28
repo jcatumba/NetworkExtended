@@ -9,22 +9,9 @@
 
 #include "networkx.h"
 
-//--- References to NetworkX classes and methods
-/* Graph Types */
-NX_object* nxGraph = NULL;
-NX_object* nxDiGraph = NULL;
-NX_object* nxMultiGraph = NULL;
-NX_object* nxMultiDiGraph = NULL;
-
-/* NX basic methods */
-NX_object* nx_len = NULL;
-NX_object* nx_add_node = NULL;
-NX_object* nx_add_edge = NULL;
-NX_object* nx_order = NULL;
-NX_object* nx_pagerank = NULL;
-
-//--- NX_objects definitions of NetworkX module, classes and methods
-
+//
+//  Loading NetworkX functions
+//
 void init_networkx () {
     NX_object* nx_module = load_networkx ();
     load_objects (nx_module);
@@ -77,90 +64,23 @@ void load_objects (NX_object *nx_module) {
     nx_order = load_nx (nxGraph, "order");
 }
 
-//--- Functions for hashing variables
-
-hash_var *cli_vars = NULL;
-
-hash_var *find_variable (char key[10]) {
-    hash_var *s;
-    HASH_FIND_STR (cli_vars, key, s);
-    return s;
-}
-
-void delete_variable (hash_var *variable) {
-    HASH_DEL (cli_vars, variable);
-    free (variable);
-}
-
-void add_variable (const char repr[10], int amount, NX_object *nxobj) {
-    hash_var *s;
-    hash_var *t = find_variable ((char *) repr);
-
-    if ( t != NULL ) {
-        delete_variable (t);
+//
+// Callable functions TODO: Edit functions to match pointer: double (*func_t) (stack*)
+//
+/* Graph creation (type double (*fnct) (stack*)) */
+NX_object* Graph (stack *p) {
+    NX_object* graph = NULL;
+    graph = (NX_object*) malloc (sizeof (NX_object));
+    if (graph->py_object = PyObject_CallObject (nxGraph->py_object, NULL)) {
+        graph->parent = nxGraph->name;
+    } else {
+        printf ("Graph creation failed.\n");
     }
-    s = (hash_var*) malloc (sizeof(hash_var));
-    strcpy (s->id, (char *) repr);
-    s->value = amount;
-    s->object = nxobj;
-    HASH_ADD_STR(cli_vars, id, s);
+    return graph;
 }
 
-void delete_all_variables () {
-    hash_var *current_var, *tmp;
-
-    HASH_ITER(hh, cli_vars, current_var, tmp) {
-        HASH_DEL(cli_vars, current_var);
-        free (current_var);
-    }
-}
-
-void print_vars () {
-    hash_var *s;
-    for (s = cli_vars; s != NULL; s=s->hh.next){
-        printf ("variable name %s: value %d\n", s->id, s->value);
-    }
-}
-
-//--- Functions for hashing callables
-
-hash_func *cli_functs = NULL;
-
-hash_func *find_function (char key[25]) {
-    hash_func *s;
-    HASH_FIND_STR (cli_functs, key, s);
-    return s;
-}
-
-void delete_function (hash_func *function) {
-    HASH_DEL (cli_functs, function);
-    free (function);
-}
-
-void add_function (char name[25], nxfunction funct) {
-    hash_func *s;
-    hash_func *t = find_function (name);
-
-    if ( t != NULL ) {
-        delete_function (t);
-    }
-    s = (hash_func*) malloc (sizeof(hash_func));
-    strcpy (s->name, name);
-    s->func_call = funct;
-    HASH_ADD_STR (cli_functs, name, s);
-}
-
-void print_functions () {
-    hash_func *s;
-    for (s = cli_functs; s != NULL; s=s->hh.next) {
-        printf ("variable name %s", s->name);
-    }
-}
-
-//--- Callable functions TODO: Edit functions to match pointer: double (*func_t) (params)
-
-/* Graph creation functions */
-NX_object* Graph (params p) {
+/*** Graph creation functions ***/
+/*NX_object* Graph (params p) {
     NX_object* graph = NULL;
     graph = (NX_object*) malloc (sizeof (NX_object));
     if (graph->py_object = PyObject_CallObject (nxGraph->py_object, NULL)) {
@@ -210,10 +130,10 @@ NX_object* MultiDiGraph (params p) {
         printf ("MultiDiGraph creation failed.\n");
     }
     return multidigraph;
-}
+}*/
 
-/* Basic Methods for Graphs */
-NX_object* len (params p) {
+/*** Basic Methods for Graphs ***/
+/*NX_object* len (params p) {
     hash_var *f = find_variable (p.cmd_val[0]);
     if (f != NULL) {
         PyObject* tuple = PyTuple_New (1);
@@ -223,36 +143,38 @@ NX_object* len (params p) {
     } else {
         fprintf (stderr, "Graph %s not found.\n", p.cmd_val[0]);
     }
-}
+}*/
 
-NX_object* add_node (params p) { /* TODO: Handle addition of node attributes */
+/* TODO: Handle addition of node attributes */ /* TODO: Allow non integer nodes */
+/*NX_object* add_node (params p) {
     hash_var *f = find_variable (p.cmd_val[0]);
     if ( f != NULL ) {
         PyObject* tuple = PyTuple_New (2);
         PyTuple_SetItem (tuple, 0, f->object->py_object);
-        PyTuple_SetItem (tuple, 1, PyInt_FromLong (atoi (p.cmd_val[1]))); /* TODO: Allow non integer nodes */
+        PyTuple_SetItem (tuple, 1, PyInt_FromLong (atoi (p.cmd_val[1]))); 
         PyObject_CallObject (nx_add_node->py_object, tuple);
     } else {
         fprintf (stderr, "Graph %s not found.\n", p.cmd_val[0]);
     }
     return NULL;
-}
+}*/
 
-NX_object* add_edge (params p) { /* TODO: Handle attributes */
+/* TODO: Handle attributes */ /* TODO: Allow non intenger nodes */
+/*NX_object* add_edge (params p) {
     hash_var *f = find_variable (p.cmd_val[0]);
     if (f != NULL) {
         PyObject* tuple = PyTuple_New (3);
         PyTuple_SetItem (tuple, 0, f->object->py_object);
-        PyTuple_SetItem (tuple, 1, PyInt_FromLong (atoi (p.cmd_val[1]))); /* TODO: Allow non intenger nodes */
+        PyTuple_SetItem (tuple, 1, PyInt_FromLong (atoi (p.cmd_val[1])));
         PyTuple_SetItem (tuple, 2, PyInt_FromLong (atoi (p.cmd_val[2])));
         PyObject_CallObject (nx_add_edge->py_object, tuple);
     } else {
         fprintf (stderr, "Graph %s not found.\n", p.cmd_val[0]);
     }
     return NULL;
-}
+}*/
 
-NX_object* order (params p) {
+/*NX_object* order (params p) {
     hash_var *f = find_variable (p.cmd_val[0]);
     if ( f != NULL ) {
         PyObject* tuple = PyTuple_New (1);
@@ -262,4 +184,4 @@ NX_object* order (params p) {
     } else {
         fprintf (stderr, "Graph %s not found.\n", p.cmd_val[0]);
     }
-}
+}*/
