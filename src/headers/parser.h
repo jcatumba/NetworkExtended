@@ -79,7 +79,7 @@ symrec *putsym (char const *, int);
 symrec *getsym (char const *);
 
 /* Functions to manipulate stack */
-void push (int, datatype);
+void push (datatype);
 int pop (void);
 void display (void);
 void clear_stack (void);

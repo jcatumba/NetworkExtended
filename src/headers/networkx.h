@@ -23,13 +23,12 @@ void load_objects(NX_object *nxobj);
 //--- Callable NetworkX functions
 /*** NetworkX Basic Classes (Graph types). TODO: Allow the user to use Attributes ***/
 NX_object* Graph (stack *p);
-/*NX_object* Graph(params p);*/
-NX_object* DiGraph(params p);
-NX_object* MultiGraph(params p);
-NX_object* MultiDiGraph(params p);
+NX_object* DiGraph(stack *p);
+NX_object* MultiGraph(stack *p);
+NX_object* MultiDiGraph(stack *p);
 /*** NetworkX Basic Methods ***/
-NX_object* len(params p);
-NX_object* add_node(params p);
+double len(stack *p);
+NX_object* add_node(stack *p);
 NX_object* add_nodes_from(params p);
 NX_object* remove_node(params p);
 NX_object* remove_nodes_from(params p);

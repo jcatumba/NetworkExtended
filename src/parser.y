@@ -57,8 +57,8 @@ genericexp  : basicexp
 ;
 
 basicexp    : NUM                     { double num = $1.data.num; $$ = num_to_datatype (num); }
-            | VAR                     { $$.data.num = $1->value.var.data.num; $$.type = NUM; }
-            | VAR EQ basicexp         { $$.data.num = $3.data.num; $1->value.var.data.num = $3.data.num; $1->type = NUM; $$.type = NUM; }
+            | VAR                     { $$ = $1->value.var; }
+            | VAR EQ basicexp         { $$ = $3; $1->value.var = $3; }
             | FNCT LP basicexp RP     { $$.data.num = (*($1->value.fnctptr))($3.data.num); $$.type = NUM; }
             | FNCP LP csv RP          { double num = (*($1->value.fncpptr))(s); $$ = num_to_datatype (num); }
             | FNCNX LP csv RP         { NX_object *obj = (*($1->value.fnxptr))(s); $$ = nxobj_to_datatype (obj); }
@@ -70,8 +70,8 @@ basicexp    : NUM                     { double num = $1.data.num; $$ = num_to_da
             | LP basicexp RP          { $$.data.num = $2.data.num; $$.type = NUM; }
 ;
 
-csv         : basicexp           { push (NUM, $1); }
-            | csv COMMA basicexp { push (NUM, $3); }
+csv         : basicexp           { push ($1); }
+            | csv COMMA basicexp { push ($3); }
 ;
 /* End of grammar */
 %%
@@ -148,11 +148,11 @@ symrec *getsym (char const *sym_name) {
 //
 // Functions for handle stack
 //
-void push (int type, datatype val) {
+void push (datatype val) {
     if (s->top == MAXSIZE - 1 ) {
         return; /* stack is full */
     } else {
-        switch (type) {
+        switch (val.type) {
             case STR:
                 s = putitem (s->top+1, STR);
                 strcpy (s->value.string, val.data.str);
