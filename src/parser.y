@@ -54,14 +54,14 @@ line        : STOP
 ;
 
 genericexp  : basicexp
-            | FNCP LP csv RP    { double num = (*($1->value.fncpptr))(s); $$ = num_to_datatype (num); }
-            | FNCNX LP csv RP   { NX_object *obj = (*($1->value.fnxptr))(s); $$ = nxobj_to_datatype (obj); }
 ;
 
 basicexp    : NUM                     { double num = $1.data.num; $$ = num_to_datatype (num); }
             | VAR                     { $$.data.num = $1->value.var.data.num; $$.type = NUM; }
             | VAR EQ basicexp         { $$.data.num = $3.data.num; $1->value.var.data.num = $3.data.num; $1->type = NUM; $$.type = NUM; }
             | FNCT LP basicexp RP     { $$.data.num = (*($1->value.fnctptr))($3.data.num); $$.type = NUM; }
+            | FNCP LP csv RP          { double num = (*($1->value.fncpptr))(s); $$ = num_to_datatype (num); }
+            | FNCNX LP csv RP         { NX_object *obj = (*($1->value.fnxptr))(s); $$ = nxobj_to_datatype (obj); }
             | basicexp PLUS basicexp  { $$.data.num = $1.data.num + $3.data.num; $$.type = NUM; }
             | basicexp MINUS basicexp { $$.data.num = $1.data.num - $3.data.num; $$.type = NUM; }
             | basicexp TIMES basicexp { $$.data.num = $1.data.num * $3.data.num; $$.type = NUM; }
