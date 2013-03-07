@@ -46,7 +46,7 @@ typedef double (*func_t) (double);
 typedef double (*func_p) (stack*);
 typedef NX_object* (*func_nx) (stack*);
 
-typedef union { /* TODO: Add lists and dictionaries */
+typedef union { /* TODO: Add lists, tuples and dictionaries */
     double num;
     char str[50];
     NX_object* obj;

@@ -31,9 +31,9 @@
 }
 
 %token <val> NUM STR NXO /* Double, String or NXO */
-%token <sym> LP RP LA RA LB RB COMMA COLON PLUS MINUS TIMES OVER EQ TO STOP
+%token <sym> LP RP LS RS LB RB  COMMA COLON PLUS MINUS TIMES OVER EQ TO STOP
 %token <tptr> VAR FNCT FNCP FNCNX /* Variable and functions */
-%type <val> /*exp*/ basicexp genericexp /*csv*/
+%type <val> /*exp*/ basic genericexp hashable /*csv*/
 
 %right EQ
 %left PLUS MINUS
@@ -46,33 +46,59 @@
 
 input       : /* empty */
             | input line
-;
+            ;
 
 line        : STOP      
-            | genericexp STOP { put_output ( $1 ); }
-            | error STOP      { yyerrok; }
-;
+            | basic STOP { put_output ( $1 ); }
+            | error STOP { yyerrok; }
+            ;
 
-genericexp  : basicexp
-;
+hashable    : NUM        { double num = $1.data.num; $$ = num_to_datatype (num); }
+            | STR        { char *str = $1.data.str; $$ = str_to_datatype (str); }
+            | NXO        { NX_object *obj = $1.data.obj; $$ = nxobj_to_datatype (obj); }
+            | tuple      {}
+            ;
 
-basicexp    : NUM                     { double num = $1.data.num; $$ = num_to_datatype (num); }
-            | VAR                     { $$ = $1->value.var; }
-            | VAR EQ basicexp         { $$ = $3; $1->value.var = $3; }
-            | FNCT LP basicexp RP     { $$.data.num = (*($1->value.fnctptr))($3.data.num); $$.type = NUM; }
-            | FNCP LP csv RP          { double num = (*($1->value.fncpptr))(s); $$ = num_to_datatype (num); }
-            | FNCNX LP csv RP         { NX_object *obj = (*($1->value.fnxptr))(s); $$ = nxobj_to_datatype (obj); }
-            | basicexp PLUS basicexp  { $$.data.num = $1.data.num + $3.data.num; $$.type = NUM; }
-            | basicexp MINUS basicexp { $$.data.num = $1.data.num - $3.data.num; $$.type = NUM; }
-            | basicexp TIMES basicexp { $$.data.num = $1.data.num * $3.data.num; $$.type = NUM; }
-            | basicexp OVER basicexp  { $$.data.num = $1.data.num / $3.data.num; $$.type = NUM; }
-            | basicexp TO basicexp    { $$.data.num = pow ($1.data.num, $3.data.num); $$.type = NUM; }
-            | LP basicexp RP          { $$.data.num = $2.data.num; $$.type = NUM; }
-;
+basic       : hashable
+            | list
+            | dict
+            | VAR               { $$ = $1->value.var; }
+            | VAR EQ basic      { $$ = $3; $1->value.var = $3; }
+            | FNCT LP basic RP  { $$.data.num = (*($1->value.fnctptr))($3.data.num); $$.type = NUM; }
+            | FNCP LP csv RP    { double num = (*($1->value.fncpptr))(s); $$ = num_to_datatype (num); }
+            | FNCNX LP csv RP   { NX_object *obj = (*($1->value.fnxptr))(s); if (obj != NULL ) $$ = nxobj_to_datatype (obj); }
+            | basic PLUS basic  { $$.data.num = $1.data.num + $3.data.num; $$.type = NUM; }
+            | basic MINUS basic { $$.data.num = $1.data.num - $3.data.num; $$.type = NUM; }
+            | basic TIMES basic { $$.data.num = $1.data.num * $3.data.num; $$.type = NUM; }
+            | basic OVER basic  { $$.data.num = $1.data.num / $3.data.num; $$.type = NUM; }
+            | basic TO basic    { $$.data.num = pow ($1.data.num, $3.data.num); $$.type = NUM; }
+            | LP basic RP       { $$.data.num = $2.data.num; $$.type = NUM; }
+            ;
 
-csv         : basicexp           { push ($1); }
-            | csv COMMA basicexp { push ($3); }
-;
+/* Only match comma separated values of basic type (non colon separated values) */
+csv         : basic           { push ($1); }
+            | csv COMMA basic { push ($3); }
+            ;
+
+/* Only match comma separated values of colon separated values */
+cscv        : colsv
+            | cscv COMMA colsv
+            ;
+
+colsv       : hashable COLON basic
+            ;
+
+tuple       : LP RP
+            | LP csv RS
+            ;
+
+list        : LS RS
+            | LS csv RS
+            ;
+
+dict        : LB RB
+            | LB cscv RB
+            ;
 /* End of grammar */
 %%
 
@@ -105,12 +131,14 @@ void put_output (datatype val) {
         default:
             break;
     }
+    clear_stack ();
 }
 
 datatype nxobj_to_datatype (NX_object *obj) {
     datatype ptr;
     ptr.type = NXO;
     ptr.data.obj = obj;
+    obj->name = sym_table->name;
     return ptr;
 }
 
@@ -161,6 +189,10 @@ void push (datatype val) {
                 s = putitem (s->top+1, NUM);
                 s->value.number = val.data.num;
                 break;
+            case NXO:
+                s = putitem (s->top+1, NXO);
+                strcpy (s->value.string, val.data.obj->name);
+                break;
             default:
                 break;
         }
@@ -188,9 +220,9 @@ void display () {
             stack *ptr = getitem (i);
             type = ptr->type;
             if (type == STR)
-                printf ("%s\n", ptr->value.string);
+                printf ("%d: %s\n", i, ptr->value.string);
             else if (type == NUM )
-                printf ("%.10g\n", ptr->value.number);
+                printf ("%d: %.10g\n", i, ptr->value.number);
         }
     }
     printf("\n");

@@ -30,10 +30,17 @@ char    [a-zA-z]
 "/"            { yylval.sym = yytext[0]; return OVER; }
 "^"            { yylval.sym = yytext[0]; return TO; }
 "="            { yylval.sym = yytext[0]; return EQ; }
+"'{char}+'"    { yylval.sym = yytext; return STR; }
+"\"{char}+\""  { yylval.sym = yytext; return STR; }
 {char}+        { symrec *sym = getsym (yytext); if (sym==0) sym = putsym (yytext, VAR) ; yylval.tptr = sym; return sym->type; }
 "("            { return LP; }
 ")"            { return RP; }
+"["            { return LS; }
+"]"            { return RS; }
+"{"            { return LB; }
+"}"            { return RB; }
 ","            { return COMMA; }
+":"            { return COLON; }
 [ \t]+         { }
 "\n"           { return STOP; }
 
