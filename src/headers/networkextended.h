@@ -52,6 +52,6 @@ void print_functions();
 
 //--- Internal functions
 int compute(nxfunction function, params p);
-void parsecommand(char *command, char **p_parsed, int *i);
+void parsecommand(char *command, char **p_parsed, int *i); /* XXX: Replace to yyparse */
 
 #endif // NETWORKEXTENDED_H
