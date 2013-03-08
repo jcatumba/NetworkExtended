@@ -11,44 +11,19 @@
 #define NETWORKEXTENDED_H
 
 #include "networkx.h"
-#include "uthash.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "parser.tab.h"
+//#include <math.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
 
-typedef struct{
-    int cmd_size;
-    char *var_name;
-    char **cmd_val;
-} params;
+//--- Callable
+double max (stack*);
+double min (stack*);
+NX_object* value(params p); /* XXX: Replace value by simple variable input */
+NX_object* exit_cli(params p); /* TODO: Improve exit_cli function */
 
-typedef struct {
-    char id[10];
-    int value;
-    NX_object* object;
-    UT_hash_handle hh;
-} hash_var;
-
-typedef NX_object* (*nxfunction)(params);
-
-typedef struct {
-    char name[25];
-    nxfunction func_call;
-    UT_hash_handle hh;
-} hash_func;
-
-//--- Functions for hashing variables
-hash_var *find_variable(char key[10]);
-void delete_variable(hash_var *variable);
-void add_variable(const char repr[10], int amount, NX_object* nxobj);
-void delete_all_variables();
-void print_vars();
-
-//--- Functions for hashing internals
-hash_func *find_function(char key[25]);
-void delete_function(hash_func *function);
-void add_function(char name[25], nxfunction function);
-void print_functions();
+void init_table (void);
 
 //--- Internal functions
 int compute(nxfunction function, params p);
