@@ -22,6 +22,7 @@
     void put_output (datatype);
     datatype nxobj_to_datatype (NX_object*);
     datatype num_to_datatype (double);
+    datatype do_arith (datatype, datatype, int);
 %}
 
 %union {
@@ -65,13 +66,13 @@ basic       : hashable
             | VAR               { $$ = $1->value.var; }
             | VAR EQ basic      { $$ = $3; $1->value.var = $3; }
             | FNCT LP basic RP  { $$.data.num = (*($1->value.fnctptr))($3.data.num); $$.type = NUM; }
-            | FNCP LP csv RP    { double num = (*($1->value.fncpptr))(s); $$ = num_to_datatype (num); }
+            | FNCP LP csv RP    { $$.data.num = (*($1->value.fncpptr))(s); $$.type = NUM; }
             | FNCNX LP csv RP   { NX_object *obj = (*($1->value.fnxptr))(s); if (obj != NULL ) $$ = nxobj_to_datatype (obj); }
-            | basic PLUS basic  { $$.data.num = $1.data.num + $3.data.num; $$.type = NUM; }
-            | basic MINUS basic { $$.data.num = $1.data.num - $3.data.num; $$.type = NUM; }
-            | basic TIMES basic { $$.data.num = $1.data.num * $3.data.num; $$.type = NUM; }
-            | basic OVER basic  { $$.data.num = $1.data.num / $3.data.num; $$.type = NUM; }
-            | basic TO basic    { $$.data.num = pow ($1.data.num, $3.data.num); $$.type = NUM; }
+            | basic PLUS basic  { $$ = do_arith ($1, $3, PLUS); }
+            | basic MINUS basic { $$ = do_arith ($1, $3, MINUS); }
+            | basic TIMES basic { $$ = do_arith ($1, $3, TIMES); }
+            | basic OVER basic  { $$ = do_arith ($1, $3, OVER); }
+            | basic TO basic    { $$ = do_arith ($1, $3, TO); }
             | LP basic RP       { $$.data.num = $2.data.num; $$.type = NUM; }
             ;
 
@@ -134,6 +135,42 @@ void put_output (datatype val) {
     clear_stack ();
 }
 
+datatype do_arith (datatype one, datatype two, int operator) {
+    datatype result;
+    if (one.type == NUM && two.type == NUM) {
+        switch (operator) {
+            case PLUS:
+                result.data.num = one.data.num + two.data.num;
+                break;
+            case MINUS:
+                result.data.num = one.data.num - two.data.num;
+                break;
+            case TIMES:
+                result.data.num = one.data.num * two.data.num;
+                break;
+            case OVER:
+                result.data.num = one.data.num / two.data.num;
+                break;
+            case TO:
+                result.data.num = pow (one.data.num, two.data.num);
+                break;
+        }
+        result.type = NUM;
+    } else if (one.type == STR && two.type == STR) {
+        switch (operator) {
+            case PLUS:
+                strcpy (result.data.str, one.data.str);
+                strcat (result.data.str, two.data.str);
+                break;
+            default:
+                strcpy (result.data.str, "Invalid types (strings). Use numbers instead.");
+                break;
+        }
+        result.type = STR;
+    }
+    return result;
+}
+
 datatype nxobj_to_datatype (NX_object *obj) {
     datatype ptr;
     ptr.type = NXO;
@@ -146,6 +183,13 @@ datatype num_to_datatype (double num) {
     datatype ptr;
     ptr.type = NUM;
     ptr.data.num = num;
+    return ptr;
+}
+
+datatype str_to_datatype (char str[50]) {
+    datatype ptr;
+    ptr.type = NUM;
+    strcpy (ptr.data.str, str),
     return ptr;
 }
 
