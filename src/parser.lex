@@ -35,8 +35,8 @@ all     [[:alnum:][:blank:]]
 {char}+        { symrec *sym = getsym (yytext); if (sym==0) sym = putsym (yytext, VAR) ; yylval.tptr = sym; return sym->type; }
 "("            { return LP; }
 ")"            { return RP; }
-"["            { return LS; }
-"]"            { return RS; }
+"\["            { return LS; }
+"\]"            { return RS; }
 "{"            { return LB; }
 "}"            { return RB; }
 ","            { return COMMA; }

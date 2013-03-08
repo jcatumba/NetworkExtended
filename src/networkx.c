@@ -145,7 +145,7 @@ double len (stack *p) {
 
 /* TODO: Handle addition of node attributes */ /* TODO: Allow non integer nodes */
 NX_object* add_node (stack *p) {
-    if (p->top != 1) fprintf(stderr, ">>> Usage: add_node (<graph_name>,<number>).\n");
+    if (p->top != 1) fprintf (stderr, ">>> Usage: add_node (<graph_name>,<number>).\n");
     stack *first = getitem (0);
     symrec *f = getsym (first->value.string);
     if ( f != NULL ) {
@@ -160,28 +160,33 @@ NX_object* add_node (stack *p) {
 }
 
 /* TODO: Handle attributes */ /* TODO: Allow non intenger nodes */
-/*NX_object* add_edge (params p) {
-    hash_var *f = find_variable (p.cmd_val[0]);
+NX_object* add_edge (stack *p) {
+    if (p->top != 2) fprintf (stderr, ">>> Usage: add_edge (<graph_name>,<number>,<number>).\n");
+    stack *first = getitem (0);
+    symrec *f = getsym (first->value.string);
     if (f != NULL) {
         PyObject* tuple = PyTuple_New (3);
-        PyTuple_SetItem (tuple, 0, f->object->py_object);
-        PyTuple_SetItem (tuple, 1, PyInt_FromLong (atoi (p.cmd_val[1])));
-        PyTuple_SetItem (tuple, 2, PyInt_FromLong (atoi (p.cmd_val[2])));
+        PyTuple_SetItem (tuple, 0, f->value.var.data.obj->py_object);
+        PyTuple_SetItem (tuple, 2, PyInt_FromLong (p->value.number));
+        PyTuple_SetItem (tuple, 1, PyInt_FromLong (p->next->value.number));
         PyObject_CallObject (nx_add_edge->py_object, tuple);
     } else {
-        fprintf (stderr, "Graph %s not found.\n", p.cmd_val[0]);
+        fprintf (stderr, "Graph %s not found.\n", first->value.string);
     }
     return NULL;
-}*/
+}
 
-/*NX_object* order (params p) {
-    hash_var *f = find_variable (p.cmd_val[0]);
+double order (stack *p) {
+    if (p->top != 0) fprintf (stderr, ">>> Usage: add_edge (<graph_name>).\n");
+    stack *first = getitem (0);
+    symrec *f = getsym (first->value.string);
     if ( f != NULL ) {
         PyObject* tuple = PyTuple_New (1);
-        PyTuple_SetItem (tuple, 0, f->object->py_object);
+        PyTuple_SetItem (tuple, 0, f->value.var.data.obj->py_object);
         PyObject* value = PyObject_CallObject (nx_order->py_object, tuple);
-        if (value) printf ("%ld\n", PyInt_AsLong (value));
+        if (value) return PyInt_AsLong (value);
     } else {
-        fprintf (stderr, "Graph %s not found.\n", p.cmd_val[0]);
+        fprintf (stderr, "Graph %s not found.\n", first->value.string);
+        return 0;
     }
-}*/
+}

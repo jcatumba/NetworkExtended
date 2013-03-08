@@ -33,11 +33,13 @@ struct init const arith_fncts[] =
     {"max", {.fnc2 = max}},
     {"min", {.fnc2 = min}},
     {"len", {.fnc2 = len}},
+    {"order", {.fnc2 = order}},
     {"Graph", {.fnc3 = Graph}},
     {"DiGraph", {.fnc3 = DiGraph}},
     {"MultiGraph", {.fnc3 = MultiGraph}},
     {"MultiDiGraph", {.fnc3 = MultiDiGraph}},
     {"add_node", {.fnc3 = add_node}},
+    {"add_edge", {.fnc3 = add_edge}},
     {0, 0}
 };
 
@@ -47,12 +49,12 @@ void init_table (void) {
         if (i <= 5) {
             symrec *ptr = putsym (arith_fncts[i].fname, FNCT);
             ptr->value.fnctptr = arith_fncts[i].fnct.fnc1;
-        } else if (i <= 8){
+        } else if (i <= 9){
             symrec *ptr = putsym (arith_fncts[i].fname, FNCP);
             ptr->value.fncpptr = arith_fncts[i].fnct.fnc2;
         } else {
             symrec *ptr = putsym (arith_fncts[i].fname, FNCNX);
-            ptr->value.fnxptr = arith_fncts[i].fnct.fnc2;
+            ptr->value.fnxptr = arith_fncts[i].fnct.fnc3;
         }
     }
 }

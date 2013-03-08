@@ -22,6 +22,7 @@
     void put_output (datatype);
     datatype nxobj_to_datatype (NX_object*);
     datatype num_to_datatype (double);
+    datatype str_to_datatype (char[50]);
     datatype do_arith (datatype, datatype, int);
 %}
 
@@ -34,7 +35,7 @@
 %token <val> NUM STR NXO /* Double, String or NXO */
 %token <sym> LP RP LS RS LB RB  COMMA COLON PLUS MINUS TIMES OVER EQ TO STOP
 %token <tptr> VAR FNCT FNCP FNCNX /* Variable and functions */
-%type <val> /*exp*/ basic genericexp hashable /*csv*/
+%type <val> basic hashable
 
 %right EQ
 %left PLUS MINUS
@@ -57,12 +58,12 @@ line        : STOP
 hashable    : NUM        { double num = $1.data.num; $$ = num_to_datatype (num); }
             | STR        { char *str = $1.data.str; $$ = str_to_datatype (str); }
             | NXO        { NX_object *obj = $1.data.obj; $$ = nxobj_to_datatype (obj); }
-            | tuple      {}
+/*            | tuple      {}*/
             ;
 
 basic       : hashable
-            | list
-            | dict
+/*            | list
+            | dict */
             | VAR               { $$ = $1->value.var; }
             | VAR EQ basic      { $$ = $3; $1->value.var = $3; }
             | FNCT LP basic RP  { $$.data.num = (*($1->value.fnctptr))($3.data.num); $$.type = NUM; }
@@ -82,7 +83,7 @@ csv         : basic           { push ($1); }
             ;
 
 /* Only match comma separated values of colon separated values */
-cscv        : colsv
+/*cscv        : colsv
             | cscv COMMA colsv
             ;
 
@@ -99,7 +100,7 @@ list        : LS RS
 
 dict        : LB RB
             | LB cscv RB
-            ;
+            ;*/
 /* End of grammar */
 %%
 
@@ -189,7 +190,7 @@ datatype num_to_datatype (double num) {
 datatype str_to_datatype (char str[50]) {
     datatype ptr;
     ptr.type = NUM;
-    strcpy (ptr.data.str, str),
+    strcpy (ptr.data.str, str);
     return ptr;
 }
 

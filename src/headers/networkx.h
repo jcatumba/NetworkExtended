@@ -29,116 +29,116 @@ NX_object* MultiDiGraph(stack *p);
 /*** NetworkX Basic Methods ***/
 double len(stack *p);
 NX_object* add_node(stack *p);
-NX_object* add_nodes_from(params p);
-NX_object* remove_node(params p);
-NX_object* remove_nodes_from(params p);
-NX_object* add_edge(params p);
-NX_object* add_edges_from(params p);
-NX_object* add_weighted_edges_from(params p);
-NX_object* remove_edge(params p);
-NX_object* remove_edges_from(params p);
-NX_object* add_star(params p);
-NX_object* add_path(params p);
-NX_object* add_cycle(params p);
-NX_object* clear(params p);
-NX_object* nodes(params p);
-NX_object* nodes_iter(params p);
-NX_object* edges(params p);
-NX_object* edges_iter(params p);
-NX_object* out_edges(params p); /* [Multi]DiGraph specific */
-NX_object* out_edges_iter(params p); /* [Multi]DiGraph specific */
-NX_object* in_edges(params p); /* [Multi]DiGraph specific */
-NX_object* in_edges_iter(params p); /* [Multi]DiGraph specific */
-NX_object* get_edge_data(params p);
-NX_object* neighbors(params p);
-NX_object* neighbors_iter(params p);
-NX_object* successors(params p); /* [Multi]DiGraph specific */
-NX_object* successors_iter(params p); /* [Multi]DiGraph specific */
-NX_object* predecessors(params p); /* [Multi]DiGraph specific */
-NX_object* predecessors_iter(params p); /* [Multi]DiGraph specific */
-NX_object* adjacency_list(params p);
-NX_object* adjacency_iter(params p);
-NX_object* nbunch_iter(params p);
-NX_object* has_node(params p);
-NX_object* has_edge(params p);
-NX_object* order(params p);
-NX_object* degree(params p);
-NX_object* degree_iter(params p);
-NX_object* in_degree(params p); /* [Multi]DiGraph specific */
-NX_object* in_degree_iter(params p); /* [Multi]DiGraph specific */
-NX_object* out_degree(params p); /* [Multi]DiGraph specific */
-NX_object* out_degree_iter(params p); /* [Multi]DiGraph specific */
-NX_object* size(params p);
-NX_object* number_of_edges(params p);
-NX_object* nodes_with_selfloops(params p);
-NX_object* selfloop_edges(params p);
-NX_object* number_of_selfloops(params p);
-NX_object* copy(params p);
-NX_object* to_undirected(params p);
-NX_object* to_directed(params p);
-NX_object* subgraph(params p);
-NX_object* reverse(params p); /* [Multi]DiGraph specific */
+NX_object* add_nodes_from(stack *p);
+NX_object* remove_node(stack *p);
+NX_object* remove_nodes_from(stack *p);
+NX_object* add_edge(stack *p);
+NX_object* add_edges_from(stack *p);
+NX_object* add_weighted_edges_from(stack *p);
+NX_object* remove_edge(stack *p);
+NX_object* remove_edges_from(stack *p);
+NX_object* add_star(stack *p);
+NX_object* add_path(stack *p);
+NX_object* add_cycle(stack *p);
+NX_object* clear(stack *p);
+NX_object* nodes(stack *p);
+NX_object* nodes_iter(stack *p);
+NX_object* edges(stack *p);
+NX_object* edges_iter(stack *p);
+NX_object* out_edges(stack *p); /* [Multi]DiGraph specific */
+NX_object* out_edges_iter(stack *p); /* [Multi]DiGraph specific */
+NX_object* in_edges(stack *p); /* [Multi]DiGraph specific */
+NX_object* in_edges_iter(stack *p); /* [Multi]DiGraph specific */
+NX_object* get_edge_data(stack *p);
+NX_object* neighbors(stack *p);
+NX_object* neighbors_iter(stack *p);
+NX_object* successors(stack *p); /* [Multi]DiGraph specific */
+NX_object* successors_iter(stack *p); /* [Multi]DiGraph specific */
+NX_object* predecessors(stack *p); /* [Multi]DiGraph specific */
+NX_object* predecessors_iter(stack *p); /* [Multi]DiGraph specific */
+NX_object* adjacency_list(stack *p);
+NX_object* adjacency_iter(stack *p);
+NX_object* nbunch_iter(stack *p);
+NX_object* has_node(stack *p);
+NX_object* has_edge(stack *p);
+double order(stack *p);
+NX_object* degree(stack *p);
+NX_object* degree_iter(stack *p);
+NX_object* in_degree(stack *p); /* [Multi]DiGraph specific */
+NX_object* in_degree_iter(stack *p); /* [Multi]DiGraph specific */
+NX_object* out_degree(stack *p); /* [Multi]DiGraph specific */
+NX_object* out_degree_iter(stack *p); /* [Multi]DiGraph specific */
+NX_object* size(stack *p);
+NX_object* number_of_edges(stack *p);
+NX_object* nodes_with_selfloops(stack *p);
+NX_object* selfloop_edges(stack *p);
+NX_object* number_of_selfloops(stack *p);
+NX_object* copy(stack *p);
+NX_object* to_undirected(stack *p);
+NX_object* to_directed(stack *p);
+NX_object* subgraph(stack *p);
+NX_object* reverse(stack *p); /* [Multi]DiGraph specific */
 
 /*** NetworkX Algorithms ***/
-NX_object* max_clique(params p);
-NX_object* clique_removal(params p);
-NX_object* min_weighted_dominating_set(params p);
-NX_object* min_edge_dominating_set(params p);
-NX_object* maximum_independet_set(params p);
-NX_object* min_maximal_matching(params p);
-NX_object* ramsey_R2(params p);
-NX_object* min_weighted_vertex_cover(params p);
-NX_object* degree_assortativity_coefficient(params p);
-NX_object* attribute_assortativity_coefficient(params p);
-NX_object* numeric_assortativity_coefficient(params p);
-NX_object* degree_pearson_correlation_coefficient(params p);
-NX_object* average_neighbor_degree(params p);
-NX_object* average_degree_connectivity(params p);
-NX_object* k_nearest_neighbors(params p);
-NX_object* attribute_mixing_matrix(params p);
-NX_object* degree_mixing_matrix(params p);
-NX_object* degree_mixing_dict(params p);
-NX_object* attribute_mixing_dict(params p);
-NX_object* is_bipartite(params p);
-NX_object* is_bipartite_node_set(params p);
-NX_object* sets(params p);
-NX_object* color(params p);
-NX_object* density(params p);
-NX_object* degrees(params p);
-NX_object* biadjacency_Matrix(params p);
-NX_object* projected_graph(params p);
-NX_object* weighted_projected_graph(params p);
-NX_object* collaboration_weighted_projected_graph(params p);
-NX_object* overlap_weighted_projected_graph(params p);
-NX_object* generic_weighted_projected_graph(params p);
-NX_object* spectral_bipartivity(params p);
-NX_object* clustering(params p);
-NX_object* redundancy(params p);
-NX_object* closeness_centrality(params p);
-NX_object* degree_centrality(params p);
-NX_object* in_degree_centrality(params p);
-NX_object* out_degree_centrality(params p);
-NX_object* betweenness_centrality(params p);
-NX_object* edge_betweenness_centrality(params p);
-NX_object* blockmodel(params p);
-NX_object* edge_boundary(params p);
-NX_object* node_boundary(params p);
-NX_object* current_flow_closeness_centrality(params p);
-NX_object* current_flow_betweenness_centrality(params p);
-NX_object* edge_current_flow_betweenness_centrality(params p);
-NX_object* approximate_current_flow_betweenness_centrality(params p);
-NX_object* eigenvector_centrality(params p);
-NX_object* eigenvector_centrality_numpy(params p);
-NX_object* communicability(params p);
-NX_object* communicability_exp(params p);
-NX_object* communicability_centrality(params p);
-NX_object* communicability_centrality_exp(params p);
-NX_object* communicability_betwenness_centrality(params p);
-NX_object* estrada_index(params p);
-NX_object* load_centrality(params p);
-NX_object* edge_load(params p);
+NX_object* max_clique(stack *p);
+NX_object* clique_removal(stack *p);
+NX_object* min_weighted_dominating_set(stack *p);
+NX_object* min_edge_dominating_set(stack *p);
+NX_object* maximum_independet_set(stack *p);
+NX_object* min_maximal_matching(stack *p);
+NX_object* ramsey_R2(stack *p);
+NX_object* min_weighted_vertex_cover(stack *p);
+NX_object* degree_assortativity_coefficient(stack *p);
+NX_object* attribute_assortativity_coefficient(stack *p);
+NX_object* numeric_assortativity_coefficient(stack *p);
+NX_object* degree_pearson_correlation_coefficient(stack *p);
+NX_object* average_neighbor_degree(stack *p);
+NX_object* average_degree_connectivity(stack *p);
+NX_object* k_nearest_neighbors(stack *p);
+NX_object* attribute_mixing_matrix(stack *p);
+NX_object* degree_mixing_matrix(stack *p);
+NX_object* degree_mixing_dict(stack *p);
+NX_object* attribute_mixing_dict(stack *p);
+NX_object* is_bipartite(stack *p);
+NX_object* is_bipartite_node_set(stack *p);
+NX_object* sets(stack *p);
+NX_object* color(stack *p);
+NX_object* density(stack *p);
+NX_object* degrees(stack *p);
+NX_object* biadjacency_Matrix(stack *p);
+NX_object* projected_graph(stack *p);
+NX_object* weighted_projected_graph(stack *p);
+NX_object* collaboration_weighted_projected_graph(stack *p);
+NX_object* overlap_weighted_projected_graph(stack *p);
+NX_object* generic_weighted_projected_graph(stack *p);
+NX_object* spectral_bipartivity(stack *p);
+NX_object* clustering(stack *p);
+NX_object* redundancy(stack *p);
+NX_object* closeness_centrality(stack *p);
+NX_object* degree_centrality(stack *p);
+NX_object* in_degree_centrality(stack *p);
+NX_object* out_degree_centrality(stack *p);
+NX_object* betweenness_centrality(stack *p);
+NX_object* edge_betweenness_centrality(stack *p);
+NX_object* blockmodel(stack *p);
+NX_object* edge_boundary(stack *p);
+NX_object* node_boundary(stack *p);
+NX_object* current_flow_closeness_centrality(stack *p);
+NX_object* current_flow_betweenness_centrality(stack *p);
+NX_object* edge_current_flow_betweenness_centrality(stack *p);
+NX_object* approximate_current_flow_betweenness_centrality(stack *p);
+NX_object* eigenvector_centrality(stack *p);
+NX_object* eigenvector_centrality_numpy(stack *p);
+NX_object* communicability(stack *p);
+NX_object* communicability_exp(stack *p);
+NX_object* communicability_centrality(stack *p);
+NX_object* communicability_centrality_exp(stack *p);
+NX_object* communicability_betwenness_centrality(stack *p);
+NX_object* estrada_index(stack *p);
+NX_object* load_centrality(stack *p);
+NX_object* edge_load(stack *p);
 
-NX_object* dijkstra_path(params p);
+NX_object* dijkstra_path(stack *p);
 
 /*** NetworkX Drawing ***/
 
