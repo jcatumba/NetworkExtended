@@ -81,7 +81,7 @@ void load_objects (NX_object *nx_module) {
 }
 
 //
-// Callable functions TODO: Edit functions to match pointer: double (*func_t) (stack*)
+// Callable functions
 //
 /*** Graph creation functions ***/
 NX_object* Graph (stack *p) {

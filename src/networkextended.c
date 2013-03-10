@@ -40,6 +40,7 @@ struct init const arith_fncts[] =
     {"MultiDiGraph", {.fnc3 = MultiDiGraph}},
     {"add_node", {.fnc3 = add_node}},
     {"add_edge", {.fnc3 = add_edge}},
+    {"exit", {.fnc3 = exit_cli}},
     {0, 0}
 };
 
@@ -62,39 +63,6 @@ void init_table (void) {
 //
 // Internal functions
 //
-
-int compute (nxfunction function, params p){ /* XXX: Remove (bison parser will call functions) */
-    NX_object* d = (*function)(p);
-    if ( d != NULL ) {
-        return 0;
-    } else {
-        return 1;
-    }
-}
-
-void parsecommand (char *command, char **p_parsed, int *i) { /* XXX: Replace by yyparse */
-    int j;
-    char *result = NULL;
-
-    if ( *i==0 ) {
-        result = strtok (command, "(");
-        p_parsed[0] = result;
-    } else {
-        result = strtok (command, "=");
-        p_parsed[0] = result;
-        if (result != NULL) {
-            result = strtok (NULL, "(");
-            p_parsed[1] = result;
-        }
-    }
-    while (result != NULL) {
-        ++*i;
-        result = strtok (NULL, ",");
-        p_parsed[*i] = result;
-    }
-    result = strtok (p_parsed[*i-1],")");
-    p_parsed[*i-1] = result;
-}
 
 //
 // CLI functions
@@ -133,9 +101,10 @@ double min (stack *p) {
         printf ("Value of %s not found.\n", p.cmd_val[0]);
         return NULL;
     }
-}
+}*/
 
-NX_object* exit_cli (params p) {
+NX_object* exit_cli (stack *p) {
+    remove ("cmd");
     exit (0);
     return NULL;
-}*/
+}

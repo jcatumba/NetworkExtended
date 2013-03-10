@@ -20,13 +20,10 @@
 //--- Callable
 double max (stack*);
 double min (stack*);
-NX_object* value(params p); /* XXX: Replace value by simple variable input */
-NX_object* exit_cli(params p); /* TODO: Improve exit_cli function */
+NX_object* exit_cli(stack*); /* TODO: Improve exit_cli function */
 
 void init_table (void);
 
 //--- Internal functions
-int compute(nxfunction function, params p);
-void parsecommand(char *command, char **p_parsed, int *i); /* XXX: Replace to yyparse */
 
 #endif // NETWORKEXTENDED_H
