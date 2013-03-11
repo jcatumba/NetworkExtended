@@ -5,18 +5,18 @@
 SUBDIRS = src
 SUBCLEAN = $(addsuffix .clean,$(SUBDIRS))
 LIB = -lm
-LIBRARIES = lib/main.o lib/parserl.o lib/parsery.o lib/networkx.o lib/networkextended.o
+LIBRARIES = bin/libs/main.o bin/libs/parserl.o bin/libs/parsery.o bin/libs/networkx.o bin/libs/networkextended.o
 INCLUDE = -I./src/headers
-LINK = -Wl,-rpath,./lib
+LINK = -Wl,-rpath,./bin/libs
 pkgconfig = `pkg-config --cflags --libs python`
-BUILD = build/networkextended.bin
+BUILD = bin/networkextended.bin
 
 # --- Construct all things
 .PHONY: all
 
 all: $(BUILD)
 
-build/networkextended.bin: $(SUBDIRS) $(LIBRARIES) 
+bin/networkextended.bin: $(SUBDIRS) $(LIBRARIES) 
 	gcc -g -o $@ $(LIBRARIES) $(LINK) $(LIB) $(INCLUDE) $(pkgconfig)
 
 # --- Construct all subdirs and debug option
