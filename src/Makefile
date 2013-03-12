@@ -34,5 +34,7 @@ parser.tab.c: parser.y headers/parser.h
 
 clean:
 	rm -f ../bin/libs/*
+	rm -f lex.yy.c
+	rm -f parser.tab.c
 
 #TODO: Add instructions to build tests and modules/netevo directories
