@@ -20,7 +20,8 @@ class netextGui : public ofBaseApp {
 		void windowResized (int w, int h);
 		void dragEvent (ofDragInfo dragInfo);
 		void gotMessage (ofMessage msg);
-        Node theNode;
+
+        vector<Node> Nodes; // Vector to save all nodes.
 
     ofxUICanvas *gui;
     ofxUIDropDownList *ddl;

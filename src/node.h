@@ -9,14 +9,15 @@ public:
     Node ();
 
     // Methods
-    void moveTo (int, int);
+    void set (int, int);
     void draw ();
 
     // Properties
     int x;
     int y;
     int radius;
-    ofColor color;
+    ofColor bgcolor;
+    ofColor bdcolor;
 };
 
 #endif

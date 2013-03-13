@@ -40,12 +40,15 @@ void netextGui::setup (){
 
 //--------------------------------------------------------------
 void netextGui::update (){
-    theNode.moveTo (mouseX, mouseY);
+    //theNode.moveTo (mouseX, mouseY);
 }
 
 //--------------------------------------------------------------
 void netextGui::draw (){
-    theNode.draw ();
+    //theNode.draw ();
+    for (int i=0; i<Nodes.size (); i++) {
+        Nodes[i].draw ();
+    }
 }
 
 //--------------------------------------------------------------
@@ -109,6 +112,8 @@ void netextGui::mousePressed (int x, int y, int button){
     //cout << "Mouse button: " << button << endl;
 
     if (button == 0) {
+        Nodes.push_back (Node ());
+        Nodes.back().set (x, y);
     //    theNode.draw (x, y);
     }
 }

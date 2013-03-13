@@ -2,21 +2,27 @@
 
 Node::Node () {
     // Set the initial color
-    color.set (ofRandom(255), ofRandom(255), ofRandom(255));
+    bgcolor.set (200, 200, 200);
+    bdcolor.set (64, 64, 64);
 
     // Default radius
-    x = ofRandom (ofGetWindowWidth ());
-    y = ofRandom (ofGetWindowHeight ());
+    //x = ofRandom (ofGetWindowWidth ());
+    x = 0;
+    //y = ofRandom (ofGetWindowHeight ());
+    y = 0;
     radius = 30;
 }
 
-void Node::moveTo (int _xDest, int _yDest) {
-    x += (_xDest - x)*0.1;
-    y += (_yDest - y)*0.1;
+void Node::set (int _xDest, int _yDest) {
+    x = _xDest;
+    y = _yDest;
 }
 
 void Node::draw () {
-    ofSetColor (color);
+    ofSetColor (bgcolor);
     ofFill ();
+    ofCircle (x, y, radius);
+    ofSetColor (bdcolor);
+    ofNoFill ();
     ofCircle (x, y, radius);
 }
