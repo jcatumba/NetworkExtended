@@ -3,9 +3,9 @@
 #include "ofAppGlutWindow.h"
 
 //--------------------------------------------------------------
-int main(){
+int main () {
 	ofAppGlutWindow window; // create a window
 	// set width, height, mode (OF_WINDOW or OF_FULLSCREEN)
-	ofSetupOpenGL(&window, 1024, 768, OF_WINDOW);
-	ofRunApp(new netextGui()); // start the app
+	ofSetupOpenGL (&window, 1024, 768, OF_WINDOW);
+	ofRunApp (new netextGui ()); // start the app
 }

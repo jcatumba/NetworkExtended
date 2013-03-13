@@ -2,7 +2,10 @@
 
 //--------------------------------------------------------------
 void netextGui::setup (){
+    //ofBackgroundGradient (ofColor (255, 255, 255), ofColor (0, 0, 0), OF_GRADIENT_CIRCULAR);
     ofEnableSmoothing ();
+    float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
+    float length = 320;
     gui = new ofxUICanvas ();
 
     gui->setFont ("GUI/mono.ttf");
@@ -18,7 +21,18 @@ void netextGui::setup (){
     gui->addSpacer ();
     gui->addLabel ("Node properties", OFX_UI_FONT_MEDIUM);
     gui->addSpacer ();
+
+    vector<string> names;
+    names.push_back("One");
+    names.push_back("Two");
+    names.push_back("Three");
+    ddl = new ofxUIDropDownList (length-xInit, "Dynamic Drop Down", names, OFX_UI_FONT_MEDIUM);
+    ddl->setAllowMultiple (true);
+    gui->addWidgetDown (ddl);
+
+    gui->addSpacer ();
     gui->addLabel ("Edge properties", OFX_UI_FONT_MEDIUM);
+
     gui->autoSizeToFitWidgets ();
     ofAddListener (gui->newGUIEvent, this, &netextGui::guiEvent);
     gui->loadSettings ("GUI/guiSettings.xml");
@@ -26,12 +40,12 @@ void netextGui::setup (){
 
 //--------------------------------------------------------------
 void netextGui::update (){
-
+    theNode.moveTo (mouseX, mouseY);
 }
 
 //--------------------------------------------------------------
 void netextGui::draw (){
-
+    theNode.draw ();
 }
 
 //--------------------------------------------------------------
@@ -42,12 +56,22 @@ void netextGui::exit (){
 
 //--------------------------------------------------------------
 void netextGui::guiEvent (ofxUIEventArgs &e){
-    if (e.widget->getName () == "Background value") {
+    string name = e.widget->getName ();
+
+    //cout << "Widget Name: " << name << endl;
+
+    if (name  == "Background value") {
         ofxUISlider *slider = (ofxUISlider *) e.widget;
         ofBackground (slider->getScaledValue ());
-    } else if (e.widget->getName () == "Fullscreen") {
+    } else if (name == "Fullscreen") {
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
         ofSetFullscreen (toggle->getValue ());
+    } else if (name == "Dynamic Drop Down") {
+        ofxUIDropDownList *ddlist = (ofxUIDropDownList *) e.widget;
+        vector<ofxUIWidget *> &selected = ddlist->getSelected();
+        for (int i=0; i< selected.size(); i++) {
+            cout << "SELECTED: " << selected[i]->getName() << endl;
+        }
     }
 }
 
@@ -82,7 +106,11 @@ void netextGui::mouseDragged (int x, int y, int button){
 
 //--------------------------------------------------------------
 void netextGui::mousePressed (int x, int y, int button){
+    //cout << "Mouse button: " << button << endl;
 
+    if (button == 0) {
+    //    theNode.draw (x, y);
+    }
 }
 
 //--------------------------------------------------------------

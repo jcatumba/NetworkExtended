@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxUI.h"
+// Especific definitions
+#include "node.h"
 
 class netextGui : public ofBaseApp {
 	public:
@@ -18,8 +20,10 @@ class netextGui : public ofBaseApp {
 		void windowResized (int w, int h);
 		void dragEvent (ofDragInfo dragInfo);
 		void gotMessage (ofMessage msg);
+        Node theNode;
 
     ofxUICanvas *gui;
+    ofxUIDropDownList *ddl;
     void exit ();
     void guiEvent (ofxUIEventArgs &e);
 };
