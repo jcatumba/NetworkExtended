@@ -36,5 +36,6 @@ clean:
 	rm -f ../bin/libs/*
 	rm -f lex.yy.c
 	rm -f parser.tab.c
+	rm -f headers/parser.tab.h
 
 #TODO: Add instructions to build tests and modules/netevo directories

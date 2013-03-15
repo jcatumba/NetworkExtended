@@ -7,6 +7,9 @@
  * more information about the license see the license.txt file.
  * ================================================================*/
 
+#ifndef PARSER_H
+#define PARSER_H
+
 #define MAXSIZE 10 /* Maxsize for stack */
 #include <Python.h>
 
@@ -87,3 +90,5 @@ void clear_stack (void);
 /* Functions to handle stack chain */
 stack *putitem (int, int);
 stack *getitem (int);
+
+#endif // PARSER_H
