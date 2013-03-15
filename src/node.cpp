@@ -7,22 +7,31 @@ Node::Node () {
 
     // Default radius
     //x = ofRandom (ofGetWindowWidth ());
-    x = 0;
-    //y = ofRandom (ofGetWindowHeight ());
-    y = 0;
-    radius = 30;
+    center.set(0, 0);
+    radius = 25;
 }
 
 void Node::set (int _xDest, int _yDest) {
-    x = _xDest;
-    y = _yDest;
+    center.set (_xDest, _yDest);
 }
 
 void Node::draw () {
     ofSetColor (bgcolor);
     ofFill ();
-    ofCircle (x, y, radius);
+    ofCircle (center.x, center.y, radius);
     ofSetColor (bdcolor);
     ofNoFill ();
-    ofCircle (x, y, radius);
+    ofCircle (center.x, center.y, radius);
+}
+
+void Node::update (int x, int y) {
+    center.set (x, y);
+}
+
+bool Node::checkOver (int x, int y) {
+    if (center.distance(ofVec2f (x, y)) < radius * 0.9) {
+        return true;
+    } else {
+        return false;
+    }
 }

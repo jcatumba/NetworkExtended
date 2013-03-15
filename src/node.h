@@ -1,7 +1,8 @@
-#ifndef ball_h
-#define ball_h
+#ifndef NODE_H
+#define NODE_H
 
 #include "ofMain.h"
+#include "ofxUI.h"
 
 class Node {
 public:
@@ -9,15 +10,16 @@ public:
     Node ();
 
     // Methods
-    void set (int, int);
-    void draw ();
+    void set (int, int); // Setup the node
+    void draw (); // Draw the node
+    void update (int, int); // Update the node
+    bool checkOver (int, int); // Check if the mouse is over the node
 
     // Properties
-    int x;
-    int y;
+    ofVec2f center;
     int radius;
     ofColor bgcolor;
     ofColor bdcolor;
 };
 
-#endif
+#endif // NODE_H

@@ -104,23 +104,30 @@ void netextGui::mouseMoved (int x, int y){
 
 //--------------------------------------------------------------
 void netextGui::mouseDragged (int x, int y, int button){
-
+    if (selectedNode > -1) {
+        Nodes[selectedNode].update(ofGetMouseX(), ofGetMouseY());
+    }
 }
 
 //--------------------------------------------------------------
 void netextGui::mousePressed (int x, int y, int button){
-    //cout << "Mouse button: " << button << endl;
-
-    if (button == 0) {
+    bool pressed = false;
+    for (int i=0; i<Nodes.size(); i++) {
+        if (Nodes[i].checkOver(x, y)) {
+            pressed = true;
+            selectedNode = i;
+            break;
+        }
+    }
+    if (button == 0 && !pressed) {
         Nodes.push_back (Node ());
         Nodes.back().set (x, y);
-    //    theNode.draw (x, y);
     }
 }
 
 //--------------------------------------------------------------
 void netextGui::mouseReleased (int x, int y, int button){
-
+    selectedNode = -1;
 }
 
 //--------------------------------------------------------------

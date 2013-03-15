@@ -1,8 +1,5 @@
 #pragma once
 
-#include "ofMain.h"
-#include "ofxUI.h"
-// Especific definitions
 #include "node.h"
 
 class netextGui : public ofBaseApp {
@@ -22,6 +19,7 @@ class netextGui : public ofBaseApp {
 		void gotMessage (ofMessage msg);
 
         vector<Node> Nodes; // Vector to save all nodes.
+        int selectedNode = -1;
 
     ofxUICanvas *gui;
     ofxUIDropDownList *ddl;
