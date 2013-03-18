@@ -40,14 +40,15 @@ void netextGui::setup (){
 
 //--------------------------------------------------------------
 void netextGui::update (){
-    //theNode.moveTo (mouseX, mouseY);
 }
 
 //--------------------------------------------------------------
 void netextGui::draw (){
-    //theNode.draw ();
     for (int i=0; i<Nodes.size (); i++) {
         Nodes[i].draw ();
+    }
+    for (int i=0; i<Edges.size (); i++) {
+        Edges[i].draw ();
     }
 }
 
@@ -105,29 +106,72 @@ void netextGui::mouseMoved (int x, int y){
 //--------------------------------------------------------------
 void netextGui::mouseDragged (int x, int y, int button){
     if (selectedNode > -1) {
-        Nodes[selectedNode].update(ofGetMouseX(), ofGetMouseY());
+        if (button == 0) {
+            Nodes[selectedNode].update(ofGetMouseX(), ofGetMouseY());
+            for (int i=0; i<Edges.size(); i++) {
+                if (Edges[i].source_id == selectedNode) {
+                    Edges[i].update_source (Nodes[selectedNode]);
+                } else if (Edges[i].target_id == selectedNode) {
+                    Edges[i].update_target (Nodes[selectedNode]);
+                }
+            }
+        } else if (button == 2) {
+            // Nothing
+        }
+    }
+    if (selectedEdge > -1) {
+        Edges[selectedEdge].update(ofGetMouseX(), ofGetMouseY());
     }
 }
 
 //--------------------------------------------------------------
 void netextGui::mousePressed (int x, int y, int button){
-    bool pressed = false;
-    for (int i=0; i<Nodes.size(); i++) {
-        if (Nodes[i].checkOver(x, y)) {
-            pressed = true;
-            selectedNode = i;
-            break;
+    bool nodePressed = false;
+    bool edgePressed = false;
+    if (button == 0) {
+        for (int i=0; i<Nodes.size(); i++) {
+            if (Nodes[i].checkOver (x, y)) {
+                nodePressed = true;
+                selectedNode = i;
+                break;
+            }
         }
-    }
-    if (button == 0 && !pressed) {
-        Nodes.push_back (Node ());
-        Nodes.back().set (x, y);
+        for (int i=0; i<Edges.size(); i++) {
+            if (Edges[i].checkOver (x, y)) {
+                edgePressed = true;
+                selectedEdge = i;
+                break;
+            }
+        }
+        if (!nodePressed && !edgePressed) {
+            Nodes.push_back (Node ());
+            Nodes.back().set (x, y);
+        }
+    } else if (button == 2) {
+        for (int i=0; i<Nodes.size(); i++) {
+            if (Nodes[i].checkOver(x, y)) {
+                nodePressed = true;
+                selectedNode = i;
+                break;
+            }
+        }
     }
 }
 
 //--------------------------------------------------------------
 void netextGui::mouseReleased (int x, int y, int button){
+    if (selectedNode > -1) {
+        if (button == 2) {
+            for (int i=0; i<Nodes.size(); i++) {
+                if (Nodes[i].checkOver(ofGetMouseX(), ofGetMouseY()) && i != selectedNode) {
+                    Edges.push_back (Edge ());
+                    Edges.back().set(Nodes[selectedNode], Nodes[i], selectedNode, i);
+                }
+            }
+        }
+    }
     selectedNode = -1;
+    selectedEdge = -1;
 }
 
 //--------------------------------------------------------------

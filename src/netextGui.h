@@ -1,6 +1,7 @@
 #pragma once
 
-#include "node.h"
+#include "ofxUI.h"
+#include "graph.h"
 
 class netextGui : public ofBaseApp {
 	public:
@@ -19,7 +20,9 @@ class netextGui : public ofBaseApp {
 		void gotMessage (ofMessage msg);
 
         vector<Node> Nodes; // Vector to save all nodes.
+        vector<Edge> Edges; // Vector to sava all edges.
         int selectedNode = -1;
+        int selectedEdge = -1;
 
     ofxUICanvas *gui;
     ofxUIDropDownList *ddl;
