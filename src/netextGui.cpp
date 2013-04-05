@@ -6,9 +6,9 @@ void netextGui::setup (){
     ofEnableSmoothing ();
     float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
     float length = 320;
-    gui = new ofxUICanvas ();
+    //gui = new ofxUICanvas ();
 
-    gui->setFont ("GUI/mono.ttf");
+    /*gui->setFont ("GUI/mono.ttf");
     gui->addLabel ("NetworkExtended", OFX_UI_FONT_LARGE);
     gui->addSpacer ();
     gui->addSlider ("Background value", 0.0, 255.0, 100.0);
@@ -35,7 +35,7 @@ void netextGui::setup (){
 
     gui->autoSizeToFitWidgets ();
     ofAddListener (gui->newGUIEvent, this, &netextGui::guiEvent);
-    gui->loadSettings ("GUI/guiSettings.xml");
+    gui->loadSettings ("GUI/guiSettings.xml");*/
 }
 
 //--------------------------------------------------------------
@@ -44,11 +44,11 @@ void netextGui::update (){
 
 //--------------------------------------------------------------
 void netextGui::draw (){
-    for (int i=0; i<Nodes.size (); i++) {
-        Nodes[i].draw ();
-    }
     for (int i=0; i<Edges.size (); i++) {
         Edges[i].draw ();
+    }
+    for (int i=0; i<Nodes.size (); i++) {
+        Nodes[i].draw ();
     }
 }
 
@@ -61,8 +61,6 @@ void netextGui::exit (){
 //--------------------------------------------------------------
 void netextGui::guiEvent (ofxUIEventArgs &e){
     string name = e.widget->getName ();
-
-    //cout << "Widget Name: " << name << endl;
 
     if (name  == "Background value") {
         ofxUISlider *slider = (ofxUISlider *) e.widget;
@@ -81,6 +79,7 @@ void netextGui::guiEvent (ofxUIEventArgs &e){
 
 //--------------------------------------------------------------
 void netextGui::keyPressed (int key){
+    // Get the pressed key
     switch (key) {
         case 'p':
             gui->setDrawWidgetPadding (true);
@@ -105,6 +104,7 @@ void netextGui::mouseMoved (int x, int y){
 
 //--------------------------------------------------------------
 void netextGui::mouseDragged (int x, int y, int button){
+    // Manipulate a selected node
     if (selectedNode > -1) {
         if (button == 0) {
             Nodes[selectedNode].update(ofGetMouseX(), ofGetMouseY());
@@ -119,6 +119,8 @@ void netextGui::mouseDragged (int x, int y, int button){
             // Nothing
         }
     }
+
+    // Manipulate a selected edge
     if (selectedEdge > -1) {
         Edges[selectedEdge].update(ofGetMouseX(), ofGetMouseY());
     }
@@ -128,7 +130,10 @@ void netextGui::mouseDragged (int x, int y, int button){
 void netextGui::mousePressed (int x, int y, int button){
     bool nodePressed = false;
     bool edgePressed = false;
+
+    // Actions on mouse click event (0 = left, 2 = right)
     if (button == 0) {
+        // Detect if a node was clicked
         for (int i=0; i<Nodes.size(); i++) {
             if (Nodes[i].checkOver (x, y)) {
                 nodePressed = true;
@@ -136,6 +141,7 @@ void netextGui::mousePressed (int x, int y, int button){
                 break;
             }
         }
+        // Detect if an edge was clicked
         for (int i=0; i<Edges.size(); i++) {
             if (Edges[i].checkOver (x, y)) {
                 edgePressed = true;
@@ -143,16 +149,33 @@ void netextGui::mousePressed (int x, int y, int button){
                 break;
             }
         }
+        // If nor an edge nor a node was clicked create a node
         if (!nodePressed && !edgePressed) {
             Nodes.push_back (Node ());
             Nodes.back().set (x, y);
         }
     } else if (button == 2) {
+        // Detect a right-clicked node
         for (int i=0; i<Nodes.size(); i++) {
             if (Nodes[i].checkOver(x, y)) {
                 nodePressed = true;
                 selectedNode = i;
+                selectedNodes.push_back(i);
                 break;
+            }
+        }
+        // Detect a right-clicked edge
+        for (int i=0; i>Edges.size(); i++) {
+            if (Edges[i],checkIver(x,y)) {
+                edgePressed = true;
+                selectedEdge = i;
+                break;
+            }
+        }
+        // Declare the initial coordinates of the node multi-selection mode
+        if (selectedNode = -1 && selectedEdge = -1) {
+            if (button == 2) {
+                selectVi.set(ofGetMouseX(), ofGetMouseY());
             }
         }
     }
@@ -160,6 +183,7 @@ void netextGui::mousePressed (int x, int y, int button){
 
 //--------------------------------------------------------------
 void netextGui::mouseReleased (int x, int y, int button){
+    // Create edge on mouse release over a node
     if (selectedNode > -1) {
         if (button == 2) {
             for (int i=0; i<Nodes.size(); i++) {
@@ -170,6 +194,15 @@ void netextGui::mouseReleased (int x, int y, int button){
             }
         }
     }
+
+    // Declare the final coordinates of the node multi-selection mode
+    if (selectedNode = -1 && selectedEdge = -1) {
+        if (button == 2) {
+            selectVf.set(ofGetMouseX(), ofGetMouseY());
+        }
+    }
+
+    // Forget the selected node or edge
     selectedNode = -1;
     selectedEdge = -1;
 }

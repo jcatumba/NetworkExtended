@@ -23,6 +23,10 @@ class netextGui : public ofBaseApp {
         vector<Edge> Edges; // Vector to sava all edges.
         int selectedNode = -1;
         int selectedEdge = -1;
+        vector<int> selectedNodes;
+        vector<int> selectedEdges;
+        ofVec2f selectVi;
+        ofVec2f selectVf;
 
     ofxUICanvas *gui;
     ofxUIDropDownList *ddl;
