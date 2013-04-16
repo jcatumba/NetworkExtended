@@ -1,8 +1,19 @@
+/*===================================================================
+ * NetworkExtended
+ * Copyright (C) 2012 Jorge Catumba Ruiz <jorgerev90@gmail.com>
+ * Universidad Nacional de Colombia, Colombia
+ * ------------------------------------------------------------------
+ * This software is licensed under the terms of the GPL v0.3 for
+ * more information about the license see the license.txt file.
+ * ================================================================*/
+
 #include "graph.h"
 
 Node::Node () {
-    bgcolor.set (200, 200, 200);
-    bdcolor.set (64, 64, 64);
+    def_bgcolor.set (200, 200, 200);
+    sel_bgcolor.set (100, 100, 200);
+    def_bdcolor.set (100, 100, 100);
+    sel_bdcolor.set (32, 32, 64);
 
     center.set(0, 0);
     radius = 25;
@@ -13,10 +24,10 @@ void Node::set (int _xDest, int _yDest) {
 }
 
 void Node::draw () {
-    ofSetColor (bgcolor);
+    ofSetColor (def_bgcolor);
     ofFill ();
     ofCircle (center.x, center.y, radius);
-    ofSetColor (bdcolor);
+    ofSetColor (def_bdcolor);
     ofNoFill ();
     ofCircle (center.x, center.y, radius);
 }
@@ -34,7 +45,8 @@ bool Node::checkOver (int x, int y) {
 }
 
 Edge::Edge () {
-    color.set (64, 64, 64);
+    def_color.set (100, 100, 100);
+    sel_color.set (32, 32, 64);
     middleBezier.set (0, 0);
     middleDraw.set (0, 0);
     midRad = 9;
@@ -50,7 +62,7 @@ void Edge::set (Node _source, Node _target, int idsource, int idtarget) {
 }
 
 void Edge::draw () {
-    ofSetColor (color);
+    ofSetColor (def_color);
     ofNoFill ();
     ofBezier (source.center.x, source.center.y, middleBezier.x, middleBezier.y, middleBezier.x, middleBezier.y, target.center.x, target.center.y);
     ofCircle (middleDraw.x, middleDraw.y, midRad);

@@ -10,14 +10,14 @@ OF_ROOT = /home/jorge/Documentos/Programacion/C/of_v0073_linux_release
 # for example search paths like:
 # USER_CFLAGS = -I src/objects
 
-USER_CFLAGS = 
+USER_CFLAGS = `pkg-config --cflags python`
 
 
 # USER_LDFLAGS allows to pass custom flags to the linker
 # for example libraries like:
 # USER_LDFLAGS = libs/libawesomelib.a
 
-USER_LDFLAGS =
+USER_LDFLAGS = `pkg-config --libs python`
 
 
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"

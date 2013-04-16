@@ -1,3 +1,12 @@
+/*===================================================================
+ * NetworkExtended
+ * Copyright (C) 2012 Jorge Catumba Ruiz <jorgerev90@gmail.com>
+ * Universidad Nacional de Colombia, Colombia
+ * ------------------------------------------------------------------
+ * This software is licensed under the terms of the GPL v0.3 for
+ * more information about the license see the license.txt file.
+ * ================================================================*/
+
 #ifndef GRAPH_H
 #define GRAPH_H
 
@@ -17,8 +26,10 @@ public:
     // Properties
     ofVec2f center;
     int radius;
-    ofColor bgcolor;
-    ofColor bdcolor;
+    ofColor def_bgcolor;
+    ofColor sel_bgcolor;
+    ofColor def_bdcolor;
+    ofColor sel_bdcolor;
 };
 
 class Edge {
@@ -42,7 +53,8 @@ public:
     int midRad;
     ofVec2f middleBezier;
     ofVec2f middleDraw;
-    ofColor color;
+    ofColor def_color;
+    ofColor sel_color;
 };
 
 ofVec2f drawPoint (ofVec2f, ofVec2f, ofVec2f); // Get the point on the middle of the bezier curve

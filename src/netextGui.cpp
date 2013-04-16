@@ -1,8 +1,18 @@
+/*===================================================================
+ * NetworkExtended
+ * Copyright (C) 2012 Jorge Catumba Ruiz <jorgerev90@gmail.com>
+ * Universidad Nacional de Colombia, Colombia
+ * ------------------------------------------------------------------
+ * This software is licensed under the terms of the GPL v0.3 for
+ * more information about the license see the license.txt file.
+ * ================================================================*/
+
 #include "netextGui.h"
 
 //--------------------------------------------------------------
 void netextGui::setup (){
-    //ofBackgroundGradient (ofColor (255, 255, 255), ofColor (0, 0, 0), OF_GRADIENT_CIRCULAR);
+    ofBackgroundGradient (ofColor (255, 255, 255), ofColor (0, 0, 0), OF_GRADIENT_CIRCULAR);
+    //ofBackground (32, 32, 32);
     ofEnableSmoothing ();
     float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
     float length = 320;
@@ -157,7 +167,7 @@ void netextGui::mousePressed (int x, int y, int button){
     } else if (button == 2) {
         // Detect a right-clicked node
         for (int i=0; i<Nodes.size(); i++) {
-            if (Nodes[i].checkOver(x, y)) {
+            if (Nodes[i].checkOver (x, y)) {
                 nodePressed = true;
                 selectedNode = i;
                 selectedNodes.push_back(i);
@@ -166,14 +176,14 @@ void netextGui::mousePressed (int x, int y, int button){
         }
         // Detect a right-clicked edge
         for (int i=0; i>Edges.size(); i++) {
-            if (Edges[i],checkIver(x,y)) {
+            if (Edges[i].checkOver (x, y)) {
                 edgePressed = true;
                 selectedEdge = i;
                 break;
             }
         }
         // Declare the initial coordinates of the node multi-selection mode
-        if (selectedNode = -1 && selectedEdge = -1) {
+        if (selectedNode == -1 && selectedEdge == -1) {
             if (button == 2) {
                 selectVi.set(ofGetMouseX(), ofGetMouseY());
             }
@@ -196,7 +206,7 @@ void netextGui::mouseReleased (int x, int y, int button){
     }
 
     // Declare the final coordinates of the node multi-selection mode
-    if (selectedNode = -1 && selectedEdge = -1) {
+    if (selectedNode == -1 && selectedEdge == -1) {
         if (button == 2) {
             selectVf.set(ofGetMouseX(), ofGetMouseY());
         }
