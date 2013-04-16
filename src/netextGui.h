@@ -29,6 +29,7 @@ class netextGui : public ofBaseApp {
 		void dragEvent (ofDragInfo dragInfo);
 		void gotMessage (ofMessage msg);
 
+        bool mouse_dragged;
         vector<Node> Nodes; // Vector to save all nodes.
         vector<Edge> Edges; // Vector to sava all edges.
         int selectedNode = -1;

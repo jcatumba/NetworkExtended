@@ -11,7 +11,13 @@
 
 //--------------------------------------------------------------
 void netextGui::setup (){
+    // App specific information
+    ofSetWindowTitle("NetworkExtended");
     ofBackgroundGradient (ofColor (255, 255, 255), ofColor (0, 0, 0), OF_GRADIENT_CIRCULAR);
+
+    //Variable initialización
+    mouse_dragged = false;
+
     //ofBackground (32, 32, 32);
     ofEnableSmoothing ();
     float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
@@ -94,9 +100,12 @@ void netextGui::guiEvent (ofxUIEventArgs &e){
 
 //--------------------------------------------------------------
 void netextGui::keyPressed (int key){
-    cout << "Key pressed is: " << key << endl;
+    //cout << "Key pressed is: " << key << endl;
     // Get the pressed key
     switch (key) {
+        case 'f':
+            ofToggleFullscreen ();
+            break;
         case 'p':
             gui->setDrawWidgetPadding (true);
             break;
@@ -123,6 +132,8 @@ void netextGui::mouseMoved (int x, int y){
 
 //--------------------------------------------------------------
 void netextGui::mouseDragged (int x, int y, int button){
+    mouse_dragged = true;
+
     // Manipulate a selected node
     if (selectedNode > -1) {
         if (button == 0) {
@@ -143,6 +154,11 @@ void netextGui::mouseDragged (int x, int y, int button){
     if (selectedEdge > -1) {
         Edges[selectedEdge].update(ofGetMouseX(), ofGetMouseY());
     }
+
+    // Declare final coordinates of selection if not edge nor node was selected
+    if (selectedNode == -1 && selectedEdge == -1) {
+        selectVf.set(ofGetMouseX(), ofGetMouseY());
+    }
 }
 
 //--------------------------------------------------------------
@@ -157,7 +173,7 @@ void netextGui::mousePressed (int x, int y, int button){
             if (Nodes[i].checkOver (x, y)) {
                 nodePressed = true;
                 selectedNode = i;
-                Nodes[i].toggle_selected ();
+                //Nodes[i].toggle_selected ();
                 break;
             }
         }
@@ -166,14 +182,15 @@ void netextGui::mousePressed (int x, int y, int button){
             if (Edges[i].checkOver (x, y)) {
                 edgePressed = true;
                 selectedEdge = i;
-                Edges[i].toggle_selected ();
+                //Edges[i].toggle_selected ();
                 break;
             }
         }
-        // If nor an edge nor a node was clicked create a node
+        // Declare the initial coordinates of the node multi-selection mode
         if (!nodePressed && !edgePressed) {
-            Nodes.push_back (Node ());
-            Nodes.back().set (x, y);
+            selectVi.set(ofGetMouseX(), ofGetMouseY());
+            //Nodes.push_back (Node ());
+            //Nodes.back().set (x, y);
         }
     } else if (button == 2) {
         // Detect a right-clicked node
@@ -181,7 +198,6 @@ void netextGui::mousePressed (int x, int y, int button){
             if (Nodes[i].checkOver (x, y)) {
                 nodePressed = true;
                 selectedNode = i;
-                selectedNodes.push_back(i);
                 break;
             }
         }
@@ -193,20 +209,23 @@ void netextGui::mousePressed (int x, int y, int button){
                 break;
             }
         }
-        // Declare the initial coordinates of the node multi-selection mode
-        if (selectedNode == -1 && selectedEdge == -1) {
-            if (button == 2) {
-                selectVi.set(ofGetMouseX(), ofGetMouseY());
-            }
-        }
     }
 }
 
 //--------------------------------------------------------------
 void netextGui::mouseReleased (int x, int y, int button){
-    // Create edge on mouse release over a node
+    // Detect if a node was selected
     if (selectedNode > -1) {
+        if (button == 0) {
+            if (mouse_dragged) {
+                //empty
+            } else {
+                Nodes[selectedNode].toggle_selected ();
+                // TODO: Active properties edition
+            }
+        }
         if (button == 2) {
+            // Create edge on mouse release over a node
             for (int i=0; i<Nodes.size(); i++) {
                 if (Nodes[i].checkOver(ofGetMouseX(), ofGetMouseY()) && i != selectedNode) {
                     Edges.push_back (Edge ());
@@ -216,16 +235,49 @@ void netextGui::mouseReleased (int x, int y, int button){
         }
     }
 
-    // Declare the final coordinates of the node multi-selection mode
-    if (selectedNode == -1 && selectedEdge == -1) {
-        if (button == 2) {
-            selectVf.set(ofGetMouseX(), ofGetMouseY());
+    // Detect if an edge was selected
+    if (selectedEdge > -1) {
+        if (button == 0) {
+            if (mouse_dragged) {
+                //empty
+            } else {
+                Edges[selectedEdge].toggle_selected ();
+                // TODO: Active properties edition
+            }
         }
     }
 
-    // Forget the selected node or edge
+    if (selectedNode == -1 && selectedEdge == -1) {
+        if (button == 0) {
+            if (mouse_dragged) {
+                // Select multiple nodes
+                if (selectVi.x > selectVf.x) {
+                    float pass = selectVi.x;
+                    selectVi.x = selectVf.x;
+                    selectVf.x = pass;
+                }
+                if (selectVi.y > selectVf.y) {
+                    float pass = selectVi.y;
+                    selectVi.y = selectVf.y;
+                    selectVf.y = pass;
+                }
+                for (int  i=0; i<Nodes.size(); i++) {
+                    if (selectVi.x <= Nodes[i].center.x && Nodes[i].center.x <= selectVf.x && selectVi.y <= Nodes[i].center.y && Nodes[i].center.y <= selectVf.y) {
+                        Nodes[i].toggle_selected ();
+                    }
+                }
+            } else {
+                // Create node
+                Nodes.push_back (Node ());
+                Nodes.back().set (x, y);
+            }
+        }
+    }
+
+    // Forget the selected node or edge and drag of mouse
     selectedNode = -1;
     selectedEdge = -1;
+    mouse_dragged = false;
 }
 
 //--------------------------------------------------------------
