@@ -15,6 +15,7 @@ Node::Node () {
     def_bdcolor.set (100, 100, 100);
     sel_bdcolor.set (32, 32, 64);
 
+    selected = false;
     center.set(0, 0);
     radius = 25;
 }
@@ -24,16 +25,29 @@ void Node::set (int _xDest, int _yDest) {
 }
 
 void Node::draw () {
-    ofSetColor (def_bgcolor);
+    if (selected)
+        ofSetColor (sel_bgcolor);
+    else
+        ofSetColor (def_bgcolor);
     ofFill ();
     ofCircle (center.x, center.y, radius);
-    ofSetColor (def_bdcolor);
+    if (selected)
+        ofSetColor (sel_bdcolor);
+    else
+        ofSetColor (def_bdcolor);
     ofNoFill ();
     ofCircle (center.x, center.y, radius);
 }
 
 void Node::update (int x, int y) {
     center.set (x, y);
+}
+
+void Node::toggle_selected (void) {
+    if (selected)
+        selected = false;
+    else
+        selected = true;
 }
 
 bool Node::checkOver (int x, int y) {
@@ -50,6 +64,8 @@ Edge::Edge () {
     middleBezier.set (0, 0);
     middleDraw.set (0, 0);
     midRad = 9;
+
+    selected = false;
 }
 
 void Edge::set (Node _source, Node _target, int idsource, int idtarget) {
@@ -62,7 +78,10 @@ void Edge::set (Node _source, Node _target, int idsource, int idtarget) {
 }
 
 void Edge::draw () {
-    ofSetColor (def_color);
+    if (selected)
+        ofSetColor (sel_color);
+    else
+        ofSetColor (def_color);
     ofNoFill ();
     ofBezier (source.center.x, source.center.y, middleBezier.x, middleBezier.y, middleBezier.x, middleBezier.y, target.center.x, target.center.y);
     ofCircle (middleDraw.x, middleDraw.y, midRad);
@@ -81,6 +100,13 @@ void Edge::update_source (Node _source) {
 void Edge::update_target (Node _target) {
     target = _target;
     middleDraw = drawPoint (source.center, middleBezier, target.center);
+}
+
+void Edge::toggle_selected (void) {
+    if (selected)
+        selected = false;
+    else
+        selected = true;
 }
 
 bool Edge::checkOver (int x, int y) {

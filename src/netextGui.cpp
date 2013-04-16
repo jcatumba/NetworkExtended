@@ -63,6 +63,11 @@ void netextGui::draw (){
 }
 
 //--------------------------------------------------------------
+void netextGui::removeSelected (void) {
+    //
+}
+
+//--------------------------------------------------------------
 void netextGui::exit (){
     gui->saveSettings ("GUI/guiSettings.xml");
     delete gui;
@@ -89,6 +94,7 @@ void netextGui::guiEvent (ofxUIEventArgs &e){
 
 //--------------------------------------------------------------
 void netextGui::keyPressed (int key){
+    cout << "Key pressed is: " << key << endl;
     // Get the pressed key
     switch (key) {
         case 'p':
@@ -96,6 +102,9 @@ void netextGui::keyPressed (int key){
             break;
         case 'P':
             gui->setDrawWidgetPadding (false);
+            break;
+        case 127:
+            //remove_selected ();
             break;
         default:
             break;
@@ -148,6 +157,7 @@ void netextGui::mousePressed (int x, int y, int button){
             if (Nodes[i].checkOver (x, y)) {
                 nodePressed = true;
                 selectedNode = i;
+                Nodes[i].toggle_selected ();
                 break;
             }
         }
@@ -156,6 +166,7 @@ void netextGui::mousePressed (int x, int y, int button){
             if (Edges[i].checkOver (x, y)) {
                 edgePressed = true;
                 selectedEdge = i;
+                Edges[i].toggle_selected ();
                 break;
             }
         }

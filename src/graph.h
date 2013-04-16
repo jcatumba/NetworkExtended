@@ -21,9 +21,11 @@ public:
     void set (int, int); // Setup the node
     void draw (); // Draw the node
     void update (int, int); // Update the node
+    void toggle_selected (void);
     bool checkOver (int, int); // Check if the mouse is over the node
 
     // Properties
+    bool selected;
     ofVec2f center;
     int radius;
     ofColor def_bgcolor;
@@ -43,9 +45,11 @@ public:
     void update (int, int); // Update the edge
     void update_source (Node);
     void update_target (Node);
+    void toggle_selected (void);
     bool checkOver (int, int); // Check oif the mouse is over the edge
 
     // Properties
+    bool selected;
     Node source;
     Node target;
     int source_id;
