@@ -112,9 +112,32 @@ void netextGui::keyPressed (int key){
         case 'P':
             gui->setDrawWidgetPadding (false);
             break;
-        case 127:
-            //remove_selected ();
+        case 127: {
+            //remove selected;
+            vector<int> selectedI;
+            for (int i=0; i<Nodes.size(); i++) {
+                if (Nodes[i].selected) {
+                    selectedI.push_back (i);
+                    //Nodes.erase(Nodes.begin() + i);
+                }
+            }
+            for (int i=0; i<selectedI.size(); i++) {
+                selectedI[i] = selectedI[i] - i;
+                Nodes.erase(Nodes.begin() + selectedI[i]);
+            }
+            selectedI.clear();
+            for (int i=0; i<Edges.size(); i++) {
+                if (Edges[i].selected) {
+                    selectedI.push_back (i);
+                    //Edges.erase(Edges.begin() + i);
+                }
+            }
+            for (int i=0;i<selectedI.size(); i++) {
+                selectedI[i] = selectedI[i] - i;
+                Edges.erase(Edges.begin() +  selectedI[i]);
+            }
             break;
+        }
         default:
             break;
     }
@@ -229,7 +252,7 @@ void netextGui::mouseReleased (int x, int y, int button){
             for (int i=0; i<Nodes.size(); i++) {
                 if (Nodes[i].checkOver(ofGetMouseX(), ofGetMouseY()) && i != selectedNode) {
                     Edges.push_back (Edge ());
-                    Edges.back().set(Nodes[selectedNode], Nodes[i], selectedNode, i);
+                    Edges.back().set(Nodes[selectedNode], Nodes[i]);
                 }
             }
         }

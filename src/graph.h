@@ -23,6 +23,7 @@ public:
     void update (int, int); // Update the node
     void toggle_selected (void);
     bool checkOver (int, int); // Check if the mouse is over the node
+    bool testEqual (Node &);
 
     // Properties
     bool selected;
@@ -40,7 +41,7 @@ public:
     Edge ();
 
     // Methods
-    void set (Node, Node, int, int); // Initialize the node
+    void set (Node, Node); // Initialize the node
     void draw (); // Draw the edge
     void update (int, int); // Update the edge
     void update_source (Node);

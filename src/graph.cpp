@@ -58,6 +58,10 @@ bool Node::checkOver (int x, int y) {
     }
 }
 
+bool Node::testEqual (Node &comp) {
+    return this == &comp;
+}
+
 Edge::Edge () {
     def_color.set (100, 100, 100);
     sel_color.set (32, 32, 64);
@@ -68,11 +72,9 @@ Edge::Edge () {
     selected = false;
 }
 
-void Edge::set (Node _source, Node _target, int idsource, int idtarget) {
+void Edge::set (Node _source, Node _target) {
     source = _source;
     target = _target;
-    source_id = idsource;
-    target_id = idtarget;
     middleDraw.set ((source.center.x + target.center.x)/2, (source.center.y + target.center.y)/2);
     middleBezier = bezierPoint (source.center, middleDraw, target.center);
 }
