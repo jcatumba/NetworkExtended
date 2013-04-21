@@ -69,9 +69,9 @@ void netextGui::draw (){
     ofSetColor(0);
     verdana14.drawString(graphType, 30, 35);
     verdana14.drawString(numNodes, 30, 52);
-    verdana14.drawString("Node(s)", 30 + numNodes.size()*12, 52);
+    verdana14.drawString("Node(s)", 35 + verdana14.stringWidth(numNodes), 52);
     verdana14.drawString(numEdges, 30, 69);
-    verdana14.drawString("Edge(s)", 30 + numEdges.size()*12, 69);
+    verdana14.drawString("Edge(s)", 35 + verdana14.stringWidth(numEdges), 69);
 
     for (int i=0; i<Edges.size (); i++) {
         Edges[i].draw ();
