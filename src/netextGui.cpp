@@ -113,28 +113,32 @@ void netextGui::keyPressed (int key){
             gui->setDrawWidgetPadding (false);
             break;
         case 127: {
-            //remove selected;
+            // Remove selected;
             vector<int> selectedI;
             for (int i=0; i<Nodes.size(); i++) {
                 if (Nodes[i].selected) {
                     selectedI.push_back (i);
-                    //Nodes.erase(Nodes.begin() + i);
                 }
             }
             for (int i=0; i<selectedI.size(); i++) {
-                selectedI[i] = selectedI[i] - i;
-                Nodes.erase(Nodes.begin() + selectedI[i]);
+                //selectedI[i] = selectedI[i] - i;
+                Nodes.erase(Nodes.begin() + selectedI[i] - i);
+                for (int j=0; j<Edges.size(); j++) {
+                    if (Edges[j].source_id > selectedI[i])
+                        Edges[j].source_id -= 1;
+                    if (Edges[j].target_id > selectedI[i])
+                        Edges[j].target_id -= 1;
+                }
             }
             selectedI.clear();
             for (int i=0; i<Edges.size(); i++) {
                 if (Edges[i].selected) {
                     selectedI.push_back (i);
-                    //Edges.erase(Edges.begin() + i);
                 }
             }
             for (int i=0;i<selectedI.size(); i++) {
-                selectedI[i] = selectedI[i] - i;
-                Edges.erase(Edges.begin() +  selectedI[i]);
+                //selectedI[i] = selectedI[i] - i;
+                Edges.erase(Edges.begin() +  selectedI[i] - i);
             }
             break;
         }
@@ -244,6 +248,11 @@ void netextGui::mouseReleased (int x, int y, int button){
                 //empty
             } else {
                 Nodes[selectedNode].toggle_selected ();
+                for (int i=0; i<Edges.size(); i++) {
+                    if (selectedNode == Edges[i].source_id || selectedNode == Edges[i].target_id) {
+                        Edges[i].toggle_selected ();
+                    }
+                }
                 // TODO: Active properties edition
             }
         }
@@ -252,7 +261,7 @@ void netextGui::mouseReleased (int x, int y, int button){
             for (int i=0; i<Nodes.size(); i++) {
                 if (Nodes[i].checkOver(ofGetMouseX(), ofGetMouseY()) && i != selectedNode) {
                     Edges.push_back (Edge ());
-                    Edges.back().set(Nodes[selectedNode], Nodes[i]);
+                    Edges.back().set(Nodes[selectedNode], Nodes[i], selectedNode, i);
                 }
             }
         }
@@ -287,6 +296,12 @@ void netextGui::mouseReleased (int x, int y, int button){
                 for (int  i=0; i<Nodes.size(); i++) {
                     if (selectVi.x <= Nodes[i].center.x && Nodes[i].center.x <= selectVf.x && selectVi.y <= Nodes[i].center.y && Nodes[i].center.y <= selectVf.y) {
                         Nodes[i].toggle_selected ();
+                        for (int j=0; j<Edges.size(); j++) {
+                            if (i == Edges[j].source_id || i == Edges[j].target_id) {
+                                if (!Edges[j].selected)
+                                    Edges[j].toggle_selected ();
+                            }
+                        }
                     }
                 }
             } else {

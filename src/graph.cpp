@@ -72,9 +72,11 @@ Edge::Edge () {
     selected = false;
 }
 
-void Edge::set (Node _source, Node _target) {
+void Edge::set (Node _source, Node _target, int idsource, int idtarget) {
     source = _source;
     target = _target;
+    source_id = idsource;
+    target_id = idtarget;
     middleDraw.set ((source.center.x + target.center.x)/2, (source.center.y + target.center.y)/2);
     middleBezier = bezierPoint (source.center, middleDraw, target.center);
 }
@@ -94,9 +96,17 @@ void Edge::update (int x, int y) {
     middleBezier = bezierPoint (source.center, middleDraw, target.center);
 }
 
+void Edge::update_source_id (int idsource) {
+    source_id = idsource;
+}
+
 void Edge::update_source (Node _source) {
     source = _source;
     middleDraw = drawPoint (source.center, middleBezier, target.center);
+}
+
+void Edge::update_target_id (int idtarget) {
+    target_id = idtarget;
 }
 
 void Edge::update_target (Node _target) {

@@ -41,10 +41,12 @@ public:
     Edge ();
 
     // Methods
-    void set (Node, Node); // Initialize the node
+    void set (Node, Node, int, int); // Initialize the node
     void draw (); // Draw the edge
     void update (int, int); // Update the edge
+    void update_source_id (int);
     void update_source (Node);
+    void update_target_id (int);
     void update_target (Node);
     void toggle_selected (void);
     bool checkOver (int, int); // Check oif the mouse is over the edge
