@@ -13,7 +13,13 @@
 void netextGui::setup (){
     // App specific information
     ofSetWindowTitle("NetworkExtended");
+    ofTrueTypeFont::setGlobalDpi(72);
+    verdana14.loadFont("GUI/verdana.ttf", 14, true, true);
     ofBackgroundGradient (ofColor (255, 255, 255), ofColor (0, 0, 0), OF_GRADIENT_CIRCULAR);
+
+    graphType = "Undirected graph";
+    numEdges = "0";
+    numNodes = "0";
 
     //Variable initialización
     mouse_dragged = false;
@@ -60,6 +66,13 @@ void netextGui::update (){
 
 //--------------------------------------------------------------
 void netextGui::draw (){
+    ofSetColor(0);
+    verdana14.drawString(graphType, 30, 35);
+    verdana14.drawString(numNodes, 30, 52);
+    verdana14.drawString("Node(s)", 30 + numNodes.size()*12, 52);
+    verdana14.drawString(numEdges, 30, 69);
+    verdana14.drawString("Edge(s)", 30 + numEdges.size()*12, 69);
+
     for (int i=0; i<Edges.size (); i++) {
         Edges[i].draw ();
     }
@@ -123,6 +136,9 @@ void netextGui::keyPressed (int key){
             for (int i=0; i<selectedI.size(); i++) {
                 //selectedI[i] = selectedI[i] - i;
                 Nodes.erase(Nodes.begin() + selectedI[i] - i);
+                stringstream ss;
+                ss << Nodes.size();
+                numNodes = ss.str();
                 for (int j=0; j<Edges.size(); j++) {
                     if (Edges[j].source_id > selectedI[i])
                         Edges[j].source_id -= 1;
@@ -139,6 +155,9 @@ void netextGui::keyPressed (int key){
             for (int i=0;i<selectedI.size(); i++) {
                 //selectedI[i] = selectedI[i] - i;
                 Edges.erase(Edges.begin() +  selectedI[i] - i);
+                stringstream ss;
+                ss << Edges.size();
+                numEdges = ss.str();
             }
             break;
         }
@@ -262,6 +281,9 @@ void netextGui::mouseReleased (int x, int y, int button){
                 if (Nodes[i].checkOver(ofGetMouseX(), ofGetMouseY()) && i != selectedNode) {
                     Edges.push_back (Edge ());
                     Edges.back().set(Nodes[selectedNode], Nodes[i], selectedNode, i);
+                    stringstream ss;
+                    ss << Edges.size();
+                    numEdges = ss.str();
                 }
             }
         }
@@ -308,6 +330,9 @@ void netextGui::mouseReleased (int x, int y, int button){
                 // Create node
                 Nodes.push_back (Node ());
                 Nodes.back().set (x, y);
+                stringstream ss;
+                ss << Nodes.size();
+                numNodes = ss.str();
             }
         }
     }
