@@ -17,6 +17,8 @@ void netextGui::setup (){
     verdana14.loadFont("GUI/verdana.ttf", 14, true, true);
     ofBackgroundGradient (ofColor (255, 255, 255), ofColor (0, 0, 0), OF_GRADIENT_CIRCULAR);
 
+    // Create the NetworkX Graph
+
     graphType = "Undirected graph";
     numEdges = "0";
     numNodes = "0";
@@ -116,6 +118,13 @@ void netextGui::keyPressed (int key){
     //cout << "Key pressed is: " << key << endl;
     // Get the pressed key
     switch (key) {
+        case 's': {
+            PyObject *file_name = PyTuple_New(2);
+            PyTuple_SetItem(file_name, 0, the_graph);
+            PyTuple_SetItem(file_name, 1, PyString_FromString("netext_graph.gml"));
+            PyObject_CallObject(nx_write_gml, file_name);
+            break;
+        }
         case 'f':
             ofToggleFullscreen ();
             break;
@@ -135,6 +144,7 @@ void netextGui::keyPressed (int key){
             }
             for (int i=0; i<selectedI.size(); i++) {
                 //selectedI[i] = selectedI[i] - i;
+                PyObject_CallObject (nx_remove_node, PyTuple_Pack(2, the_graph, PyInt_FromLong(selectedI[i])));
                 Nodes.erase(Nodes.begin() + selectedI[i] - i);
                 stringstream ss;
                 ss << Nodes.size();
@@ -154,7 +164,9 @@ void netextGui::keyPressed (int key){
             }
             for (int i=0;i<selectedI.size(); i++) {
                 //selectedI[i] = selectedI[i] - i;
-                Edges.erase(Edges.begin() +  selectedI[i] - i);
+                Edge edge_selected = Edges[selectedI[i]];
+                PyObject_CallObject (nx_remove_edge, PyTuple_Pack(3, the_graph, PyInt_FromLong(edge_selected.source_id), PyInt_FromLong(edge_selected.target_id)));
+                Edges.erase(Edges.begin() + selectedI[i] - i);
                 stringstream ss;
                 ss << Edges.size();
                 numEdges = ss.str();
@@ -281,6 +293,20 @@ void netextGui::mouseReleased (int x, int y, int button){
                 if (Nodes[i].checkOver(ofGetMouseX(), ofGetMouseY()) && i != selectedNode) {
                     Edges.push_back (Edge ());
                     Edges.back().set(Nodes[selectedNode], Nodes[i], selectedNode, i);
+
+                    // Put node on NetworkX graph
+                    PyObject *tuple = PyTuple_New (3);
+                    PyTuple_SetItem (tuple, 0, the_graph);
+                    PyTuple_SetItem (tuple, 1, PyInt_FromLong (selectedNode));
+                    PyTuple_SetItem (tuple, 2, PyInt_FromLong (i));
+                    PyObject_CallObject (nx_add_edge, tuple);
+                    //PyObject *the_graph_nodes = load_nx(the_graph, "node");
+                    //PyObject *node_ptr = PyObject_GetItem (the_graph_nodes, PyInt_FromLong(Nodes.size() - 1));
+                    //PyObject *node_center = PyTuple_New(2);
+                    //PyTuple_SetItem (node_center, 0, PyLong_FromLong(Nodes.back().center.x));
+                    //PyTuple_SetItem (node_center, 1, PyLong_FromLong(Nodes.back().center.y));
+                    //PyObject_SetItem(node_ptr, PyString_FromString("center"), node_center);
+
                     stringstream ss;
                     ss << Edges.size();
                     numEdges = ss.str();
@@ -327,9 +353,23 @@ void netextGui::mouseReleased (int x, int y, int button){
                     }
                 }
             } else {
-                // Create node
+                // Draw node
                 Nodes.push_back (Node ());
                 Nodes.back().set (x, y);
+
+                // Put node on NetworkX graph
+                PyObject *tuple = PyTuple_New (2);
+                PyTuple_SetItem (tuple, 0, the_graph);
+                PyTuple_SetItem (tuple, 1, PyInt_FromLong (Nodes.size() - 1));
+                PyObject_CallObject (nx_add_node, tuple);
+                PyObject *the_graph_nodes = load_nx(the_graph, "node");
+                PyObject *node_ptr = PyObject_GetItem (the_graph_nodes, PyInt_FromLong(Nodes.size() - 1));
+                PyObject *node_center = PyTuple_New(2);
+                PyTuple_SetItem (node_center, 0, PyLong_FromLong(Nodes.back().center.x));
+                PyTuple_SetItem (node_center, 1, PyLong_FromLong(Nodes.back().center.y));
+                PyObject_SetItem(node_ptr, PyString_FromString("center"), node_center);
+
+                // Update number of nodes on screen
                 stringstream ss;
                 ss << Nodes.size();
                 numNodes = ss.str();

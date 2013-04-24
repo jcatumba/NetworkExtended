@@ -7,7 +7,7 @@
  * more information about the license see the license.txt file.
  * ================================================================*/
 
-#include "networkx.h"
+//#include "networkx.h"
 #include "ofMain.h"
 #include "netextGui.h"
 #include "ofAppGlutWindow.h"

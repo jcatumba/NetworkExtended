@@ -16,6 +16,13 @@
 extern "C" {
 #endif
 
+extern PyObject* nxGraph;
+extern PyObject* nx_add_node;
+extern PyObject* nx_remove_node;
+extern PyObject* nx_add_edge;
+extern PyObject* nx_remove_edge;
+extern PyObject* nx_write_gml;
+
 //
 // Loading NetworkX functions
 //

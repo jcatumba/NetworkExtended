@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "networkx.h"
 #include "ofxUI.h"
 #include "graph.h"
 
@@ -43,6 +44,8 @@ class netextGui : public ofBaseApp {
         vector<int> selectedEdges;
         ofVec2f selectVi;
         ofVec2f selectVf;
+
+        PyObject *the_graph = PyObject_CallObject(nxGraph, NULL);
 
     ofxUICanvas *gui;
     ofxUIDropDownList *ddl;

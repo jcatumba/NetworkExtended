@@ -21,8 +21,11 @@ PyObject* nxMultiDiGraph = NULL;
 /*** NX basic methods ***/
 PyObject* nx_len = NULL;
 PyObject* nx_add_node = NULL;
+PyObject* nx_remove_node = NULL;
 PyObject* nx_add_edge = NULL;
+PyObject* nx_remove_edge = NULL;
 PyObject* nx_order = NULL;
+PyObject* nx_write_gml = NULL;
 //PyObject* nx_pagerank = NULL;
 
 //
@@ -66,8 +69,11 @@ void load_objects (PyObject *parent) {
     // Graph Methods
     nx_len = load_nx (nxGraph, "__len__");
     nx_add_node = load_nx (nxGraph, "add_node");
+    nx_remove_node = load_nx (nxGraph, "remove_node");
     nx_add_edge = load_nx (nxGraph, "add_edge");
+    nx_remove_edge = load_nx (nxGraph, "remove_edge");
     nx_order = load_nx (nxGraph, "order");
+    nx_write_gml = load_nx (parent, "write_gml");
 }
 
 //
