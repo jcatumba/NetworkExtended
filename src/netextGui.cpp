@@ -34,6 +34,13 @@ void netextGui::setup (){
     gui->setFont ("GUI/verdana.ttf");
     gui->addLabel ("NetworkExtended", OFX_UI_FONT_LARGE);
     gui->addSpacer ();
+    gui->addLabel (graphType, OFX_UI_FONT_MEDIUM);
+    stringstream nodesinfo;
+    nodesinfo << numNodes << " " << "Node(s)";
+    gui->addLabel (nodesinfo.str(), OFX_UI_FONT_MEDIUM);
+    stringstream edgesinfo;
+    edgesinfo << numEdges << " " << "Node(s)";
+    gui->addLabel (edgesinfo.str(), OFX_UI_FONT_MEDIUM);
     gui->addSlider ("Background value", 0.0, 255.0, 100.0);
     gui->addToggle ("Fullscreen", false);
     gui->addLabel ("Configuration", OFX_UI_FONT_MEDIUM);
@@ -68,11 +75,11 @@ void netextGui::update (){
 //--------------------------------------------------------------
 void netextGui::draw (){
     ofSetColor(0);
-    verdana14.drawString(graphType, 30, 35);
-    verdana14.drawString(numNodes, 30, 52);
-    verdana14.drawString("Node(s)", 35 + verdana14.stringWidth(numNodes), 52);
-    verdana14.drawString(numEdges, 30, 69);
-    verdana14.drawString("Edge(s)", 35 + verdana14.stringWidth(numEdges), 69);
+    //verdana14.drawString(graphType, 30, 35);
+    //verdana14.drawString(numNodes, 30, 52);
+    //verdana14.drawString("Node(s)", 35 + verdana14.stringWidth(numNodes), 52);
+    //verdana14.drawString(numEdges, 30, 69);
+    //verdana14.drawString("Edge(s)", 35 + verdana14.stringWidth(numEdges), 69);
 
     for (int i=0; i<Edges.size (); i++) {
         Edges[i].draw ();
