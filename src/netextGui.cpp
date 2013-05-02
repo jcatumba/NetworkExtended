@@ -34,7 +34,7 @@ void netextGui::setup (){
     gui->setFont ("GUI/verdana.ttf");
     gui->addLabel ("NetworkExtended", OFX_UI_FONT_LARGE);
     gui->addSpacer ();
-    gui->addLabel (graphType, OFX_UI_FONT_MEDIUM);
+    /*gui->addLabel (graphType, OFX_UI_FONT_MEDIUM);
     stringstream nodesinfo;
     nodesinfo << numNodes << " " << "Node(s)";
     gui->addLabel (nodesinfo.str(), OFX_UI_FONT_MEDIUM);
@@ -50,7 +50,7 @@ void netextGui::setup (){
     gui->addLabel ("Graph Algorithms", OFX_UI_FONT_MEDIUM);
     gui->addSpacer ();
     gui->addLabel ("Node properties", OFX_UI_FONT_MEDIUM);
-    gui->addSpacer ();
+    gui->addSpacer ();*/
 
     vector<string> names;
     names.push_back("One");
@@ -58,10 +58,10 @@ void netextGui::setup (){
     names.push_back("Three");
     ddl = new ofxUIDropDownList (length-xInit, "Dynamic Drop Down", names, OFX_UI_FONT_MEDIUM);
     ddl->setAllowMultiple (true);
-    gui->addWidgetDown (ddl);
+    /*gui->addWidgetDown (ddl);*/
 
-    gui->addSpacer ();
-    gui->addLabel ("Edge properties", OFX_UI_FONT_MEDIUM);
+    /*gui->addSpacer ();
+    gui->addLabel ("Edge properties", OFX_UI_FONT_MEDIUM);*/
 
     gui->autoSizeToFitWidgets ();
     ofAddListener (gui->newGUIEvent, this, &netextGui::guiEvent);
@@ -74,24 +74,30 @@ void netextGui::update (){
 
 //--------------------------------------------------------------
 void netextGui::draw (){
-    ofSetColor(0);
-    //verdana14.drawString(graphType, 30, 35);
-    //verdana14.drawString(numNodes, 30, 52);
-    //verdana14.drawString("Node(s)", 35 + verdana14.stringWidth(numNodes), 52);
-    //verdana14.drawString(numEdges, 30, 69);
-    //verdana14.drawString("Edge(s)", 35 + verdana14.stringWidth(numEdges), 69);
-
     for (int i=0; i<Edges.size (); i++) {
         Edges[i].draw ();
     }
     for (int i=0; i<Nodes.size (); i++) {
         Nodes[i].draw ();
     }
+
+    // Draw the info box
+    ofSetColor(211,211,211);
+    ofFill();
+    ofRect(0,ofGetHeight()-90,ofGetWidth(),90);
+
+    // Put the contents of info box
+    ofSetColor(0);
+    verdana14.drawString(graphType, 30, ofGetHeight()-70);
+    verdana14.drawString(numNodes, 30, ofGetHeight()-53);
+    verdana14.drawString("Node(s)", 35 + verdana14.stringWidth(numNodes), ofGetHeight()-53);
+    verdana14.drawString(numEdges, 30, ofGetHeight()-36);
+    verdana14.drawString("Edge(s)", 35 + verdana14.stringWidth(numEdges), ofGetHeight()-36);
 }
 
 //--------------------------------------------------------------
 void netextGui::removeSelected (void) {
-    //
+    // XXX
 }
 
 //--------------------------------------------------------------
