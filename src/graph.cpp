@@ -20,8 +20,20 @@ Node::Node () {
     radius = 25;
 }
 
-void Node::set (int _xDest, int _yDest) {
+void Node::set (int _xDest, int _yDest, PyObject *graph, int the_size) {
     center.set (_xDest, _yDest);
+
+    // Add NetworkX node
+    PyObject *tuple = PyTuple_New(2);
+    PyTuple_SetItem (tuple, 0, graph);
+    PyTuple_SetItem (tuple, 1, PyInt_FromLong (the_size));
+    PyObject_CallObject (nx_add_node, tuple);
+
+    // Add center properties (for visualization)
+    PyObject *graph_node = load_nx(graph, "node");
+    PyObject *node_ptr = PyObject_GetItem(graph_node, PyInt_FromLong(the_size));
+    PyObject_SetItem(node_ptr, PyString_FromString("x"), PyInt_FromLong(_xDest));
+    PyObject_SetItem(node_ptr, PyString_FromString("y"), PyInt_FromLong(_yDest));
 }
 
 void Node::draw () {
@@ -39,8 +51,13 @@ void Node::draw () {
     ofCircle (center.x, center.y, radius);
 }
 
-void Node::update (int x, int y) {
+void Node::update (int x, int y, PyObject *graph, int position) {
     center.set (x, y);
+
+    PyObject *graph_node = load_nx(graph, "node");
+    PyObject *node_ptr = PyObject_GetItem(graph_node, PyInt_FromLong(position));
+    PyObject_SetItem(node_ptr, PyString_FromString("x"), PyInt_FromLong(x));
+    PyObject_SetItem(node_ptr, PyString_FromString("y"), PyInt_FromLong(y));
 }
 
 void Node::toggle_selected (void) {
@@ -72,13 +89,20 @@ Edge::Edge () {
     selected = false;
 }
 
-void Edge::set (Node _source, Node _target, int idsource, int idtarget) {
+void Edge::set (Node _source, Node _target, int idsource, int idtarget, PyObject *graph) {
     source = _source;
     target = _target;
     source_id = idsource;
     target_id = idtarget;
     middleDraw.set ((source.center.x + target.center.x)/2, (source.center.y + target.center.y)/2);
     middleBezier = bezierPoint (source.center, middleDraw, target.center);
+
+    // Add NetworkX edge
+    PyObject *tuple = PyTuple_New(3);
+    PyTuple_SetItem(tuple, 0, graph);
+    PyTuple_SetItem(tuple, 1, PyInt_FromLong(idsource));
+    PyTuple_SetItem(tuple, 2, PyInt_FromLong(idtarget));
+    PyObject_CallObject(nx_add_edge, tuple);
 }
 
 void Edge::draw () {

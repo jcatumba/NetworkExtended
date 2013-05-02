@@ -119,10 +119,7 @@ void netextGui::keyPressed (int key){
     // Get the pressed key
     switch (key) {
         case 's': {
-            PyObject *file_name = PyTuple_New(2);
-            PyTuple_SetItem(file_name, 0, the_graph);
-            PyTuple_SetItem(file_name, 1, PyString_FromString("netext_graph.gml"));
-            PyObject_CallObject(nx_write_gml, file_name);
+            PyObject_CallObject(nx_write_gml, PyTuple_Pack(2, the_graph, PyStringFromString("netext_graph.gml")));
             break;
         }
         case 'f':
@@ -195,7 +192,7 @@ void netextGui::mouseDragged (int x, int y, int button){
     // Manipulate a selected node
     if (selectedNode > -1) {
         if (button == 0) {
-            Nodes[selectedNode].update(ofGetMouseX(), ofGetMouseY());
+            Nodes[selectedNode].update(ofGetMouseX(), ofGetMouseY(), the_graph, selectedNode);
             for (int i=0; i<Edges.size(); i++) {
                 if (Edges[i].source_id == selectedNode) {
                     Edges[i].update_source (Nodes[selectedNode]);
@@ -247,8 +244,6 @@ void netextGui::mousePressed (int x, int y, int button){
         // Declare the initial coordinates of the node multi-selection mode
         if (!nodePressed && !edgePressed) {
             selectVi.set(ofGetMouseX(), ofGetMouseY());
-            //Nodes.push_back (Node ());
-            //Nodes.back().set (x, y);
         }
     } else if (button == 2) {
         // Detect a right-clicked node
@@ -291,21 +286,10 @@ void netextGui::mouseReleased (int x, int y, int button){
             // Create edge on mouse release over a node
             for (int i=0; i<Nodes.size(); i++) {
                 if (Nodes[i].checkOver(ofGetMouseX(), ofGetMouseY()) && i != selectedNode) {
+                    // Add edge
                     Edges.push_back (Edge ());
-                    Edges.back().set(Nodes[selectedNode], Nodes[i], selectedNode, i);
-
-                    // Put node on NetworkX graph
-                    PyObject *tuple = PyTuple_New (3);
-                    PyTuple_SetItem (tuple, 0, the_graph);
-                    PyTuple_SetItem (tuple, 1, PyInt_FromLong (selectedNode));
-                    PyTuple_SetItem (tuple, 2, PyInt_FromLong (i));
-                    PyObject_CallObject (nx_add_edge, tuple);
-                    //PyObject *the_graph_nodes = load_nx(the_graph, "node");
-                    //PyObject *node_ptr = PyObject_GetItem (the_graph_nodes, PyInt_FromLong(Nodes.size() - 1));
-                    //PyObject *node_center = PyTuple_New(2);
-                    //PyTuple_SetItem (node_center, 0, PyLong_FromLong(Nodes.back().center.x));
-                    //PyTuple_SetItem (node_center, 1, PyLong_FromLong(Nodes.back().center.y));
-                    //PyObject_SetItem(node_ptr, PyString_FromString("center"), node_center);
+                    // Set edge
+                    Edges.back().set(Nodes[selectedNode], Nodes[i], selectedNode, i, the_graph);
 
                     stringstream ss;
                     ss << Edges.size();
@@ -353,21 +337,10 @@ void netextGui::mouseReleased (int x, int y, int button){
                     }
                 }
             } else {
-                // Draw node
+                // Add node
                 Nodes.push_back (Node ());
-                Nodes.back().set (x, y);
-
-                // Put node on NetworkX graph
-                PyObject *tuple = PyTuple_New (2);
-                PyTuple_SetItem (tuple, 0, the_graph);
-                PyTuple_SetItem (tuple, 1, PyInt_FromLong (Nodes.size() - 1));
-                PyObject_CallObject (nx_add_node, tuple);
-                PyObject *the_graph_nodes = load_nx(the_graph, "node");
-                PyObject *node_ptr = PyObject_GetItem (the_graph_nodes, PyInt_FromLong(Nodes.size() - 1));
-                PyObject *node_center = PyTuple_New(2);
-                PyTuple_SetItem (node_center, 0, PyLong_FromLong(Nodes.back().center.x));
-                PyTuple_SetItem (node_center, 1, PyLong_FromLong(Nodes.back().center.y));
-                PyObject_SetItem(node_ptr, PyString_FromString("center"), node_center);
+                // Set the node properties
+                Nodes.back().set (x, y, the_graph, Nodes.size()-1);
 
                 // Update number of nodes on screen
                 stringstream ss;

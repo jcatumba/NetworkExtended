@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "networkx.h"
 #include "ofxUI.h"
 #include "graph.h"
 

@@ -10,6 +10,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include "networkx.h"
 #include "ofMain.h"
 
 class Node {
@@ -18,9 +19,9 @@ public:
     Node ();
 
     // Methods
-    void set (int, int); // Setup the node
+    void set (int, int, PyObject*, int); // Setup the node
     void draw (); // Draw the node
-    void update (int, int); // Update the node
+    void update (int, int, PyObject*, int); // Update the node
     void toggle_selected (void);
     bool checkOver (int, int); // Check if the mouse is over the node
     bool testEqual (Node &);
@@ -41,7 +42,7 @@ public:
     Edge ();
 
     // Methods
-    void set (Node, Node, int, int); // Initialize the node
+    void set (Node, Node, int, int, PyObject*); // Initialize the node
     void draw (); // Draw the edge
     void update (int, int); // Update the edge
     void update_source_id (int);
