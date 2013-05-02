@@ -17,22 +17,21 @@ void netextGui::setup (){
     verdana14.loadFont("GUI/verdana.ttf", 14, true, true);
     ofBackgroundGradient (ofColor (255, 255, 255), ofColor (0, 0, 0), OF_GRADIENT_CIRCULAR);
 
-    // Create the NetworkX Graph
-
+    // Graph Basic Attributes
     graphType = "Undirected graph";
     numEdges = "0";
     numNodes = "0";
 
-    //Variable initialización
+    // Variable initialización
     mouse_dragged = false;
 
     //ofBackground (32, 32, 32);
     ofEnableSmoothing ();
     float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
     float length = 320;
-    //gui = new ofxUICanvas ();
+    gui = new ofxUICanvas ();
 
-    /*gui->setFont ("GUI/mono.ttf");
+    gui->setFont ("GUI/verdana.ttf");
     gui->addLabel ("NetworkExtended", OFX_UI_FONT_LARGE);
     gui->addSpacer ();
     gui->addSlider ("Background value", 0.0, 255.0, 100.0);
@@ -59,7 +58,7 @@ void netextGui::setup (){
 
     gui->autoSizeToFitWidgets ();
     ofAddListener (gui->newGUIEvent, this, &netextGui::guiEvent);
-    gui->loadSettings ("GUI/guiSettings.xml");*/
+    gui->loadSettings ("GUI/guiSettings.xml");
 }
 
 //--------------------------------------------------------------
@@ -119,7 +118,7 @@ void netextGui::keyPressed (int key){
     // Get the pressed key
     switch (key) {
         case 's': {
-            PyObject_CallObject(nx_write_gml, PyTuple_Pack(2, the_graph, PyStringFromString("netext_graph.gml")));
+            PyObject_CallObject(nx_write_gml, PyTuple_Pack(2, the_graph, PyString_FromString("netext_graph.gml")));
             break;
         }
         case 'f':
@@ -134,13 +133,26 @@ void netextGui::keyPressed (int key){
         case 127: {
             // Remove selected;
             vector<int> selectedI;
+            for (int i=0; i<Edges.size(); i++) {
+                if (Edges[i].selected) {
+                    selectedI.push_back (i);
+                }
+            }
+            for (int i=0;i<selectedI.size(); i++) {
+                Edge edge_selected = Edges[selectedI[i]];
+                PyObject_CallObject (nx_remove_edge, PyTuple_Pack(3, the_graph, PyInt_FromLong(edge_selected.source_id), PyInt_FromLong(edge_selected.target_id)));
+                Edges.erase(Edges.begin() + selectedI[i] - i);
+                stringstream ss;
+                ss << Edges.size();
+                numEdges = ss.str();
+            }
+            selectedI.clear();
             for (int i=0; i<Nodes.size(); i++) {
                 if (Nodes[i].selected) {
                     selectedI.push_back (i);
                 }
             }
             for (int i=0; i<selectedI.size(); i++) {
-                //selectedI[i] = selectedI[i] - i;
                 PyObject_CallObject (nx_remove_node, PyTuple_Pack(2, the_graph, PyInt_FromLong(selectedI[i])));
                 Nodes.erase(Nodes.begin() + selectedI[i] - i);
                 stringstream ss;
@@ -152,21 +164,6 @@ void netextGui::keyPressed (int key){
                     if (Edges[j].target_id > selectedI[i])
                         Edges[j].target_id -= 1;
                 }
-            }
-            selectedI.clear();
-            for (int i=0; i<Edges.size(); i++) {
-                if (Edges[i].selected) {
-                    selectedI.push_back (i);
-                }
-            }
-            for (int i=0;i<selectedI.size(); i++) {
-                //selectedI[i] = selectedI[i] - i;
-                Edge edge_selected = Edges[selectedI[i]];
-                PyObject_CallObject (nx_remove_edge, PyTuple_Pack(3, the_graph, PyInt_FromLong(edge_selected.source_id), PyInt_FromLong(edge_selected.target_id)));
-                Edges.erase(Edges.begin() + selectedI[i] - i);
-                stringstream ss;
-                ss << Edges.size();
-                numEdges = ss.str();
             }
             break;
         }
