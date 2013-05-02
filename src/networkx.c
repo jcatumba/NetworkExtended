@@ -32,48 +32,31 @@ PyObject* nx_write_gml = NULL;
 //  Loading NetworkX functions
 //
 void init_networkx () {
-    PyObject* nx_module = load_networkx ();
-    load_objects (nx_module);
-}
-
-PyObject* load_networkx () {
-    PyObject* nx_module = NULL;
-    nx_module = (PyObject*) malloc (sizeof (PyObject));
-    PyObject* nx_name = PyString_FromString ("networkx");
-    if (nx_module = PyImport_Import (nx_name))
-        return nx_module;
+    PyObject* nx_module;
+    if(nx_module = load_module ("networkx"))
+        load_objects (nx_module);
     else
-        return NULL;
-    Py_DECREF (nx_name);
-}
-
-PyObject* load_nx (PyObject *object, const char* attr_name) {
-    PyObject* pFun;
-    pFun = (PyObject*) malloc (sizeof (PyObject));
-    if (pFun = PyObject_GetAttrString (object, attr_name))
-        return pFun;
-    else
-        return NULL;
+        printf ("Load of NetworkX failed.");
 }
 
 void load_objects (PyObject *parent) {
     // Classes
-    nxGraph = load_nx (parent, "Graph");
-    nxDiGraph = load_nx (parent, "DiGraph");
-    nxMultiGraph = load_nx (parent, "MultiGraph");
-    nxMultiDiGraph = load_nx (parent, "MultiDiGraph");
+    nxGraph = load_attr (parent, "Graph");
+    nxDiGraph = load_attr (parent, "DiGraph");
+    nxMultiGraph = load_attr (parent, "MultiGraph");
+    nxMultiDiGraph = load_attr (parent, "MultiDiGraph");
 
     // Generic Methods
     //nx_pagerank = load_nx (parent, "pagerank");
 
     // Graph Methods
-    nx_len = load_nx (nxGraph, "__len__");
-    nx_add_node = load_nx (nxGraph, "add_node");
-    nx_remove_node = load_nx (nxGraph, "remove_node");
-    nx_add_edge = load_nx (nxGraph, "add_edge");
-    nx_remove_edge = load_nx (nxGraph, "remove_edge");
-    nx_order = load_nx (nxGraph, "order");
-    nx_write_gml = load_nx (parent, "write_gml");
+    nx_len = load_attr (nxGraph, "__len__");
+    nx_add_node = load_attr (nxGraph, "add_node");
+    nx_remove_node = load_attr (nxGraph, "remove_node");
+    nx_add_edge = load_attr (nxGraph, "add_edge");
+    nx_remove_edge = load_attr (nxGraph, "remove_edge");
+    nx_order = load_attr (nxGraph, "order");
+    nx_write_gml = load_attr (parent, "write_gml");
 }
 
 //

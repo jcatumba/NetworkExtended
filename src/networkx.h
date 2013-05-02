@@ -10,7 +10,7 @@
 #ifndef NETWORKX_H
 #define NETWORKX_H
 
-#include <Python.h> 
+#include "python_load.h" 
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,8 +27,6 @@ extern PyObject* nx_write_gml;
 // Loading NetworkX functions
 //
 void init_networkx (void);
-PyObject* load_nx(PyObject*, const char*);
-PyObject* load_networkx(void);
 void load_objects(PyObject*);
 
 //--- Callable NetworkX functions

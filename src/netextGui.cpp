@@ -33,7 +33,7 @@ void netextGui::setup (){
 
     gui->setFont ("GUI/verdana.ttf");
     gui->addLabel ("NetworkExtended", OFX_UI_FONT_LARGE);
-    gui->addSpacer ();
+    //gui->addSpacer ();
     /*gui->addLabel (graphType, OFX_UI_FONT_MEDIUM);
     stringstream nodesinfo;
     nodesinfo << numNodes << " " << "Node(s)";
