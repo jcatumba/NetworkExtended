@@ -27,7 +27,7 @@ extern PyObject* nx_write_gml;
 // Loading NetworkX functions
 //
 void init_networkx (void);
-void load_objects(PyObject*);
+void load_nx_objects(PyObject*);
 
 //--- Callable NetworkX functions
 /*** NetworkX Basic Classes (Graph types). TODO: Allow the user to use Attributes ***/

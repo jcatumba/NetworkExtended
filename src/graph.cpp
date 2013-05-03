@@ -30,7 +30,7 @@ void Node::set (int _xDest, int _yDest, PyObject *graph, int the_size) {
     PyObject_CallObject (nx_add_node, tuple);
 
     // Add center properties (for visualization)
-    PyObject *graph_node = load_nx(graph, "node");
+    PyObject *graph_node = load_attr (graph, "node");
     PyObject *node_ptr = PyObject_GetItem(graph_node, PyInt_FromLong(the_size));
     PyObject_SetItem(node_ptr, PyString_FromString("x"), PyInt_FromLong(_xDest));
     PyObject_SetItem(node_ptr, PyString_FromString("y"), PyInt_FromLong(_yDest));
@@ -54,7 +54,7 @@ void Node::draw () {
 void Node::update (int x, int y, PyObject *graph, int position) {
     center.set (x, y);
 
-    PyObject *graph_node = load_nx(graph, "node");
+    PyObject *graph_node = load_attr (graph, "node");
     PyObject *node_ptr = PyObject_GetItem(graph_node, PyInt_FromLong(position));
     PyObject_SetItem(node_ptr, PyString_FromString("x"), PyInt_FromLong(x));
     PyObject_SetItem(node_ptr, PyString_FromString("y"), PyInt_FromLong(y));

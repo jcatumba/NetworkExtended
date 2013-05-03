@@ -7,18 +7,18 @@
  * more information about the license see the license.txt file.
  * ================================================================*/
 
-#include "python_load.h"
+#include "netevo.h"
 
-PyObject* load_module (const char *module_name) {
-    PyObject* PyModule = NULL;
-    PyModule = (PyObject*) malloc (sizeof(PyObject));
-    PyModule = PyImport_Import (PyString_FromString(module_name));
-    return PyModule;
+// Loading NetEvo-Py Functions
+//
+void init_netevo () {
+    PyObject *ne_module;
+    if(ne_module = load_module ("netevo"))
+        load_ne_objects (ne_module);
+    else
+        printf ("Load of NetEvo-Py failed.");
 }
 
-PyObject* load_attr (PyObject *object, const char* attr_name) {
-    PyObject* PyAttr;
-    PyAttr = (PyObject*) malloc (sizeof (PyObject));
-    PyAttr = PyObject_GetAttrString (object, attr_name);
-    return PyAttr;
+void load_ne_objects (PyObject *parent) {
+    // TODO
 }

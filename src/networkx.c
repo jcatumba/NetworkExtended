@@ -34,12 +34,12 @@ PyObject* nx_write_gml = NULL;
 void init_networkx () {
     PyObject* nx_module;
     if(nx_module = load_module ("networkx"))
-        load_objects (nx_module);
+        load_nx_objects (nx_module);
     else
         printf ("Load of NetworkX failed.");
 }
 
-void load_objects (PyObject *parent) {
+void load_nx_objects (PyObject *parent) {
     // Classes
     nxGraph = load_attr (parent, "Graph");
     nxDiGraph = load_attr (parent, "DiGraph");
