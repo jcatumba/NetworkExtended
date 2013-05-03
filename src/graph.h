@@ -11,6 +11,7 @@
 #define GRAPH_H
 
 #include "networkx.h"
+#include "netevo.h"
 #include "ofMain.h"
 
 class Node {

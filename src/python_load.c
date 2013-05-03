@@ -12,7 +12,7 @@
 PyObject* load_module (const char *module_name) {
     PyObject* PyModule = NULL;
     PyModule = (PyObject*) malloc (sizeof(PyObject));
-    PyModule = PyImport_Import (PyString_FromString(module_name));
+    PyModule = PyImport_ImportModuleEx (module_name, NULL, NULL, NULL);
     return PyModule;
 }
 

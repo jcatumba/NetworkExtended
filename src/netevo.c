@@ -13,10 +13,10 @@
 //
 void init_netevo () {
     PyObject *ne_module;
-    if(ne_module = load_module ("netevo"))
+    if((ne_module = load_module ("netevo")))
         load_ne_objects (ne_module);
     else
-        printf ("Load of NetEvo-Py failed.");
+        printf ("Load of NetEvo-Py failed.\n");
 }
 
 void load_ne_objects (PyObject *parent) {

@@ -26,6 +26,7 @@ int main () {
     // Initializing app
     Py_Initialize ();
     init_networkx ();
+    init_netevo ();
 	ofRunApp (new netextGui ()); // start the app
 
     // Finalizing

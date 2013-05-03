@@ -36,7 +36,7 @@ void init_networkx () {
     if(nx_module = load_module ("networkx"))
         load_nx_objects (nx_module);
     else
-        printf ("Load of NetworkX failed.");
+        printf ("Load of NetworkX failed.\n");
 }
 
 void load_nx_objects (PyObject *parent) {
