@@ -9,6 +9,9 @@
 
 #include "graph.h"
 
+//---------------------------
+// Node specification
+//---------------------------
 Node::Node () {
     def_bgcolor.set (200, 200, 200);
     sel_bgcolor.set (100, 100, 200);
@@ -79,10 +82,12 @@ bool Node::testEqual (Node &comp) {
     return this == &comp;
 }
 
+//---------------------------
+// Edge specification
+//---------------------------
 Edge::Edge () {
     def_color.set (100, 100, 100);
     sel_color.set (32, 32, 64);
-    middleBezier.set (0, 0);
     middleDraw.set (0, 0);
     midRad = 9;
 
@@ -94,8 +99,7 @@ void Edge::set (Node _source, Node _target, int idsource, int idtarget, PyObject
     target = _target;
     source_id = idsource;
     target_id = idtarget;
-    middleDraw.set ((source.center.x + target.center.x)/2, (source.center.y + target.center.y)/2);
-    middleBezier = bezierPoint (source.center, middleDraw, target.center);
+    middleDraw.set (source.center.getMiddle(target.center));
 
     // Add NetworkX edge
     PyObject *tuple = PyTuple_New(3);
@@ -111,13 +115,13 @@ void Edge::draw () {
     else
         ofSetColor (def_color);
     ofNoFill ();
-    ofBezier (source.center.x, source.center.y, middleBezier.x, middleBezier.y, middleBezier.x, middleBezier.y, target.center.x, target.center.y);
+    //ofBezier (source.center.x, source.center.y, middleBezier.x, middleBezier.y, middleBezier.x, middleBezier.y, target.center.x, target.center.y);
+    ofLine (source.center, target.center);
     ofCircle (middleDraw.x, middleDraw.y, midRad);
 }
 
 void Edge::update (int x, int y) {
     middleDraw.set (x, y);
-    middleBezier = bezierPoint (source.center, middleDraw, target.center);
 }
 
 void Edge::update_source_id (int idsource) {
@@ -126,7 +130,7 @@ void Edge::update_source_id (int idsource) {
 
 void Edge::update_source (Node _source) {
     source = _source;
-    middleDraw = drawPoint (source.center, middleBezier, target.center);
+    middleDraw.set (source.center.getMiddle(target.center));
 }
 
 void Edge::update_target_id (int idtarget) {
@@ -135,7 +139,7 @@ void Edge::update_target_id (int idtarget) {
 
 void Edge::update_target (Node _target) {
     target = _target;
-    middleDraw = drawPoint (source.center, middleBezier, target.center);
+    middleDraw.set (source.center.getMiddle(target.center));
 }
 
 void Edge::toggle_selected (void) {
@@ -153,12 +157,3 @@ bool Edge::checkOver (int x, int y) {
     }
 }
 
-ofVec2f drawPoint (ofVec2f p0, ofVec2f p1, ofVec2f p2) {
-    ofVec2f pd = operator*(0.125, p0) + operator*(6*0.125, p1) + operator*(0.125, p2);
-    return pd;
-}
-
-ofVec2f bezierPoint (ofVec2f p0, ofVec2f pd, ofVec2f p2) {
-    ofVec2f p1 =  operator*(8.0/6.0, pd - operator*(0.125, p0) - operator*(0.125, p2)); 
-    return p1;
-}

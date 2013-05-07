@@ -217,7 +217,7 @@ void netextGui::mouseDragged (int x, int y, int button){
 
     // Manipulate a selected edge
     if (selectedEdge > -1) {
-        Edges[selectedEdge].update(ofGetMouseX(), ofGetMouseY());
+        //Edges[selectedEdge].update(ofGetMouseX(), ofGetMouseY());
     }
 
     // Declare final coordinates of selection if not edge nor node was selected

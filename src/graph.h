@@ -60,13 +60,9 @@ public:
     int source_id;
     int target_id;
     int midRad;
-    ofVec2f middleBezier;
     ofVec2f middleDraw;
     ofColor def_color;
     ofColor sel_color;
 };
-
-ofVec2f drawPoint (ofVec2f, ofVec2f, ofVec2f); // Get the point on the middle of the bezier curve
-ofVec2f bezierPoint (ofVec2f, ofVec2f, ofVec2f); // get the bezier point according to the middle point of the curve
 
 #endif // GRAPH_H
