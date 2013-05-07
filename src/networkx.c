@@ -133,9 +133,7 @@ double len (stack *p) {
     stack *first = getitem (0);
     symrec *f = getsym (first->value.string);
     if (f != NULL) {
-        PyObject* tuple = PyTuple_New (1);
-        PyTuple_SetItem (tuple, 0, f->value.var.data.obj->py_object);
-        PyObject* value = PyObject_CallObject (nx_len->py_object, tuple);
+        PyObject* value = PyObject_CallObject (nx_len->py_object, PyTuple_Pack(1, f->value.var.data.obj->py_object));
         if (value) return PyInt_AsLong (value);
     } else {
         fprintf (stderr, ">>> Graph %s not found.\n", first->value.string);
@@ -149,10 +147,7 @@ NX_object* add_node (stack *p) {
     stack *first = getitem (0);
     symrec *f = getsym (first->value.string);
     if ( f != NULL ) {
-        PyObject* tuple = PyTuple_New (2);
-        PyTuple_SetItem (tuple, 0, f->value.var.data.obj->py_object);
-        PyTuple_SetItem (tuple, 1, PyInt_FromLong (p->value.number)); 
-        PyObject_CallObject (nx_add_node->py_object, tuple);
+        PyObject_CallObject (nx_add_node->py_object, PyTuple_Pack(2, f->value.var.data.obj->py_object, PyInt_FromLong (p->value.number)));
     } else {
         fprintf (stderr, ">>> Graph %s not found.\n", first->value.string);
     }
@@ -165,11 +160,7 @@ NX_object* add_edge (stack *p) {
     stack *first = getitem (0);
     symrec *f = getsym (first->value.string);
     if (f != NULL) {
-        PyObject* tuple = PyTuple_New (3);
-        PyTuple_SetItem (tuple, 0, f->value.var.data.obj->py_object);
-        PyTuple_SetItem (tuple, 2, PyInt_FromLong (p->value.number));
-        PyTuple_SetItem (tuple, 1, PyInt_FromLong (p->next->value.number));
-        PyObject_CallObject (nx_add_edge->py_object, tuple);
+        PyObject_CallObject (nx_add_edge->py_object, PyTuple_Pack(3, f->value.var.data.obj->py_object, PyInt_FromLong(p->value.number), PyInt_FromLong(p->next->value.number)));
     } else {
         fprintf (stderr, "Graph %s not found.\n", first->value.string);
     }
@@ -181,9 +172,7 @@ double order (stack *p) {
     stack *first = getitem (0);
     symrec *f = getsym (first->value.string);
     if ( f != NULL ) {
-        PyObject* tuple = PyTuple_New (1);
-        PyTuple_SetItem (tuple, 0, f->value.var.data.obj->py_object);
-        PyObject* value = PyObject_CallObject (nx_order->py_object, tuple);
+        PyObject* value = PyObject_CallObject (nx_order->py_object, PyTuple_Pack(1, f->value.var.data.obj->py_object));
         if (value) return PyInt_AsLong (value);
     } else {
         fprintf (stderr, "Graph %s not found.\n", first->value.string);
