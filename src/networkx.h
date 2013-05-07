@@ -22,6 +22,7 @@ extern PyObject* nx_remove_node;
 extern PyObject* nx_add_edge;
 extern PyObject* nx_remove_edge;
 extern PyObject* nx_write_gml;
+extern PyObject* nx_density;
 
 //
 // Loading NetworkX functions

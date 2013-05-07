@@ -26,6 +26,7 @@ PyObject* nx_add_edge = NULL;
 PyObject* nx_remove_edge = NULL;
 PyObject* nx_order = NULL;
 PyObject* nx_write_gml = NULL;
+PyObject* nx_density = NULL;
 //PyObject* nx_pagerank = NULL;
 
 //
@@ -56,6 +57,7 @@ void load_nx_objects (PyObject *parent) {
     nx_add_edge = load_attr (nxGraph, "add_edge");
     nx_remove_edge = load_attr (nxGraph, "remove_edge");
     nx_order = load_attr (nxGraph, "order");
+    nx_density = load_attr (parent, "density");
     nx_write_gml = load_attr (parent, "write_gml");
 }
 

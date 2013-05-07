@@ -31,6 +31,7 @@ class netextGui : public ofBaseApp {
 
         ofTrueTypeFont verdana14;
         string graphType;
+        string graphDensity;
         string numNodes;
         string numEdges;
 
