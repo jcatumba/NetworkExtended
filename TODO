@@ -1,0 +1,11 @@
+The following list shows the TODO list for NetworkExtended (CLI)
+
+-- Required
+    * Improve the syntax of the language.
+    * Allow the use of list, tuples and dictionaries.
+    * Finish the addition of NetworkX functions.
+    * Start the addition of NetEvo functions.
+
+-- Optional
+    * Add code completion.
+    * Add history of commands.
