@@ -1,4 +1,4 @@
-bin/
+bin/*
 obj/*
 *.cproject
 *.project
@@ -8,3 +8,4 @@ obj/*
 *.pyc
 *.tab.*
 *.yy.c
+interface_directives.txt
