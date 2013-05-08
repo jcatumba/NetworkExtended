@@ -118,6 +118,16 @@ void Edge::draw () {
     //ofBezier (source.center.x, source.center.y, middleBezier.x, middleBezier.y, middleBezier.x, middleBezier.y, target.center.x, target.center.y);
     ofLine (source.center, target.center);
     ofCircle (middleDraw.x, middleDraw.y, midRad);
+    // Draw arrow inside circle for Directed Graphs
+    if (graphType == "DiGraph" || graphType == "MultiDiGraph") {
+        double t = midRad / middleDraw.distance(target.center);
+        ofVec2f head = (1 - t)*middleDraw + t*target.center;
+        ofVec2f tail1 = head.rotate(120, middleDraw);
+        ofVec2f tail2 = head.rotate(-240, middleDraw);
+        head.rotate(120, middleDraw);
+        ofLine (head, tail1);
+        ofLine (head, tail2);
+    }
 }
 
 void Edge::update (int x, int y) {
