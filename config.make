@@ -3,7 +3,8 @@
 # OF_ROOT allows to move projects outside apps/* just set this variable to the
 # absoulte path to the OF root folder
 
-OF_ROOT = /home/jorge/Documentos/Programacion/C/of_v0073_linux_release
+OF_ROOT = ../of_current
+#OF_ROOT = /home/jorge/Descargas/of_v0.7.4
 
 
 # USER_CFLAGS allows to pass custom flags to the compiler
