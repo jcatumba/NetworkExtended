@@ -17,23 +17,20 @@ void netextGui::setup (){
     verdana14.loadFont ("GUI/verdana.ttf", 14, true, true);
     //ofBackgroundGradient (ofColor (255, 255, 255), ofColor (0, 0, 0), OF_GRADIENT_CIRCULAR);
 
-    // Graph Basic Attributes
-    graphType = "Graph";
-    graphDensity = "0";
-    numEdges = "0";
-    numNodes = "0";
+    // Graph initialization TODO: Ask user for graphType required
+    my_graph.set (nxGraph);
 
-    // Variable initialización
+    // Variable initialization
     mouse_dragged = false;
 
     //ofBackground (32, 32, 32);
     ofEnableSmoothing ();
-    float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
+    //float xInit = OFX_UI_GLOBAL_WIDGET_SPACING;
     float length = 320;
-    gui = new ofxUICanvas ();
+    //gui = new ofxUICanvas ();
 
-    gui->setFont ("GUI/verdana.ttf");
-    gui->addLabel ("NetworkExtended", OFX_UI_FONT_LARGE);
+    //gui->setFont ("GUI/verdana.ttf");
+    //gui->addLabel ("NetworkExtended", OFX_UI_FONT_LARGE);
     //gui->addSpacer ();
     /*gui->addLabel (graphType, OFX_UI_FONT_MEDIUM);
     gui->addSlider ("Background value", 0.0, 255.0, 100.0);
@@ -47,21 +44,21 @@ void netextGui::setup (){
     gui->addLabel ("Node properties", OFX_UI_FONT_MEDIUM);
     gui->addSpacer ();*/
 
-    vector<string> names;
-    names.push_back ("Graph");
-    names.push_back ("DiGraph");
-    names.push_back ("MultiGraph");
-    names.push_back ("MultiDiGraph");
-    ddl = new ofxUIDropDownList (length-xInit, "Graph Type", names, OFX_UI_FONT_MEDIUM);
-    ddl->setAllowMultiple (false);
-    gui->addWidgetDown (ddl);
+    //vector<string> names;
+    //names.push_back ("Graph");
+    //names.push_back ("DiGraph");
+    //names.push_back ("MultiGraph");
+    //names.push_back ("MultiDiGraph");
+    //ddl = new ofxUIDropDownList (length-xInit, "Graph Type", names, OFX_UI_FONT_MEDIUM);
+    //ddl->setAllowMultiple (false);
+    //gui->addWidgetDown (ddl);
 
     /*gui->addSpacer ();
     gui->addLabel ("Edge properties", OFX_UI_FONT_MEDIUM);*/
 
-    gui->autoSizeToFitWidgets ();
-    ofAddListener (gui->newGUIEvent, this, &netextGui::guiEvent);
-    gui->loadSettings ("GUI/guiSettings.xml");
+    //gui->autoSizeToFitWidgets ();
+    //ofAddListener (gui->newGUIEvent, this, &netextGui::guiEvent);
+    //gui->loadSettings ("GUI/guiSettings.xml");
 }
 
 //--------------------------------------------------------------
@@ -70,12 +67,8 @@ void netextGui::update (){
 
 //--------------------------------------------------------------
 void netextGui::draw (){
-    for (int i=0; i<Edges.size (); i++) {
-        Edges[i].draw ();
-    }
-    for (int i=0; i<Nodes.size (); i++) {
-        Nodes[i].draw ();
-    }
+    // Draw the graph
+    my_graph.draw ();
 
     // Draw the info box
     ofSetColor (211,211,211);
@@ -84,28 +77,23 @@ void netextGui::draw (){
 
     // Put the contents of info box
     ofSetColor (0);
-    verdana14.drawString (graphType, 30, ofGetHeight ()-70);
-    verdana14.drawString (numNodes, 30, ofGetHeight ()-53);
-    verdana14.drawString ("Node (s)", 35 + verdana14.stringWidth (numNodes), ofGetHeight ()-53);
-    verdana14.drawString (numEdges, 30, ofGetHeight ()-36);
-    verdana14.drawString ("Edge (s)", 35 + verdana14.stringWidth (numEdges), ofGetHeight ()-36);
+    /*verdana14.drawString (my_graph.graphType, 30, ofGetHeight ()-70);
+    verdana14.drawString (my_graph.numNodes, 30, ofGetHeight ()-53);
+    verdana14.drawString ("Node (s)", 35 + verdana14.stringWidth (my_graph.numNodes), ofGetHeight ()-53);
+    verdana14.drawString (my_graph.numEdges, 30, ofGetHeight ()-36);
+    verdana14.drawString ("Edge (s)", 35 + verdana14.stringWidth (my_graph.numEdges), ofGetHeight ()-36);
     verdana14.drawString ("Density: ", 30, ofGetHeight ()-19);
-    verdana14.drawString (graphDensity, 35 + verdana14.stringWidth ("Density: "), ofGetHeight ()-19);
-}
-
-//--------------------------------------------------------------
-void netextGui::removeSelected (void) {
-    // XXX
+    verdana14.drawString (my_graph.graphDensity, 35 + verdana14.stringWidth ("Density: "), ofGetHeight ()-19);*/
 }
 
 //--------------------------------------------------------------
 void netextGui::exit (){
-    gui->saveSettings ("GUI/guiSettings.xml");
-    delete gui;
+    //gui->saveSettings ("GUI/guiSettings.xml");
+    //delete gui;
 }
 
 //--------------------------------------------------------------
-void netextGui::guiEvent (ofxUIEventArgs &e){
+/*void netextGui::guiEvent (ofxUIEventArgs &e){
     string name = e.widget->getName ();
 
     if (name  == "Background value") {
@@ -118,12 +106,10 @@ void netextGui::guiEvent (ofxUIEventArgs &e){
         ofxUIDropDownList *ddlist = (ofxUIDropDownList *) e.widget;
         vector<ofxUIWidget *> &selected = ddlist->getSelected ();
         for (int i=0; i< selected.size (); i++) {
-            //cout << "SELECTED: " << selected[i]->getName () << endl;
-            graphType = selected[i]->getName ();
-            // Determine the type of NetworkX Graph
+            my_graph.update_graphType (selected[i]->getName ());
         }
     }
-}
+}*/
 
 //--------------------------------------------------------------
 void netextGui::keyPressed (int key){
@@ -131,51 +117,43 @@ void netextGui::keyPressed (int key){
     // Get the pressed key
     switch (key) {
         case 's': {
-            PyObject_CallObject (nx_write_gml, PyTuple_Pack (2, the_graph, PyString_FromString ("netext_graph.gml")));
+            my_graph.save_graph("netext_graph.gml");
             break;
         }
         case 'f':
             ofToggleFullscreen ();
             break;
         case 'p':
-            gui->setDrawWidgetPadding (true);
+            //gui->setDrawWidgetPadding (true);
             break;
         case 'P':
-            gui->setDrawWidgetPadding (false);
+            //gui->setDrawWidgetPadding (false);
             break;
         case 127: {
             // Remove selected;
             vector<int> selectedI;
-            for (int i=0; i<Edges.size (); i++) {
-                if (Edges[i].selected) {
+            for (int i=0; i<my_graph.Edges.size (); i++) {
+                if (my_graph.Edges[i].selected) {
                     selectedI.push_back (i);
                 }
             }
             for (int i=0;i<selectedI.size (); i++) {
-                Edge edge_selected = Edges[selectedI[i]];
-                PyObject_CallObject (nx_remove_edge, PyTuple_Pack (3, the_graph, PyInt_FromLong (edge_selected.source_id), PyInt_FromLong (edge_selected.target_id)));
-                Edges.erase (Edges.begin () + selectedI[i] - i);
-                stringstream ss;
-                ss << Edges.size ();
-                numEdges = ss.str ();
+                Edge edge_selected = my_graph.Edges[selectedI[i]];
+                my_graph.remove_edge (edge_selected.source_id, edge_selected.target_id, selectedI[i]-i);
             }
             selectedI.clear ();
-            for (int i=0; i<Nodes.size (); i++) {
-                if (Nodes[i].selected) {
+            for (int i=0; i<my_graph.Nodes.size (); i++) {
+                if (my_graph.Nodes[i].selected) {
                     selectedI.push_back (i);
                 }
             }
             for (int i=0; i<selectedI.size (); i++) {
-                PyObject_CallObject (nx_remove_node, PyTuple_Pack (2, the_graph, PyInt_FromLong (selectedI[i])));
-                Nodes.erase (Nodes.begin () + selectedI[i] - i);
-                stringstream ss;
-                ss << Nodes.size ();
-                numNodes = ss.str ();
-                for (int j=0; j<Edges.size (); j++) {
-                    if (Edges[j].source_id > selectedI[i])
-                        Edges[j].source_id -= 1;
-                    if (Edges[j].target_id > selectedI[i])
-                        Edges[j].target_id -= 1;
+                my_graph.remove_node (selectedI[i], selectedI[i]-i);
+                for (int j=0; j<my_graph.Edges.size (); j++) {
+                    if (my_graph.Edges[j].source_id > selectedI[i])
+                        my_graph.Edges[j].source_id -= 1;
+                    if (my_graph.Edges[j].target_id > selectedI[i])
+                        my_graph.Edges[j].target_id -= 1;
                 }
             }
             break;
@@ -202,12 +180,12 @@ void netextGui::mouseDragged (int x, int y, int button){
     // Manipulate a selected node
     if (selectedNode > -1) {
         if (button == 0) {
-            Nodes[selectedNode].update (ofGetMouseX (), ofGetMouseY (), the_graph, selectedNode);
-            for (int i=0; i<Edges.size (); i++) {
-                if (Edges[i].source_id == selectedNode) {
-                    Edges[i].update_source (Nodes[selectedNode]);
-                } else if (Edges[i].target_id == selectedNode) {
-                    Edges[i].update_target (Nodes[selectedNode]);
+            my_graph.Nodes[selectedNode].update (ofGetMouseX (), ofGetMouseY (), my_graph, selectedNode);
+            for (int i=0; i<my_graph.Edges.size (); i++) {
+                if (my_graph.Edges[i].source_id == selectedNode) {
+                    my_graph.Edges[i].update_source (my_graph.Nodes[selectedNode]);
+                } else if (my_graph.Edges[i].target_id == selectedNode) {
+                    my_graph.Edges[i].update_target (my_graph.Nodes[selectedNode]);
                 }
             }
         } else if (button == 2) {
@@ -234,17 +212,17 @@ void netextGui::mousePressed (int x, int y, int button){
     // Actions on mouse click event (0 = left, 2 = right)
     if (button == 0) {
         // Detect if a node was clicked
-        for (int i=0; i<Nodes.size (); i++) {
-            if (Nodes[i].checkOver (x, y)) {
+        for (int i=0; i<my_graph.Nodes.size (); i++) {
+            if (my_graph.Nodes[i].checkOver (x, y)) {
                 nodePressed = true;
                 selectedNode = i;
-                //Nodes[i].toggle_selected ();
+                //my_graph.Nodes[i].toggle_selected ();
                 break;
             }
         }
         // Detect if an edge was clicked
-        for (int i=0; i<Edges.size (); i++) {
-            if (Edges[i].checkOver (x, y)) {
+        for (int i=0; i<my_graph.Edges.size (); i++) {
+            if (my_graph.Edges[i].checkOver (x, y)) {
                 edgePressed = true;
                 selectedEdge = i;
                 //Edges[i].toggle_selected ();
@@ -257,16 +235,16 @@ void netextGui::mousePressed (int x, int y, int button){
         }
     } else if (button == 2) {
         // Detect a right-clicked node
-        for (int i=0; i<Nodes.size (); i++) {
-            if (Nodes[i].checkOver (x, y)) {
+        for (int i=0; i<my_graph.Nodes.size (); i++) {
+            if (my_graph.Nodes[i].checkOver (x, y)) {
                 nodePressed = true;
                 selectedNode = i;
                 break;
             }
         }
         // Detect a right-clicked edge
-        for (int i=0; i>Edges.size (); i++) {
-            if (Edges[i].checkOver (x, y)) {
+        for (int i=0; i>my_graph.Edges.size (); i++) {
+            if (my_graph.Edges[i].checkOver (x, y)) {
                 edgePressed = true;
                 selectedEdge = i;
                 break;
@@ -283,10 +261,10 @@ void netextGui::mouseReleased (int x, int y, int button){
             if (mouse_dragged) {
                 //empty
             } else {
-                Nodes[selectedNode].toggle_selected ();
-                for (int i=0; i<Edges.size (); i++) {
-                    if (selectedNode == Edges[i].source_id || selectedNode == Edges[i].target_id) {
-                        Edges[i].toggle_selected ();
+                my_graph.Nodes[selectedNode].toggle_selected ();
+                for (int i=0; i<my_graph.Edges.size (); i++) {
+                    if (selectedNode == my_graph.Edges[i].source_id || selectedNode == my_graph.Edges[i].target_id) {
+                        my_graph.Edges[i].toggle_selected ();
                     }
                 }
                 // TODO: Active properties edition
@@ -294,21 +272,17 @@ void netextGui::mouseReleased (int x, int y, int button){
         }
         if (button == 2) {
             // Create edge on mouse release over a node
-            for (int i=0; i<Nodes.size (); i++) {
-                if (Nodes[i].checkOver (ofGetMouseX (), ofGetMouseY ()) && i != selectedNode) {
+            for (int i=0; i<my_graph.Nodes.size (); i++) {
+                if (my_graph.Nodes[i].checkOver (ofGetMouseX (), ofGetMouseY ()) && i != selectedNode) {
                     // Add edge
-                    Edges.push_back (Edge ());
+                    my_graph.Edges.push_back (Edge ());
                     // Set edge
-                    Edges.back ().set (Nodes[selectedNode], Nodes[i], selectedNode, i, the_graph);
+                    my_graph.Edges.back ().set (my_graph.Nodes[selectedNode], my_graph.Nodes[i], selectedNode, i, my_graph);
 
                     // Update number of edges on screen
-                    stringstream ss;
-                    ss << Edges.size ();
-                    numEdges = ss.str ();
+                    my_graph.update_numEdges ();
                     // Update density of graph
-                    stringstream gd;
-                    gd << PyFloat_AsDouble(PyObject_CallObject(nx_density, PyTuple_Pack(1, the_graph)));
-                    graphDensity = gd.str();
+                    my_graph.update_graphDensity ();
                 }
             }
         }
@@ -320,7 +294,7 @@ void netextGui::mouseReleased (int x, int y, int button){
             if (mouse_dragged) {
                 //empty
             } else {
-                Edges[selectedEdge].toggle_selected ();
+                my_graph.Edges[selectedEdge].toggle_selected ();
                 // TODO: Active properties edition
             }
         }
@@ -340,31 +314,27 @@ void netextGui::mouseReleased (int x, int y, int button){
                     selectVi.y = selectVf.y;
                     selectVf.y = pass;
                 }
-                for (int  i=0; i<Nodes.size (); i++) {
-                    if (selectVi.x <= Nodes[i].center.x && Nodes[i].center.x <= selectVf.x && selectVi.y <= Nodes[i].center.y && Nodes[i].center.y <= selectVf.y) {
-                        Nodes[i].toggle_selected ();
-                        for (int j=0; j<Edges.size (); j++) {
-                            if (i == Edges[j].source_id || i == Edges[j].target_id) {
-                                if (!Edges[j].selected)
-                                    Edges[j].toggle_selected ();
+                for (int  i=0; i<my_graph.Nodes.size (); i++) {
+                    if (selectVi.x <= my_graph.Nodes[i].center.x && my_graph.Nodes[i].center.x <= selectVf.x && selectVi.y <= my_graph.Nodes[i].center.y && my_graph.Nodes[i].center.y <= selectVf.y) {
+                        my_graph.Nodes[i].toggle_selected ();
+                        for (int j=0; j<my_graph.Edges.size (); j++) {
+                            if (i == my_graph.Edges[j].source_id || i == my_graph.Edges[j].target_id) {
+                                if (!my_graph.Edges[j].selected)
+                                    my_graph.Edges[j].toggle_selected ();
                             }
                         }
                     }
                 }
             } else {
                 // Add node
-                Nodes.push_back (Node ());
+                my_graph.Nodes.push_back (Node ());
                 // Set the node properties
-                Nodes.back ().set (x, y, the_graph, Nodes.size ()-1);
+                my_graph.Nodes.back ().set (x, y, my_graph);
 
                 // Update number of nodes on screen
-                stringstream ss;
-                ss << Nodes.size ();
-                numNodes = ss.str ();
+                my_graph.update_numNodes ();
                 // Update density of graph
-                stringstream gd;
-                gd << PyFloat_AsDouble(PyObject_CallObject(nx_density, PyTuple_Pack(1, the_graph)));
-                graphDensity = gd.str();
+                my_graph.update_graphDensity ();
             }
         }
     }

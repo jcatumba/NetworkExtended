@@ -29,6 +29,6 @@ int main () {
     init_netevo ();
 	ofRunApp (new netextGui ()); // start the app
 
-    // Finalizing
+    // Finalizing app
     Py_Finalize ();
 }

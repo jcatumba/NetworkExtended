@@ -14,15 +14,17 @@
 #include "netevo.h"
 #include "ofMain.h"
 
+class Graph;
+
 class Node {
 public:
     // Constructor
     Node ();
 
     // Methods
-    void set (int, int, PyObject*, int); // Setup the node
+    void set (int, int, Graph&); // Setup the node
     void draw (); // Draw the node
-    void update (int, int, PyObject*, int); // Update the node
+    void update (int, int, Graph&, int); // Update the node
     void toggle_selected (void);
     bool checkOver (int, int); // Check if the mouse is over the node
     bool testEqual (Node &);
@@ -43,15 +45,15 @@ public:
     Edge ();
 
     // Methods
-    void set (Node, Node, int, int, PyObject*); // Initialize the node
-    void draw (); // Draw the edge
+    void set (Node, Node, int, int, Graph&); // Setup the edge
+    void draw (string); // Draw the edge
     void update (int, int); // Update the edge
     void update_source_id (int);
     void update_source (Node);
     void update_target_id (int);
     void update_target (Node);
     void toggle_selected (void);
-    bool checkOver (int, int); // Check oif the mouse is over the edge
+    bool checkOver (int, int); // Check if the mouse is over the edge
 
     // Properties
     bool selected;
@@ -63,6 +65,34 @@ public:
     ofVec2f middleDraw;
     ofColor def_color;
     ofColor sel_color;
+};
+
+class Graph {
+PyObject *the_graph;
+friend class Node;
+friend class Edge;
+public:
+    // Constructor
+    Graph ();
+
+    // Methods
+    void set (PyObject*); // Initialize the graph
+    void draw (); // draw Nodes and edges of graph
+    void save_graph (const char*); // save the graph to a gml format
+    void update_graphType (string);
+    void update_graphDensity ();
+    void update_numNodes ();
+    void remove_node (int, int);
+    void update_numEdges ();
+    void remove_edge (int, int, int);
+    
+    // Properties
+    string graphType;
+    string graphDensity;
+    string numNodes;
+    string numEdges;
+    vector<Node> Nodes;
+    vector<Edge> Edges;
 };
 
 #endif // GRAPH_H

@@ -23,18 +23,18 @@ Node::Node () {
     radius = 25;
 }
 
-void Node::set (int _xDest, int _yDest, PyObject *graph, int the_size) {
+void Node::set (int _xDest, int _yDest, Graph& graph) {
     center.set (_xDest, _yDest);
 
     // Add NetworkX node
     PyObject *tuple = PyTuple_New(2);
-    PyTuple_SetItem (tuple, 0, graph);
-    PyTuple_SetItem (tuple, 1, PyInt_FromLong (the_size));
+    PyTuple_SetItem (tuple, 0, graph.the_graph);
+    PyTuple_SetItem (tuple, 1, PyInt_FromLong (graph.Nodes.size()-1));
     PyObject_CallObject (nx_add_node, tuple);
 
     // Add center properties (for visualization)
-    PyObject *graph_node = load_attr (graph, "node");
-    PyObject *node_ptr = PyObject_GetItem(graph_node, PyInt_FromLong(the_size));
+    PyObject *graph_node = load_attr (graph.the_graph, "node");
+    PyObject *node_ptr = PyObject_GetItem(graph_node, PyInt_FromLong(graph.Nodes.size()-1));
     PyObject_SetItem(node_ptr, PyString_FromString("x"), PyInt_FromLong(_xDest));
     PyObject_SetItem(node_ptr, PyString_FromString("y"), PyInt_FromLong(_yDest));
 }
@@ -54,10 +54,10 @@ void Node::draw () {
     ofCircle (center.x, center.y, radius);
 }
 
-void Node::update (int x, int y, PyObject *graph, int position) {
+void Node::update (int x, int y, Graph& graph, int position) {
     center.set (x, y);
 
-    PyObject *graph_node = load_attr (graph, "node");
+    PyObject *graph_node = load_attr (graph.the_graph, "node");
     PyObject *node_ptr = PyObject_GetItem(graph_node, PyInt_FromLong(position));
     PyObject_SetItem(node_ptr, PyString_FromString("x"), PyInt_FromLong(x));
     PyObject_SetItem(node_ptr, PyString_FromString("y"), PyInt_FromLong(y));
@@ -94,7 +94,7 @@ Edge::Edge () {
     selected = false;
 }
 
-void Edge::set (Node _source, Node _target, int idsource, int idtarget, PyObject *graph) {
+void Edge::set (Node _source, Node _target, int idsource, int idtarget, Graph& graph) {
     source = _source;
     target = _target;
     source_id = idsource;
@@ -103,13 +103,13 @@ void Edge::set (Node _source, Node _target, int idsource, int idtarget, PyObject
 
     // Add NetworkX edge
     PyObject *tuple = PyTuple_New(3);
-    PyTuple_SetItem(tuple, 0, graph);
+    PyTuple_SetItem(tuple, 0, graph.the_graph);
     PyTuple_SetItem(tuple, 1, PyInt_FromLong(idsource));
     PyTuple_SetItem(tuple, 2, PyInt_FromLong(idtarget));
     PyObject_CallObject(nx_add_edge, tuple);
 }
 
-void Edge::draw () {
+void Edge::draw (string graphType) {
     if (selected)
         ofSetColor (sel_color);
     else
@@ -167,3 +167,61 @@ bool Edge::checkOver (int x, int y) {
     }
 }
 
+Graph::Graph () {
+    graphType = "Graph";
+    graphDensity = "0";
+    numNodes = "0";
+    numEdges = "0";
+}
+
+void Graph::set (PyObject *type) {
+    the_graph = PyObject_CallObject(type, NULL);
+}
+
+void Graph::draw () {
+    for (int i=0; i<Edges.size (); i++) {
+        Edges[i].draw (graphType);
+    }
+    for (int i=0; i<Nodes.size (); i++) {
+        Nodes[i].draw ();
+    }
+}
+
+void Graph::save_graph (const char* filename) {
+    PyObject_CallObject (nx_write_gml, PyTuple_Pack (2, the_graph, PyString_FromString(filename)));
+}
+
+void Graph::update_graphType (string newType) {
+    graphType = newType;
+    //TODO: Add functionality to change graph type on NetworkX
+}
+
+void Graph::update_graphDensity () {
+    stringstream gd;
+    gd << PyFloat_AsDouble(PyObject_CallObject(nx_density, PyTuple_Pack(1, the_graph)));
+    graphDensity = gd.str();
+}
+
+void Graph::update_numNodes () {
+    stringstream ss;
+    ss << Nodes.size ();
+    numNodes = ss.str();
+}
+
+void Graph::remove_node (int node, int position) {
+    PyObject_CallObject (nx_remove_node, PyTuple_Pack (2, the_graph, PyInt_FromLong(node)));
+    Nodes.erase (Nodes.begin () + position);
+    update_numNodes ();
+}
+
+void Graph::update_numEdges () {
+    stringstream ss;
+    ss << Edges.size ();
+    numEdges = ss.str();
+}
+
+void Graph::remove_edge (int source, int target, int position) {
+    PyObject_CallObject (nx_remove_edge, PyTuple_Pack (3, the_graph, PyInt_FromLong(source), PyInt_FromLong(target)));
+    Edges.erase (Edges.begin () + position);
+    update_numEdges ();
+}

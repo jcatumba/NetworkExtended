@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ofxUI.h"
+//#include "ofxUI.h"
 #include "graph.h"
 
 class netextGui : public ofBaseApp {
@@ -18,7 +18,6 @@ class netextGui : public ofBaseApp {
 		void update ();
 		void draw ();
 		
-        void removeSelected (void);
 		void keyPressed (int key);
 		void keyReleased (int key);
 		void mouseMoved (int x, int y);
@@ -30,14 +29,8 @@ class netextGui : public ofBaseApp {
 		void gotMessage (ofMessage msg);
 
         ofTrueTypeFont verdana14;
-        string graphType;
-        string graphDensity;
-        string numNodes;
-        string numEdges;
 
         bool mouse_dragged;
-        vector<Node> Nodes; // Vector to save all nodes.
-        vector<Edge> Edges; // Vector to sava all edges.
         int selectedNode = -1;
         int selectedEdge = -1;
         vector<int> selectedNodes;
@@ -45,10 +38,10 @@ class netextGui : public ofBaseApp {
         ofVec2f selectVi;
         ofVec2f selectVf;
 
-        PyObject *the_graph = PyObject_CallObject(nxGraph, NULL);
+        Graph my_graph;
 
-    ofxUICanvas *gui;
-    ofxUIDropDownList *ddl;
+    //ofxUICanvas *gui;
+    //ofxUIDropDownList *ddl;
     void exit ();
-    void guiEvent (ofxUIEventArgs &e);
+    //void guiEvent (ofxUIEventArgs &e);
 };
