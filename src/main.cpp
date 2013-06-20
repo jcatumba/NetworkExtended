@@ -19,15 +19,15 @@ extern PyObject* nxMultiDiGraph;
 
 //--------------------------------------------------------------
 int main () {
-	ofAppGlutWindow window; // create a window
-	// set width, height, mode (OF_WINDOW or OF_FULLSCREEN)
+    ofAppGlutWindow window; // create a window
+    // set width, height, mode (OF_WINDOW or OF_FULLSCREEN)
     ofSetupOpenGL (&window, 1024, 768, OF_WINDOW);
 
     // Initializing app
     Py_Initialize ();
     init_networkx ();
     init_netevo ();
-	ofRunApp (new netextGui ()); // start the app
+    ofRunApp (new netextGui ()); // start the app
 
     // Finalizing app
     Py_Finalize ();
