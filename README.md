@@ -16,7 +16,7 @@ NetEvo is a computing framework and collection of end-user tools designed to all
 openFrameworks is an open source C++ toolkit designed to assist the creative process by providing a simple and intuitive framework for experimentation.
 
 ## Development
-For develop NetworkExtended you must have the development libraries of Python, openFrameworks (with all it's dependencies) and a working installation of NetworkX and NetEvo for Python. Also, you must have a compatible C++ compiler, for instance `GCC`. The `make` utility is highly recommended.
+To develop NetworkExtended you must have the development libraries of Python, openFrameworks (with all it's dependencies) and a working installation of NetworkX and NetEvo for Python. Also, you must have a compatible C++ compiler, for instance `GCC`. The `make` utility is highly recommended.
 
 For CLI branch you must have a working [`bison`](http://www.gnu.org/software/bison/) and [`flex`](http://flex.sourceforge.net/) installation or their compatible [`yacc`](http://dinosaur.compilertools.net/yacc/) and [`lex`](http://dinosaur.compilertools.net/lex/) to compile the code. On this branch a Python-like language for Complex Networks will be developed.
 
